@@ -1,0 +1,103 @@
+/* * RooqFlow Global Theme 
+ * Primary Colors: Burgundy (#800020) and Gold (#D4AF37)
+ */
+
+:root {
+    /* Color Palette */
+    --rooq-burgundy: #800020;    /* Main corporate color from logo */
+    --rooq-gold: #D4AF37;        /* Secondary accent color from logo */
+    --rooq-dark: #2D2D2D;        /* Dark text for readability */
+    --rooq-light: #F4F4F4;       /* Background gray */
+    --rooq-white: #FFFFFF;
+    
+    /* Typography */
+    --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-arabic: 'Cairo', sans-serif; /* Recommended for Arabic translation */
+}
+
+/* Base Styles */
+body {
+    background-color: var(--rooq-light);
+    color: var(--rooq-dark);
+    font-family: var(--font-main);
+    margin: 0;
+    padding: 0;
+}
+
+/* Branding Headers */
+h1, h2, h3, .brand-text {
+    color: var(--rooq-burgundy);
+    font-weight: 700;
+}
+
+/* --- Button Styles --- */
+.btn-rooq-primary {
+    background-color: var(--rooq-burgundy);
+    color: var(--rooq-white);
+    border: 2px solid var(--rooq-burgundy);
+    padding: 10px 25px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-rooq-primary:hover {
+    background-color: var(--rooq-white);
+    color: var(--rooq-burgundy);
+}
+
+.btn-rooq-outline {
+    background-color: transparent;
+    color: var(--rooq-gold);
+    border: 2px solid var(--rooq-gold);
+    padding: 10px 25px;
+    border-radius: 5px;
+}
+
+.btn-rooq-outline:hover {
+    background-color: var(--rooq-gold);
+    color: var(--rooq-white);
+}
+
+/* --- Card Styles (for MISA tracking) --- */
+.rooq-card {
+    background: var(--rooq-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-top: 4px solid var(--rooq-burgundy); /* Highlight top in burgundy */
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.rooq-card-header {
+    border-bottom: 1px solid var(--rooq-gold); /* Thin gold separator */
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* --- Navigation & Sidebar --- */
+.rooq-navbar {
+    background-color: var(--rooq-burgundy);
+    color: var(--rooq-white);
+    border-bottom: 3px solid var(--rooq-gold);
+}
+
+.sidebar {
+    background-color: #33000d; /* Slightly darker burgundy for contrast */
+    color: var(--rooq-white);
+}
+
+.sidebar a:hover {
+    background-color: var(--rooq-gold);
+    color: var(--rooq-burgundy);
+}
+
+/* --- Progress Bar Styles --- */
+.progress-bar-rooq {
+    background-color: var(--rooq-burgundy);
+}
+
+.progress-container {
+    background-color: #e9ecef;
+    border: 1px solid var(--rooq-gold);
+    border-radius: 10px;
+}
