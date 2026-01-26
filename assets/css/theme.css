@@ -103,31 +103,31 @@ h1, h2, h3, .brand-text {
 }
 
 
-/* --- Service Note Cards (Bootdey Style) --- */
+
+/* --- New Note Card Styles --- */
 .card-box {
     padding: 20px;
-    border-radius: 3px;
-    margin-bottom: 30px;
+    border-radius: 6px;
     background-color: #fff;
     position: relative;
     border: 1px solid #e7e7e7;
     transition: all 0.3s ease;
-    /* The "Note" Top Border */
-    border-top: 4px solid var(--rooq-gold); 
+    border-top: 4px solid var(--rooq-gold); /* Gold Top */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    height: 100%;
 }
 
 .card-box:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    border-top-color: var(--rooq-burgundy); /* Change color on hover */
+    border-top-color: var(--rooq-burgundy); /* Change to Burgundy on hover */
 }
 
 .card-box .card-icon {
     position: absolute;
     right: 20px;
     top: 20px;
-    font-size: 30px;
-    opacity: 0.1; /* Watermark effect */
+    opacity: 0.1; /* Faded watermark effect */
     transition: all 0.3s ease;
 }
 
@@ -139,26 +139,14 @@ h1, h2, h3, .brand-text {
 .card-box .card-title {
     font-weight: 700;
     color: var(--rooq-burgundy);
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.card-box .card-text {
-    color: #666;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    margin-top: 15px;
+    margin-bottom: 10px;
 }
 
 .card-box .btn-link {
     color: var(--rooq-gold);
     text-decoration: none;
     font-weight: 600;
-    padding: 0;
-    margin-top: 10px;
+    margin-top: 15px;
     display: inline-block;
-}
-
-.card-box .btn-link:hover {
-    color: var(--rooq-burgundy);
 }
