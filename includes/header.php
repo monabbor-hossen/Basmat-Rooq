@@ -15,7 +15,7 @@
 <body>
 <nav class="navbar navbar-expand-lg rooq-navbar sticky-top navbar-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index"><img src="../assets/img/logo.png" alt="" width="300"></a>
+        <a class="navbar-brand fw-bold" href="index"><img src="../assets/img/logo.png" alt="" width="250"></a>
         <div class="d-flex align-items-center ms-auto">
             <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="nav-link text-white me-3 fw-bold">
                 <?php echo ($lang == 'en' ? 'عربي' : 'English'); ?>
