@@ -47,38 +47,32 @@ require_once __DIR__ . '/../app/Config/Config.php';
             </div>
 
             <form action="<?php echo BASE_URL; ?>/auth/login" method="POST">
-                
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="name@example.com" required>
-                    <label for="username"><?php echo ($lang == 'ar' ? 'اسم المستخدم / السجل التجاري' : 'Username or CR Number'); ?></label>
-                </div>
+    
+    <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                    <label for="password"><?php echo ($lang == 'ar' ? 'كلمة المرور' : 'Password'); ?></label>
-                </div>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger small p-2 text-center border-0 bg-danger bg-opacity-10 text-danger">
+            <?php 
+                echo $_SESSION['error']; 
+                unset($_SESSION['error']); // Clear error after showing
+            ?>
+        </div>
+    <?php endif; ?>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="remember">
-                        <label class="form-check-label small text-muted" for="remember">
-                            <?php echo ($lang == 'ar' ? 'تذكرني' : 'Remember me'); ?>
-                        </label>
-                    </div>
-                    <a href="#" class="small text-decoration-none fw-bold" style="color: var(--rooq-burgundy);">
-                        <?php echo ($lang == 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?'); ?>
-                    </a>
-                </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+        <label for="username"><?php echo ($lang == 'ar' ? 'اسم المستخدم' : 'Username'); ?></label>
+    </div>
 
-                <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold shadow-sm">
-                    <?php echo ($lang == 'ar' ? 'دخول' : 'Sign In'); ?>
-                </button>
-                
-                <a href="<?php echo BASE_URL; ?>/index" class="btn btn-link w-100 mt-3 text-muted text-decoration-none">
-                    &larr; <?php echo ($lang == 'ar' ? 'العودة للصفحة الرئيسية' : 'Back to Home'); ?>
-                </a>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+        <label for="password"><?php echo ($lang == 'ar' ? 'كلمة المرور' : 'Password'); ?></label>
+    </div>
 
-            </form>
+    <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold shadow-sm">
+        <?php echo ($lang == 'ar' ? 'دخول' : 'Sign In'); ?>
+    </button>
+</form>
         </div>
     </div>
 </div>
