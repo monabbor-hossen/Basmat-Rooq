@@ -12,13 +12,13 @@ class AuthController {
     }
 
     public function login($username, $password, $csrf_token) {
-        // 1. Security: Check CSRF Token
+        // 1. Check Security Token
         Security::checkCSRF($csrf_token);
 
-        // 2. Security: Sanitize Input
+        // 2. Sanitize Input
         $username = Security::clean($username);
 
-        // 3. Database Lookup (Prepared Statement)
+        // 3. Check User in Database
         $query = "SELECT id, username, password, role FROM users WHERE username = :username LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $username);
@@ -27,26 +27,23 @@ class AuthController {
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch();
             
-            // 4. Security: Verify Hash (Never compare plain text!)
+            // 4. Verify Password
             if (password_verify($password, $row['password'])) {
-                
-                // 5. Security: Prevent Session Fixation
+                // Prevent Session Hijacking
                 session_regenerate_id(true);
                 
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['role'] = $row['role'];
                 $_SESSION['username'] = $row['username'];
-                $_SESSION['last_activity'] = time();
-
-                // Redirect based on role
-                $redirect = ($row['role'] === 'admin') ? '/management/dashboard' : '/portal/dashboard';
-                header("Location: " . BASE_URL . $redirect);
+                
+                // Success: Send to Dashboard
+                header("Location: " . BASE_URL . "/portal/dashboard");
                 exit;
             }
         }
 
-        // Generic Error (Don't tell them if the username exists or not)
-        $_SESSION['error'] = ($username == '') ? "Username is required." : "Invalid credentials.";
+        // Failure: Send back to Login with Error
+        $_SESSION['error'] = "Invalid Username or Password";
         header("Location: " . BASE_URL . "/login");
         exit;
     }
