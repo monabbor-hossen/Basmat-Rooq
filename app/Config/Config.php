@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // --- 1. SMART BASE URL (Fixes Broken Links) ---
 // Detects your folder name automatically (e.g., /basmat-rooq/)
