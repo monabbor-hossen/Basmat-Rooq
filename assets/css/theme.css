@@ -150,62 +150,72 @@ h1, h2, h3, .brand-text {
     margin-top: 15px;
     display: inline-block;
 }
-
-/* --- Login Page Styles --- */
-.login-container {
-    min-height: 85vh; /* Full height minus header */
+/* --- Login Split Screen Styles --- */
+.login-wrapper {
+    min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f9fa;
-}
-
-.login-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    align-items: stretch;
     overflow: hidden;
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    flex-wrap: wrap;
 }
 
-.login-visual {
-    background: linear-gradient(135deg, var(--rooq-burgundy) 0%, #2c000e 100%);
-    width: 50%;
-    padding: 40px;
+/* Left Side: Branding */
+.login-brand-side {
+    background: linear-gradient(135deg, var(--rooq-burgundy) 0%, #4a0012 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: #fff;
-    text-align: center;
+    align-items: center;
+    color: white;
+    padding: 40px;
     position: relative;
+    width: 50%; /* Take up half the screen */
 }
 
-/* Gold Pattern Overlay */
-.login-visual::before {
+/* Gold Pattern Overlay Effect */
+.login-brand-side::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1h2v2H1V1zm4 0h2v2H5V1zm4 0h2v2H9V1z' fill='%23D4AF37' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-.login-form-section {
-    width: 50%;
-    padding: 50px;
+/* Right Side: Form */
+.login-form-side {
+    background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 60px;
+    width: 50%; /* Take up half the screen */
 }
 
-.form-floating .form-control:focus {
+.login-form-container {
+    max-width: 450px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Form Input Styling */
+.form-floating > .form-control:focus ~ label {
+    color: var(--rooq-burgundy);
+}
+.form-floating > .form-control:focus {
     border-color: var(--rooq-gold);
     box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
 }
 
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .login-visual { display: none; } /* Hide image on mobile */
-    .login-form-section { width: 100%; padding: 30px; }
+    .login-wrapper { flex-direction: column; }
+    .login-brand-side { 
+        width: 100%; 
+        min-height: 200px; 
+        padding: 30px;
+    }
+    .login-form-side { 
+        width: 100%; 
+        padding: 40px 20px;
+        flex-grow: 1;
+    }
+    .brand-logo-img { max-width: 100px !important; } /* Smaller logo on mobile */
 }

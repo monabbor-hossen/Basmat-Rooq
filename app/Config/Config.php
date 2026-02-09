@@ -1,14 +1,24 @@
 <?php
 session_start();
 
-// 1. Language Logic
+// --- 1. SMART BASE URL (Fixes Broken Links) ---
+// Detects your folder name automatically (e.g., /basmat-rooq/)
+$rootScript = dirname($_SERVER['SCRIPT_NAME']);
+// If running from public/, go up one level to get the real root
+$baseUrl = str_replace('/public', '', $rootScript); 
+// Remove trailing slash if it exists to be safe
+$baseUrl = rtrim($baseUrl, '/'); 
+define('BASE_URL', $baseUrl);
+
+
+// --- 2. Language Logic ---
 if (isset($_GET['lang'])) {
     $_SESSION['lang'] = ($_GET['lang'] == 'ar') ? 'ar' : 'en';
 }
 $lang = $_SESSION['lang'] ?? 'en';
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 
-// 2. Translations
+// --- 3. Translations ---
 $t = [
     'en' => [
         'title' => 'Basmat Rooq | Government Services',
