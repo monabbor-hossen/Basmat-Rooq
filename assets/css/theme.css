@@ -150,3 +150,62 @@ h1, h2, h3, .brand-text {
     margin-top: 15px;
     display: inline-block;
 }
+
+/* --- Login Page Styles --- */
+.login-container {
+    min-height: 85vh; /* Full height minus header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.login-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.login-visual {
+    background: linear-gradient(135deg, var(--rooq-burgundy) 0%, #2c000e 100%);
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+
+/* Gold Pattern Overlay */
+.login-visual::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1h2v2H1V1zm4 0h2v2H5V1zm4 0h2v2H9V1z' fill='%23D4AF37' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.5;
+}
+
+.login-form-section {
+    width: 50%;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-floating .form-control:focus {
+    border-color: var(--rooq-gold);
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+}
+
+@media (max-width: 768px) {
+    .login-visual { display: none; } /* Hide image on mobile */
+    .login-form-section { width: 100%; padding: 30px; }
+}
