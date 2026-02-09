@@ -29,21 +29,20 @@ class AuthController {
             
             // 4. Verify Password
             if (password_verify($password, $row['password'])) {
-                // Prevent Session Hijacking
                 session_regenerate_id(true);
                 
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['role'] = $row['role'];
                 $_SESSION['username'] = $row['username'];
                 
-                // Success: Send to Dashboard
-                header("Location: " . BASE_URL . "/portal/dashboard");
+                // SUCCESS: Redirect to the specific dashboard file
+                header("Location: " . BASE_URL . "/portal/dashboard.php");
                 exit;
             }
         }
 
-        // Failure: Send back to Login with Error
-        $_SESSION['error'] = "Invalid Username or Password";
+        // FAILURE: Set error message and go back
+        $_SESSION['error'] = "Username or Password not valid"; // Exact message you wanted
         header("Location: " . BASE_URL . "/login");
         exit;
     }
