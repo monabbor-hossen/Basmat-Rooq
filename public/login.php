@@ -1,4 +1,8 @@
-<?php require_once __DIR__ . '/../app/Config/Config.php'; ?>
+
+<?php 
+require_once __DIR__ . '/../app/Helpers/Security.php'; // Load Security Helper
+require_once __DIR__ . '/../app/Config/Config.php'; 
+?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
 <head>
