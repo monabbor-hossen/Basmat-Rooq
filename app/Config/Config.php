@@ -1,26 +1,24 @@
 <?php
+// 1. FIX: Only start session if not already active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// --- 1. SMART BASE URL (Fixes Broken Links) ---
-// Detects your folder name automatically (e.g., /basmat-rooq/)
+// 2. FIX: Automatic Base URL Detection (Fixes broken links)
+// This calculates your folder path automatically (e.g., /basmat-rooq)
 $rootScript = dirname($_SERVER['SCRIPT_NAME']);
-// If running from public/, go up one level to get the real root
 $baseUrl = str_replace('/public', '', $rootScript); 
-// Remove trailing slash if it exists to be safe
 $baseUrl = rtrim($baseUrl, '/'); 
 define('BASE_URL', $baseUrl);
 
-
-// --- 2. Language Logic ---
+// 3. Language Logic
 if (isset($_GET['lang'])) {
     $_SESSION['lang'] = ($_GET['lang'] == 'ar') ? 'ar' : 'en';
 }
 $lang = $_SESSION['lang'] ?? 'en';
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 
-// --- 3. Translations ---
+// 4. Translations
 $t = [
     'en' => [
         'title' => 'Basmat Rooq | Government Services',
