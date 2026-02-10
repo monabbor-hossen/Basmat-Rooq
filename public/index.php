@@ -1,46 +1,56 @@
 <?php require_once '../includes/header.php'; ?>
-<div class="login-wrapper d-flex min-vh-100">
-    <div class="brand-side w-50 p-5 d-flex flex-column justify-content-center bg-dark bg-opacity-25">
-        <h1 class="display-1 fw-bold"><?php echo $text['hero_title']; ?></h1>
-        <p class="lead opacity-75 mb-5"><?php echo $text['hero_desc']; ?></p>
-        
-        <div class="card-box reveal mb-4">
-            <h3><?php echo $text['about_title']; ?></h3>
-            <p><?php echo $text['about_text']; ?></p>
-        </div>
-        
-        <div class="card-box reveal">
-            <h3><?php echo $text['contact_info']; ?></h3>
-            <p>📍 <?php echo $text['location']; ?><br>📧 <?php echo $text['email']; ?></p>
-        </div>
-    </div>
 
-    <div class="form-side w-50 p-5 d-flex flex-column justify-content-center">
-        <div class="d-flex justify-content-between mb-5">
-            <h2 class="fw-bold"><?php echo $text['status']; ?></h2>
-            <a href="?lang=<?php echo $isRTL ? 'en' : 'ar'; ?>" class="btn btn-outline-light rounded-pill">
-                <?php echo $isRTL ? 'English' : 'العربية'; ?>
-            </a>
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100 flex-column flex-lg-row">
+        <div class="col-lg-6 p-5 d-flex flex-column justify-content-center" style="background: rgba(0,0,0,0.4);">
+            <h1 class="display-2 fw-bold mb-4">ROOQ<span style="color:var(--rooq-gold)">FLOW</span></h1>
+            <section class="mb-5">
+                <h3 class="text-gold" style="color:var(--rooq-gold)"><?php echo $text['about_title']; ?></h3>
+                <p class="lead opacity-75"><?php echo $text['about_text']; ?></p>
+            </section>
+            
+            <section>
+                <h3 class="text-gold" style="color:var(--rooq-gold)"><?php echo $text['services_title']; ?></h3>
+                <p class="opacity-75"><?php echo $text['services_text']; ?></p>
+            </section>
         </div>
 
-        <div class="card-box reveal mb-4">
-            <h5>Jahangir Contracting Ltd</h5>
-            <p class="small opacity-50">MISA Application Status: In Progress</p>
-            <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
-                <div class="progress-bar bg-warning" style="width: 65%;"></div>
+        <div class="col-lg-6 p-5 overflow-auto">
+            <div class="d-flex justify-content-between mb-5">
+                <h2 class="fw-bold"><?php echo $text['tracking_title']; ?></h2>
+                <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-outline-light rounded-pill">
+                    <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
+                </a>
             </div>
-        </div>
 
-        <div class="d-grid mt-4">
-            <a href="login.php" class="btn-rooq-primary text-center text-decoration-none"><?php echo $text['login']; ?></a>
+            <div class="rooq-card mb-4 reveal p-4">
+                <div class="d-flex justify-content-between">
+                    <h4 class="fw-bold">Jahangir Contracting Ltd</h4>
+                    <span class="badge bg-success">In Progress</span>
+                </div>
+                <p class="small opacity-50">Milestone: Hire Foreign Co (Approved)</p>
+                <div class="progress mt-3" style="height: 6px; background: rgba(255,255,255,0.1);">
+                    <div class="progress-bar" style="width: 75%; background: var(--rooq-gold);"></div>
+                </div>
+            </div>
+
+            <div class="rooq-card reveal p-4" style="border-top-color: var(--rooq-gold);">
+                <h4 class="fw-bold mb-3"><?php echo $text['contact_title']; ?></h4>
+                <p class="mb-1"><i class="bi bi-geo-alt me-2"></i> <?php echo $text['location']; ?></p>
+                <p><i class="bi bi-envelope me-2"></i> <?php echo $text['email']; ?></p>
+                <a href="login.php" class="btn btn-rooq-primary w-100 mt-3"><?php echo $text['login']; ?></a>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const obs = new IntersectionObserver((es) => {
-        es.forEach(e => { if (e.isIntersecting) e.target.classList.add('reveal'); });
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('reveal');
+        });
     }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach((el) => obs.observe(el));
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 </script>
+
 <?php require_once '../includes/footer.php'; ?>

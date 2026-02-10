@@ -1,6 +1,2 @@
 body[dir="rtl"] { font-family: 'Cairo', sans-serif; text-align: right; }
-.card-box {
-    text-align: right;
-    border-inline-start: 4px solid var(--rooq-gold);
-    border-top: none;
-}
+.card-box { border-inline-start: 4px solid var(--rooq-burgundy); border-top: none; }

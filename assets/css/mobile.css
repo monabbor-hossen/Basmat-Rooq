@@ -1,6 +1,4 @@
-@media (max-width: 992px) {
+@media (max-width: 768px) {
     .login-wrapper { flex-direction: column; }
-    .brand-side, .form-side { width: 100% !important; padding: 40px 20px; }
-    .display-1 { font-size: 3rem; }
-    .card-box { margin-bottom: 20px; }
+    .col-lg-6 { width: 100% !important; padding: 20px !important; }
 }

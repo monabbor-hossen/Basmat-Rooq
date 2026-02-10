@@ -1,32 +1,35 @@
 <?php
+// app/Helpers/Translator.php
 class Translator {
     public function getTranslation($lang) {
         $data = [
             'en' => [
-                'hero_title'    => 'ROOQFLOW',
-                'hero_desc'     => 'Digitizing Saudi Investment Portfolios for global stakeholders.',
-                'about_title'   => 'What is Basmat Rooq?',
-                'about_text'    => 'Basmat Rooq Company Limited is a specialized consultancy based in Unaizah, Al-Qassim, dedicated to digitizing the manual tracking of Saudi Ministry of Investment (MISA) licenses.',
-                'what_we_do'    => 'What We Do',
-                'service_desc'  => 'We provide real-time monitoring of government milestones including MISA, SBC, GOSI, QIWA, and Muqeem for active portfolios like Jahangir Contracting and Fonon.',
-                'contact_info'  => 'Contact Us',
-                'email'         => 'Kh70007980@gmail.com',
-                'location'      => 'Unaizah, Al-Qassim',
-                'login'         => 'Access Portal',
-                'status'        => 'License Intelligence'
+                'hero_title' => 'ROOQFLOW',
+                'hero_tagline' => 'Digitalizing Saudi Investment Tracking',
+                'about_title' => 'About Basmat Rooq',
+                'about_text' => 'Basmat Rooq Company Limited, based in Unaizah, Al-Qassim, is a specialized firm dedicated to digitizing the tracking of Saudi Ministry of Investment (MISA) licenses. we provide global investors with real-time transparency and efficiency.',
+                'services_title' => 'What We Do',
+                'services_text' => 'We streamline complex government workflows into a single digital dashboard. From MISA applications to GOSI, QIWA, and Muqeem integrations, we manage the 10 core milestones of your business setup in the Kingdom.',
+                'tracking_title' => 'Live Intelligence',
+                'contact_title' => 'Get In Touch',
+                'location' => 'Unaizah, Al-Qassim, KSA',
+                'email' => 'Kh70007980@gmail.com',
+                'login' => 'Client Portal',
+                'milestone_status' => 'Status'
             ],
             'ar' => [
-                'hero_title'    => 'بصمة روق',
-                'hero_desc'     => 'رقمنة محافظ الاستثمار السعودي لأصحاب المصلحة العالميين.',
-                'about_title'   => 'ما هي بصمة روق؟',
-                'about_text'    => 'شركة بصمة روق المحدودة هي شركة استشارية متخصصة مقرها في عنيزة، القصيم، مكرسة لرقمنة التتبع اليدوي لتراخيص وزارة الاستثمار السعودية (MISA).',
-                'what_we_do'    => 'ماذا نفعل',
-                'service_desc'  => 'نحن نقدم مراقبة في الوقت الفعلي للمعايير الحكومية بما في ذلك MISA و SBC و GOSI و QIWA و Muqeem للمحافظ النشطة.',
-                'contact_info'  => 'اتصل بنا',
-                'email'         => 'Kh70007980@gmail.com',
-                'location'      => 'عنيزة، القصيم',
-                'login'         => 'دخول البوابة',
-                'status'        => 'ذكاء التراخيص'
+                'hero_title' => 'بصمة روق',
+                'hero_tagline' => 'رقمنة تتبع الاستثمار السعودي',
+                'about_title' => 'عن بصمة روق',
+                'about_text' => 'شركة بصمة روق المحدودة، ومقرها في عنيزة، القصيم، هي شركة متخصصة مكرسة لرقمنة عملية تتبع تراخيص وزارة الاستثمار السعودية (MISA). نحن نوفر للمستثمرين العالميين الشفافية والكفاءة في الوقت الفعلي.',
+                'services_title' => 'ماذا نفعل',
+                'services_text' => 'نحن نقوم بتبسيط سير العمل الحكومي المعقد في لوحة تحكم رقمية واحدة. من طلبات MISA إلى تكاملات GOSI و QIWA و Muqeem، نحن ندير المعالم العشرة الأساسية لتأسيس عملك في المملكة.',
+                'tracking_title' => 'الذكاء المباشر',
+                'contact_title' => 'تواصل معنا',
+                'location' => 'عنيزة، القصيم، المملكة العربية السعودية',
+                'email' => 'Kh70007980@gmail.com',
+                'login' => 'بوابة العملاء',
+                'milestone_status' => 'الحالة'
             ]
         ];
         return $data[$lang] ?? $data['en'];

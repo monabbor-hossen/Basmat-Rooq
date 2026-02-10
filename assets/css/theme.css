@@ -1,51 +1,50 @@
+/* assets/css/theme.css */
 :root {
     --rooq-burgundy: #800020;
     --rooq-gold: #D4AF37;
     --glass: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
-    
 }
 
 body {
     background: radial-gradient(circle at top right, #4a0012, #121212);
     color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    min-height: 100vh;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    scroll-behavior: smooth;
 }
 
-/* Glassmorphic Card */
-.card-box {
+/* Glassmorphic Cards */
+.rooq-card, .card-box {
     background: var(--glass);
     backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
-    border-top: 4px solid var(--rooq-gold);
+    border-top: 4px solid var(--rooq-burgundy);
     border-radius: 20px;
     padding: 30px;
-    opacity: 0; 
+    transition: all 0.5s ease;
+    opacity: 0;
     transform: translateY(30px);
-    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.card-box.reveal { opacity: 1; transform: translateY(0); }
+.rooq-card.reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rooq-card:hover {
+    border-top-color: var(--rooq-gold);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
+}
 
 .btn-rooq-primary {
-    background: linear-gradient(45deg, var(--rooq-gold), #fff);
-    color: var(--rooq-burgundy);
-    border-radius: 50px;
-    font-weight: 800;
-    padding: 15px 40px;
+    background: linear-gradient(45deg, var(--rooq-burgundy), #4a0012);
+    color: white;
     border: none;
-    transition: 0.3s;
+    border-radius: 50px;
+    padding: 12px 35px;
+    font-weight: 600;
 }
 
-.btn-rooq-primary:hover { box-shadow: 0 0 20px var(--rooq-gold); transform: scale(1.05); }
-
-
-.card-box:hover {
-    transform: translateY(-10px);
-    background: rgba(255, 255, 255, 0.15);
-    border-top-color: var(--rooq-white);
-}
 
 /* --- Login Split Screen (Updated) --- */
 .login-wrapper {
@@ -74,7 +73,7 @@ body {
 }
 
 .login-form-side {
-    background: rgba(255, 255, 255, 0.05); /* Glass form side */
+    background: #fff; /* Glass form side */
     backdrop-filter: blur(10px);
     width: 50%;
     display: flex;
