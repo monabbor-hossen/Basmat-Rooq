@@ -1,13 +1,32 @@
-<?php require_once __DIR__ . '/../app/Config/Config.php'; ?>
+<?php
+// Define path to the app directory
+$root = dirname(__DIR__);
+
+// 1. Load configuration and the Translator helper
+require_once $root . '/app/Config/Config.php';
+require_once $root . '/app/Helpers/Translator.php';
+
+// 2. Initialize variables to prevent warnings
+$lang = $_SESSION['lang'] ?? 'en'; 
+$translator = new Translator();
+$text = $translator->getTranslation($lang);
+
+// Determine Direction (RTL for Arabic)
+$dir = ($lang == 'ar') ? 'rtl' : 'ltr';
+?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
+    <?php if($lang == 'ar'): ?>
+        <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/rtl.css">
+    <?php endif; ?>
     <title><?php echo $text['title']; ?></title>
     
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/theme.css">
+    
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
 
@@ -25,15 +44,15 @@
 
 <nav class="navbar navbar-expand-lg" style="background-color: var(--rooq-burgundy); border-bottom: 3px solid var(--rooq-gold);">
     <div class="container">
-        <a class="navbar-brand text-white fw-bold" href="<?php echo BASE_URL; ?>/">
+        <a class="navbar-brand text-white fw-bold" href="<?php echo BASE_URL; ?>">
             <img src="<?php echo BASE_URL; ?>/assets/img/logo.png" alt="Basmat Rooq" width="150" style="filter: brightness(0) invert(1);">
         </a>
         
         <div class="d-flex align-items-center ms-auto">
             <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-sm btn-outline-light me-3">
-                <?php echo ($lang == 'en' ? 'عربي' : 'English'); ?>
+                <?php echo ($text == 'en' ? 'عربي' : 'English'); ?>
             </a>
-            <a href="<?php echo BASE_URL; ?>/public/login" class="btn-rooq-outline btn-sm text-white border-white">
+            <a href="<?php echo BASE_URL; ?>public/login.php" class="btn-rooq-outline btn-sm text-white border-white">
                 <?php echo $text['login']; ?>
             </a>
         </div>

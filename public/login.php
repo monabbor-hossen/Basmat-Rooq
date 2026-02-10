@@ -45,8 +45,7 @@ require_once __DIR__ . '/../app/Config/Config.php';
                 <h2 class="fw-bold text-dark"><?php echo ($lang == 'ar' ? 'تسجيل الدخول' : 'Welcome Back'); ?></h2>
                 <p class="text-muted"><?php echo ($lang == 'ar' ? 'يرجى إدخال بيانات الاعتماد الخاصة بك' : 'Please enter your credentials to access your dashboard.'); ?></p>
             </div>
-
-            <form action="<?php echo BASE_URL; ?>/auth/login" method="POST">
+<form action="<?php echo BASE_URL; ?>/auth/login" method="POST">
     
     <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
