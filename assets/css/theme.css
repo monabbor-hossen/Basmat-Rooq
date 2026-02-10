@@ -1,40 +1,52 @@
-/* * RooqFlow Global Theme - 2026 Futuristic Edition
- * Primary Colors: Burgundy (#800020) and Gold (#D4AF37)
- */
-
 :root {
     --rooq-burgundy: #800020;
     --rooq-gold: #D4AF37;
-    --rooq-dark: #2D2D2D;
-    --rooq-light: #F4F4F4;
-    --rooq-white: #FFFFFF;
-    /* Glassmorphism Additions */
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    
-    --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-arabic: 'Cairo', sans-serif;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
-    background: radial-gradient(circle at top right, #33000d, var(--rooq-burgundy));
-    color: var(--rooq-white);
-    font-family: var(--font-main);
-    margin: 0;
+    background: radial-gradient(circle at top right, #4a0012, #121212);
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* --- Futuristic Glass Cards --- */
-.rooq-card, .card-box {
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px) saturate(160%);
-    -webkit-backdrop-filter: blur(15px);
+/* Glassmorphic Card Box */
+.card-box {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
-    border-radius: 15px;
-    padding: 25px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-top: 4px solid var(--rooq-gold);
+    border-radius: 20px;
+    padding: 30px;
+    opacity: 0; /* Hidden for scroll animation */
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+/* Scroll reveal trigger */
+.card-box.reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-rooq-primary {
+    background: linear-gradient(45deg, var(--rooq-gold), #fff);
+    color: var(--rooq-burgundy);
+    border-radius: 50px;
+    font-weight: 800;
+    padding: 15px 40px;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-rooq-primary:hover {
+    box-shadow: 0 0 20px var(--rooq-gold);
+    transform: scale(1.05);
+}
+
 
 .card-box:hover {
     transform: translateY(-10px);
@@ -76,32 +88,4 @@ body {
     align-items: center;
     justify-content: center;
     padding: 40px;
-}
-
-/* --- Buttons & Progress --- */
-.btn-rooq-primary {
-    background: var(--rooq-gold);
-    color: var(--rooq-burgundy);
-    font-weight: 700;
-    border: none;
-    border-radius: 30px; /* Modern pill shape */
-    padding: 12px 30px;
-    transition: 0.3s;
-}
-
-.btn-rooq-primary:hover {
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-    transform: scale(1.05);
-}
-
-.progress-container {
-    background: rgba(255,255,255,0.1);
-    height: 10px;
-    border-radius: 20px;
-    border: none;
-}
-
-.progress-bar-rooq {
-    background: linear-gradient(90deg, var(--rooq-gold), #fff);
-    box-shadow: 0 0 10px var(--rooq-gold);
 }

@@ -2,45 +2,37 @@
 session_start();
 $root = dirname(__DIR__);
 
-// Load configuration and the Translator class
+// Load Core Dependencies
 require_once $root . '/app/Config/Config.php';
 require_once $root . '/app/Helpers/Translator.php';
-// 2. Logic to catch the button click (?lang=ar)
+
+// Language Switching Logic
 if (isset($_GET['lang'])) {
     $_SESSION['lang'] = $_GET['lang'];
 }
-// Initialize variables to prevent warnings
-$lang = $_SESSION['lang'] ?? 'en'; 
+$lang = $_SESSION['lang'] ?? 'en';
+$isRTL = ($lang === 'ar');
+
+// Initialize Translation Helper
 $translator = new Translator();
 $text = $translator->getTranslation($lang);
-// Determine Direction (RTL for Arabic)
-$dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
+<html lang="<?php echo $lang; ?>" dir="<?php echo $isRTL ? 'rtl' : 'ltr'; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
-    <?php if($lang == 'ar'): ?>
-        <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/rtl.css">
-    <?php endif; ?>
-    <title>Basmat Rooq</title>
-    
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css">
-    
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+    <title>Basmat Rooq | <?php echo $text['hero_title']; ?></title>
 
-    <style>
-        body { font-family: <?php echo ($lang == 'ar' ? "'Cairo', sans-serif" : "'Segoe UI', sans-serif"); ?>; }
-        .hero-section {
-            background: linear-gradient(rgba(128, 0, 32, 0.9), rgba(45, 45, 45, 0.8));
-            color: #fff;
-            padding: 120px 0;
-            text-align: center;
-        }
-    </style>
+    <?php if ($isRTL): ?>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+        <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/rtl.css">
+    <?php else: ?>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <?php endif; ?>
+
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/mobile.css">
 </head>
 <body>
 

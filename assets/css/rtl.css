@@ -1,0 +1,17 @@
+/* Specific overrides for Arabic Language */
+body[dir="rtl"] {
+    font-family: 'Cairo', 'Almarai', sans-serif; /* Recommended for Arabic UX */
+    line-height: 1.6;
+}
+
+/* Logical properties ensure mirroring */
+.card-box {
+    text-align: start; /* Flips from left-align to right-align automatically */
+    border-inline-start: 4px solid var(--rooq-gold); /* Gold bar on the right side in RTL */
+    border-top: none; 
+}
+
+/* Ensure icons flip where necessary */
+.card-icon {
+    inset-inline-end: 20px; /* Positions icon on the left in RTL */
+}

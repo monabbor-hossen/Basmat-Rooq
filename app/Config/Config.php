@@ -1,20 +1,11 @@
 <?php
-// app/Config/Config.php
-
-// Define the protocol (http or https)
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-
-// Define the domain
+// Determine protocol and domain for BASE_URL
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
 $domain = $_SERVER['HTTP_HOST'];
+// Adjust path if your project is in a subfolder like /rooqflow/
+define('BASE_URL', $protocol . $domain . '/rooqflow/');
 
-// Define the project folder (if applicable)
-// If your project is in the root, leave as ''; if in a folder, use '/basmat-rooq'
-$projectFolder = '/rooqflow'; 
-
-// Combine to create the BASE_URL constant
-define('BASE_URL', $protocol . $domain . $projectFolder . '/');
-
-// Project Brand Colors (as seen in theme.css)
+// Brand Identity
 define('COLOR_BURGUNDY', '#800020');
 define('COLOR_GOLD', '#D4AF37');
 ?>
