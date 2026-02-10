@@ -1,8 +1,23 @@
+<?php
+session_start();
+$root = dirname(__DIR__);
 
-<?php 
+// Load configuration and the Translator class
+require_once $root . '/app/Config/Config.php';
+require_once $root . '/app/Helpers/Translator.php';
 require_once __DIR__ . '/../app/Helpers/Security.php'; // Load Security Helper
-require_once __DIR__ . '/../app/Config/Config.php'; 
+// 2. Logic to catch the button click (?lang=ar)
+if (isset($_GET['lang'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+}
+// Initialize variables to prevent warnings
+$lang = $_SESSION['lang'] ?? 'en'; 
+$translator = new Translator();
+$text = $translator->getTranslation($lang);
+// Determine Direction (RTL for Arabic)
+$dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 ?>
+
 <!DOCTYPE html>
 <html lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
 <head>
@@ -35,8 +50,8 @@ require_once __DIR__ . '/../app/Config/Config.php';
     <div class="login-form-side">
         
         <div class="position-absolute top-0 end-0 p-4">
-            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-sm btn-outline-secondary">
-                <?php echo ($lang == 'en' ? 'عربي' : 'English'); ?>
+            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn-rooq-outline">
+                <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
             </a>
         </div>
 

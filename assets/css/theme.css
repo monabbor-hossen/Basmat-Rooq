@@ -1,221 +1,107 @@
-/* * RooqFlow Global Theme 
+/* * RooqFlow Global Theme - 2026 Futuristic Edition
  * Primary Colors: Burgundy (#800020) and Gold (#D4AF37)
  */
 
 :root {
-    /* Color Palette */
-    --rooq-burgundy: #800020;    /* Main corporate color from logo */
-    --rooq-gold: #D4AF37;        /* Secondary accent color from logo */
-    --rooq-dark: #2D2D2D;        /* Dark text for readability */
-    --rooq-light: #F4F4F4;       /* Background gray */
+    --rooq-burgundy: #800020;
+    --rooq-gold: #D4AF37;
+    --rooq-dark: #2D2D2D;
+    --rooq-light: #F4F4F4;
     --rooq-white: #FFFFFF;
+    /* Glassmorphism Additions */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
     
-    /* Typography */
     --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-arabic: 'Cairo', sans-serif; /* Recommended for Arabic translation */
+    --font-arabic: 'Cairo', sans-serif;
 }
 
-/* Base Styles */
 body {
-    background-color: var(--rooq-light);
-    color: var(--rooq-dark);
+    background: radial-gradient(circle at top right, #33000d, var(--rooq-burgundy));
+    color: var(--rooq-white);
     font-family: var(--font-main);
     margin: 0;
-    padding: 0;
+    min-height: 100vh;
 }
 
-/* Branding Headers */
-h1, h2, h3, .brand-text {
-    color: var(--rooq-burgundy);
-    font-weight: 700;
-}
-
-/* --- Button Styles --- */
-.btn-rooq-primary {
-    background-color: var(--rooq-burgundy);
-    color: var(--rooq-white);
-    border: 2px solid var(--rooq-burgundy);
-    padding: 10px 25px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.btn-rooq-primary:hover {
-    background-color: var(--rooq-white);
-    color: var(--rooq-burgundy);
-}
-
-.btn-rooq-outline {
-    background-color: transparent;
-    color: var(--rooq-gold);
-    border: 2px solid var(--rooq-gold);
-    padding: 10px 25px;
-    border-radius: 5px;
-}
-
-.btn-rooq-outline:hover {
-    background-color: var(--rooq-gold);
-    color: var(--rooq-white);
-}
-
-/* --- Card Styles (for MISA tracking) --- */
-.rooq-card {
-    background: var(--rooq-white);
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-top: 4px solid var(--rooq-burgundy); /* Highlight top in burgundy */
-    margin-bottom: 20px;
-    padding: 20px;
-}
-
-.rooq-card-header {
-    border-bottom: 1px solid var(--rooq-gold); /* Thin gold separator */
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-/* --- Navigation & Sidebar --- */
-.rooq-navbar {
-    background-color: var(--rooq-burgundy);
-    color: var(--rooq-white);
-    border-bottom: 3px solid var(--rooq-gold);
-}
-
-.sidebar {
-    background-color: #33000d; /* Slightly darker burgundy for contrast */
-    color: var(--rooq-white);
-}
-
-.sidebar a:hover {
-    background-color: var(--rooq-gold);
-    color: var(--rooq-burgundy);
-}
-
-/* --- Progress Bar Styles --- */
-.progress-bar-rooq {
-    background-color: var(--rooq-burgundy);
-}
-
-.progress-container {
-    background-color: #e9ecef;
-    border: 1px solid var(--rooq-gold);
-    border-radius: 10px;
-}
-
-
-
-/* --- New Note Card Styles --- */
-.card-box {
-    padding: 20px;
-    border-radius: 6px;
-    background-color: #fff;
-    position: relative;
-    border: 1px solid #e7e7e7;
-    transition: all 0.3s ease;
-    border-top: 4px solid var(--rooq-gold); /* Gold Top */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    height: 100%;
+/* --- Futuristic Glass Cards --- */
+.rooq-card, .card-box {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px) saturate(160%);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 4px solid var(--rooq-gold);
 }
 
 .card-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    border-top-color: var(--rooq-burgundy); /* Change to Burgundy on hover */
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.15);
+    border-top-color: var(--rooq-white);
 }
 
-.card-box .card-icon {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    opacity: 0.1; /* Faded watermark effect */
-    transition: all 0.3s ease;
-}
-
-.card-box:hover .card-icon {
-    opacity: 1; /* Fully visible on hover */
-    transform: scale(1.1);
-}
-
-.card-box .card-title {
-    font-weight: 700;
-    color: var(--rooq-burgundy);
-    margin-top: 15px;
-    margin-bottom: 10px;
-}
-
-.card-box .btn-link {
-    color: var(--rooq-gold);
-    text-decoration: none;
-    font-weight: 600;
-    margin-top: 15px;
-    display: inline-block;
-}
-/* --- Login Split Screen Styles --- */
+/* --- Login Split Screen (Updated) --- */
 .login-wrapper {
     min-height: 100vh;
     display: flex;
-    align-items: stretch;
-    overflow: hidden;
 }
 
-/* Left Side: Branding */
 .login-brand-side {
     background: linear-gradient(135deg, var(--rooq-burgundy) 0%, #4a0012 100%);
+    width: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
-    padding: 40px;
     position: relative;
-    width: 50%; /* Take up half the screen */
+    overflow: hidden;
 }
 
-/* Gold Pattern Overlay Effect */
+/* Futuristic Pattern Overlay */
 .login-brand-side::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.4;
 }
 
-/* Right Side: Form */
 .login-form-side {
-    background-color: white;
+    background: rgba(255, 255, 255, 0.05); /* Glass form side */
+    backdrop-filter: blur(10px);
+    width: 50%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    padding: 60px;
-    width: 50%; /* Take up half the screen */
+    padding: 40px;
 }
 
-.login-form-container {
-    max-width: 450px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-/* Form Input Styling */
-.form-floating > .form-control:focus ~ label {
+/* --- Buttons & Progress --- */
+.btn-rooq-primary {
+    background: var(--rooq-gold);
     color: var(--rooq-burgundy);
-}
-.form-floating > .form-control:focus {
-    border-color: var(--rooq-gold);
-    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+    font-weight: 700;
+    border: none;
+    border-radius: 30px; /* Modern pill shape */
+    padding: 12px 30px;
+    transition: 0.3s;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .login-wrapper { flex-direction: column; }
-    .login-brand-side { 
-        width: 100%; 
-        min-height: 200px; 
-        padding: 30px;
-    }
-    .login-form-side { 
-        width: 100%; 
-        padding: 40px 20px;
-        flex-grow: 1;
-    }
-    .brand-logo-img { max-width: 100px !important; } /* Smaller logo on mobile */
+.btn-rooq-primary:hover {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+    transform: scale(1.05);
+}
+
+.progress-container {
+    background: rgba(255,255,255,0.1);
+    height: 10px;
+    border-radius: 20px;
+    border: none;
+}
+
+.progress-bar-rooq {
+    background: linear-gradient(90deg, var(--rooq-gold), #fff);
+    box-shadow: 0 0 10px var(--rooq-gold);
 }

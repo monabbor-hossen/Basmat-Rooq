@@ -1,0 +1,28 @@
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8rem; /* Scalable font units for small screens */
+    }
+
+    /* Stack milestones vertically on mobile */
+    .milestone-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Bottom navigation for better mobile UX */
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+    }
+}

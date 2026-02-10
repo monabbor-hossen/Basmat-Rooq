@@ -1,16 +1,18 @@
 <?php
-// Define path to the app directory
+session_start();
 $root = dirname(__DIR__);
 
-// 1. Load configuration and the Translator helper
+// Load configuration and the Translator class
 require_once $root . '/app/Config/Config.php';
 require_once $root . '/app/Helpers/Translator.php';
-
-// 2. Initialize variables to prevent warnings
+// 2. Logic to catch the button click (?lang=ar)
+if (isset($_GET['lang'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+}
+// Initialize variables to prevent warnings
 $lang = $_SESSION['lang'] ?? 'en'; 
 $translator = new Translator();
 $text = $translator->getTranslation($lang);
-
 // Determine Direction (RTL for Arabic)
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 ?>
@@ -23,7 +25,7 @@ $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
     <?php if($lang == 'ar'): ?>
         <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/rtl.css">
     <?php endif; ?>
-    <title><?php echo $text['title']; ?></title>
+    <title>Basmat Rooq</title>
     
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css">
     
@@ -49,8 +51,8 @@ $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
         </a>
         
         <div class="d-flex align-items-center ms-auto">
-            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-sm btn-outline-light me-3">
-                <?php echo ($text == 'en' ? 'عربي' : 'English'); ?>
+            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn-rooq-outline">
+                <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
             </a>
             <a href="<?php echo BASE_URL; ?>public/login.php" class="btn-rooq-outline btn-sm text-white border-white">
                 <?php echo $text['login']; ?>
