@@ -3,17 +3,17 @@
     --rooq-gold: #D4AF37;
     --glass: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
+    
 }
 
 body {
     background: radial-gradient(circle at top right, #4a0012, #121212);
-    color: #ffffff;
+    color: #fff;
     font-family: 'Segoe UI', sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
-/* Glassmorphic Card Box */
+/* Glassmorphic Card */
 .card-box {
     background: var(--glass);
     backdrop-filter: blur(15px);
@@ -21,16 +21,12 @@ body {
     border-top: 4px solid var(--rooq-gold);
     border-radius: 20px;
     padding: 30px;
-    opacity: 0; /* Hidden for scroll animation */
+    opacity: 0; 
     transform: translateY(30px);
     transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Scroll reveal trigger */
-.card-box.reveal {
-    opacity: 1;
-    transform: translateY(0);
-}
+.card-box.reveal { opacity: 1; transform: translateY(0); }
 
 .btn-rooq-primary {
     background: linear-gradient(45deg, var(--rooq-gold), #fff);
@@ -39,13 +35,10 @@ body {
     font-weight: 800;
     padding: 15px 40px;
     border: none;
-    transition: 0.3s ease;
+    transition: 0.3s;
 }
 
-.btn-rooq-primary:hover {
-    box-shadow: 0 0 20px var(--rooq-gold);
-    transform: scale(1.05);
-}
+.btn-rooq-primary:hover { box-shadow: 0 0 20px var(--rooq-gold); transform: scale(1.05); }
 
 
 .card-box:hover {
