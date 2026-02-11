@@ -7,4 +7,6 @@
 @media (max-width: 576px) {
     .display-1 { font-size: 2.5rem; }
     .nav-buttons { display: flex; flex-direction: column; gap: 10px; }
+    .navbar .btn {padding: 8px 18px;font-size: 14px;}
+    .section-padding .glass-panel img {height: 80px !important;}
 }

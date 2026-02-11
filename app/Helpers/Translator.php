@@ -18,7 +18,8 @@ class Translator {
                 'email_label'    => 'Email',
                 'location_label' => 'Headquarters',
                 'location_val'   => 'Unaizah, Al-Qassim, KSA',
-                'login'          => 'Access Portal'
+                'login'          => 'Access Portal',
+                'explore_us'     => 'Get to know us'
             ],
             'ar' => [
                 'hero_title'     => 'بصمة روق',
@@ -36,7 +37,8 @@ class Translator {
                 'email_label'    => 'البريد الإلكتروني',
                 'location_label' => 'المقر الرئيسي',
                 'location_val'   => 'عنيزة، القصيم، المملكة العربية السعودية',
-                'login'          => 'دخول البوابة'
+                'login'          => 'دخول البوابة',
+                'explore_us'     => 'تعرف علينا'
             ]
         ];
         return $data[$lang] ?? $data['en'];

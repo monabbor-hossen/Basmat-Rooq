@@ -50,7 +50,7 @@ $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
     <div class="login-form-side">
         
         <div class="position-absolute top-0 end-0 p-4">
-            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn-rooq-outline">
+            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-rooq-primary">
                 <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
             </a>
         </div>

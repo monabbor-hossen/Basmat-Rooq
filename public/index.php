@@ -6,7 +6,7 @@
             <h1 class="display-1 fw-bold text-uppercase"><?php echo $text['hero_title']; ?></h1>
             <p class="lead mb-4 opacity-75"><?php echo $text['hero_desc']; ?></p>
             <div class="nav-buttons">
-                <a href="#about" class="btn btn-outline-light rounded-pill px-4 me-2">Explore Us</a>
+                <a href="#about" class="btn btn-outline-light rounded-pill px-4 py-2 me-2"><?php echo $text['explore_us']; ?></a>
                 <a href="login.php" class="btn btn-rooq-primary"><?php echo $text['login']; ?></a>
             </div>
         </div>
