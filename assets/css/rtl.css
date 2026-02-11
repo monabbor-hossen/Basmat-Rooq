@@ -1,2 +1,9 @@
-body[dir="rtl"] { font-family: 'Cairo', sans-serif; text-align: right; }
-.card-box { border-inline-start: 4px solid var(--rooq-burgundy); border-top: none; }
+body[dir="rtl"] {
+    font-family: 'Cairo', sans-serif;
+}
+
+body[dir="rtl"] .text-start { text-align: right !important; }
+body[dir="rtl"] .ms-auto { margin-right: auto !important; margin-left: 0 !important; }
+
+/* Mirroring icons if necessary */
+body[dir="rtl"] .bi-arrow-right::before { content: "\f12f"; } /* Mirror arrow icon */

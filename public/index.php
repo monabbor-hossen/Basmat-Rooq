@@ -1,56 +1,92 @@
 <?php require_once '../includes/header.php'; ?>
 
-<div class="container-fluid p-0">
-    <div class="row g-0 min-vh-100 flex-column flex-lg-row">
-        <div class="col-lg-6 p-5 d-flex flex-column justify-content-center" style="background: rgba(0,0,0,0.4);">
-            <h1 class="display-2 fw-bold mb-4">ROOQ<span style="color:var(--rooq-gold)">FLOW</span></h1>
-            <section class="mb-5">
-                <h3 class="text-gold" style="color:var(--rooq-gold)"><?php echo $text['about_title']; ?></h3>
-                <p class="lead opacity-75"><?php echo $text['about_text']; ?></p>
-            </section>
-            
-            <section>
-                <h3 class="text-gold" style="color:var(--rooq-gold)"><?php echo $text['services_title']; ?></h3>
-                <p class="opacity-75"><?php echo $text['services_text']; ?></p>
-            </section>
-        </div>
-
-        <div class="col-lg-6 p-5 overflow-auto">
-            <div class="d-flex justify-content-between mb-5">
-                <h2 class="fw-bold"><?php echo $text['tracking_title']; ?></h2>
-                <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-outline-light rounded-pill">
-                    <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
-                </a>
-            </div>
-
-            <div class="rooq-card mb-4 reveal p-4">
-                <div class="d-flex justify-content-between">
-                    <h4 class="fw-bold">Jahangir Contracting Ltd</h4>
-                    <span class="badge bg-success">In Progress</span>
-                </div>
-                <p class="small opacity-50">Milestone: Hire Foreign Co (Approved)</p>
-                <div class="progress mt-3" style="height: 6px; background: rgba(255,255,255,0.1);">
-                    <div class="progress-bar" style="width: 75%; background: var(--rooq-gold);"></div>
-                </div>
-            </div>
-
-            <div class="rooq-card reveal p-4" style="border-top-color: var(--rooq-gold);">
-                <h4 class="fw-bold mb-3"><?php echo $text['contact_title']; ?></h4>
-                <p class="mb-1"><i class="bi bi-geo-alt me-2"></i> <?php echo $text['location']; ?></p>
-                <p><i class="bi bi-envelope me-2"></i> <?php echo $text['email']; ?></p>
-                <a href="login.php" class="btn btn-rooq-primary w-100 mt-3"><?php echo $text['login']; ?></a>
+<header class="min-vh-100 d-flex align-items-center text-center">
+    <div class="container">
+        <div class="glass-panel p-5 reveal">
+            <h1 class="display-1 fw-bold text-uppercase"><?php echo $text['hero_title']; ?></h1>
+            <p class="lead mb-4 opacity-75"><?php echo $text['hero_desc']; ?></p>
+            <div class="nav-buttons">
+                <a href="#about" class="btn btn-outline-light rounded-pill px-4 me-2">Explore Us</a>
+                <a href="login.php" class="btn btn-rooq-primary"><?php echo $text['login']; ?></a>
             </div>
         </div>
     </div>
-</div>
+</header>
+
+<section id="about" class="section-padding">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 reveal">
+                <h2 class="text-gold display-5 fw-bold mb-4"><?php echo $text['about_us']; ?></h2>
+                <p class="fs-5 opacity-75"><?php echo $text['about_desc']; ?></p>
+            </div>
+            <div class="col-lg-6 reveal">
+                <div class="glass-panel text-center">
+                    <img src="<?php echo BASE_URL; ?>assets/img/icons/Ministry_of_Investment_Logo-Dark.svg" style="height: 100px; filter: invert(1);">
+                    <h4 class="mt-3">MISA Strategic Partner</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding" style="background: rgba(255,255,255,0.02);">
+    <div class="container">
+        <h2 class="text-center display-5 fw-bold mb-5 text-gold"><?php echo $text['what_we_do']; ?></h2>
+        <div class="row g-4">
+            <div class="col-md-4 reveal">
+                <div class="glass-panel h-100">
+                    <h4 class="text-gold"><?php echo $text['service_1']; ?></h4>
+                    <p class="small opacity-75"><?php echo $text['service_1_desc']; ?></p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal">
+                <div class="glass-panel h-100">
+                    <h4 class="text-gold"><?php echo $text['service_2']; ?></h4>
+                    <p class="small opacity-75"><?php echo $text['service_2_desc']; ?></p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal">
+                <div class="glass-panel h-100">
+                    <h4 class="text-gold"><?php echo $text['service_3']; ?></h4>
+                    <p class="small opacity-75"><?php echo $text['service_3_desc']; ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding text-center">
+    <div class="container">
+        <div class="glass-panel reveal mx-auto" style="max-width: 800px;">
+            <h2 class="text-gold mb-4"><?php echo $text['contact_us']; ?></h2>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <p class="mb-1 text-gold fw-bold"><?php echo $text['email_label']; ?></p>
+                    <p>Kh70007980@gmail.com</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-1 text-gold fw-bold"><?php echo $text['location_label']; ?></p>
+                    <p><?php echo $text['location_val']; ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <script>
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('reveal');
+            if (entry.isIntersecting) entry.target.classList.add('visible');
         });
     }, { threshold: 0.1 });
+
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 </script>
+
+<style>
+    .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
 
 <?php require_once '../includes/footer.php'; ?>
