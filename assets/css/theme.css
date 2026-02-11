@@ -40,6 +40,21 @@ body {
     padding: 12px 35px;
 }
 
+
+.btn-rooq-outline {
+    background-color: transparent;
+    color: var(--rooq-gold);
+    border: 2px solid var(--rooq-gold);
+    padding: 10px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn-rooq-outline:hover {
+    background-color: var(--rooq-gold);
+    color: var(--rooq-white);
+}
+
 /* --- Login Split Screen (Updated) --- */
 .login-wrapper {
     min-height: 100vh;

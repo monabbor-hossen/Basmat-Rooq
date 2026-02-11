@@ -26,10 +26,10 @@ $text = $translator->getTranslation($lang);
     <title>Basmat Rooq | <?php echo $text['hero_title']; ?></title>
 
     <?php if ($isRTL): ?>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+        <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/bootstrap.rtl.min.css">
         <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/rtl.css">
     <?php else: ?>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="<?php echo BASE_URL;?>assets/css/bootstrap.min.css">
     <?php endif; ?>
 
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
@@ -44,10 +44,10 @@ $text = $translator->getTranslation($lang);
         </a>
         
         <div class="d-flex align-items-center ms-auto">
-            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn-rooq-outline">
+            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn-rooq-outline ">
                 <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
             </a>
-            <a href="<?php echo BASE_URL; ?>public/login.php" class="btn-rooq-outline btn-sm text-white border-white">
+            <a href="<?php echo BASE_URL; ?>public/login.php" class="btn-rooq-outline btn-sm ms-2 text-white border-white">
                 <?php echo $text['login']; ?>
             </a>
         </div>
