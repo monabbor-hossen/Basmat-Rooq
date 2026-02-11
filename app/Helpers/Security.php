@@ -12,11 +12,16 @@ class Security {
     }
 
     public static function checkCSRF($token) {
-        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-            die("Security Alert: Invalid Request Token.");
-        }
-        return true;
+    // Ensure $token is a string and session token is set to avoid TypeErrors
+    if (!is_string($token) || !isset($_SESSION['csrf_token'])) {
+        die("Security Alert: Missing or invalid request token.");
     }
+    
+    if (!hash_equals($_SESSION['csrf_token'], $token)) {
+        die("Security Alert: Invalid Request Token.");
+    }
+    return true;
+}
 
     public static function clean($data) {
         return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');

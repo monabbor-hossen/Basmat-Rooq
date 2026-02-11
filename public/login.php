@@ -5,6 +5,7 @@ $root = dirname(__DIR__);
 // Load configuration and the Translator class
 require_once $root . '/app/Config/Config.php';
 require_once $root . '/app/Helpers/Translator.php';
+require_once __DIR__ . '/../app/Auth/SessionManager.php';
 require_once __DIR__ . '/../app/Helpers/Security.php'; // Load Security Helper
 // 2. Logic to catch the button click (?lang=ar)
 if (isset($_GET['lang'])) {
@@ -16,6 +17,25 @@ $translator = new Translator();
 $text = $translator->getTranslation($lang);
 // Determine Direction (RTL for Arabic)
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
+
+$auth = new SessionManager();
+$error = "";
+
+// ONLY run this logic if the form was submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // Check if the keys exist before using them
+    $user = $_POST['username'] ?? '';
+    $pass = $_POST['password'] ?? '';
+    $token = $_POST['csrf_token'] ?? '';
+
+    if ($auth->login($user, $pass, $token)) {
+        header("Location: ../portal/dashboard.php");
+        exit();
+    } else {
+        $error = "Invalid credentials or security token.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +80,7 @@ $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
                 <h2 class="fw-bold text-dark"><?php echo ($lang == 'ar' ? 'تسجيل الدخول' : 'Welcome Back'); ?></h2>
                 <p class="text-muted"><?php echo ($lang == 'ar' ? 'يرجى إدخال بيانات الاعتماد الخاصة بك' : 'Please enter your credentials to access your dashboard.'); ?></p>
             </div>
-<form action="<?php echo BASE_URL; ?>/auth/login" method="POST">
+<form action="login.php" method="POST">
     
     <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
@@ -91,6 +111,6 @@ $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
     </div>
 </div>
 
-<script src="<?php echo BASE_URL; ?>/assets/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.min.js"></script>
 </body>
 </html>
