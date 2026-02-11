@@ -44,10 +44,10 @@ $text = $translator->getTranslation($lang);
         </a>
         
         <div class="d-flex align-items-center ms-auto">
-            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn-rooq-outline ">
+            <a href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>" class="btn btn-outline-light rounded-pill px-4 me-2 ">
                 <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?>
             </a>
-            <a href="<?php echo BASE_URL; ?>public/login.php" class="btn-rooq-outline btn-sm ms-2 text-white border-white">
+            <a href="<?php echo BASE_URL; ?>public/login.php" class="btn btn-rooq-primary ">
                 <?php echo $text['login']; ?>
             </a>
         </div>
