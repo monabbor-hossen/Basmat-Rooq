@@ -75,15 +75,26 @@ function getRoleName($roleId) {
                                         <?php echo date('M d, Y', strtotime($user['created_at'])); ?>
                                     </td>
 
-                                    <td class="text-end pe-4">
-                                        <button class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <?php if($_SESSION['user_id'] != $user['id']): // Prevent deleting self ?>
-                                            <button class="btn btn-sm btn-outline-danger border-0 opacity-50 hover-opacity-100 ms-2">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        <?php endif; ?>
+                                   <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            
+                                            <a href="user-edit.php?id=<?php echo $user['id']; ?>" 
+                                            class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" 
+                                            title="Edit User">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+                                            <?php if($_SESSION['user_id'] != $user['id']): ?>
+                                                <form action="user-delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
+                                                    <input type="hidden" name="delete_id" value="<?php echo $user['id']; ?>">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0 opacity-50 hover-opacity-100" title="Delete User">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                            
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
