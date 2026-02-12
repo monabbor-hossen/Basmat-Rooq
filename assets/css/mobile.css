@@ -3,10 +3,6 @@
     .display-1 { font-size: 3.5rem; }
     .glass-panel { padding: 25px; margin-bottom: 20px; }
     
-/* Responsive Sidebar */
-    .rooq-sidebar { margin-inline-start: -260px; }
-    .rooq-sidebar.active { margin-inline-start: 0; }
-    .portal-main { margin-inline-start: 0; }
 }
 
 
@@ -15,4 +11,12 @@
     .nav-buttons { display: flex; flex-direction: column; gap: 10px; }
     .navbar .btn {padding: 8px 18px;font-size: 14px;}
     .section-padding .glass-panel img {height: 80px !important;}
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .portal-sidebar {
+        display: none; /* Hide sidebar on mobile or use a toggle */
+    }
 }

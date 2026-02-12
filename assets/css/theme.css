@@ -92,39 +92,52 @@ body {
 }
 
 
-
-/* Portal Layout Structure */
-.rooq-navbar {
-    height: 70px;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(20px);
+/* Portal Specific Styles */
+.portal-header {
+    background: var(--rooq-burgundy);
     border-bottom: 1px solid var(--glass-border);
-    z-index: 1050;
+    height: 60px;
 }
 
-.rooq-sidebar {
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--rooq-gold);
+    color: var(--rooq-burgundy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.portal-sidebar {
     width: 260px;
-    height: 100vh;
-    position: fixed;
-    top: 70px;
-    background: rgba(51, 0, 13, 0.95); /* Deep Burgundy */
-    border-inline-end: 1px solid var(--glass-border);
-    transition: all 0.3s ease;
-    z-index: 1040;
+    min-height: calc(100vh - 60px);
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--glass-border);
 }
 
-.portal-main {
-    margin-inline-start: 260px; /* Adapts for RTL/LTR automatically */
-    padding-top: 85px;
-    min-height: 100vh;
+.sidebar-content .nav-link {
+    color: #fff;
+    padding: 12px 25px;
+    opacity: 0.7;
 }
 
-/* Glass Dropdown Styling */
+.sidebar-content .nav-link.active, 
+.sidebar-content .nav-link:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.05);
+    border-left: 4px solid var(--rooq-gold);
+}
+
 .glass-dropdown {
-    background: rgba(45, 45, 45, 0.9) !important;
+    background: rgba(30, 0, 8, 0.95) !important;
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
+    color: white;
 }
 
-.dropdown-item { color: #fff !important; transition: 0.2s; }
-.dropdown-item:hover { background: var(--rooq-gold); color: #000 !important; }
+.glass-dropdown .dropdown-item { color: white; }
+.glass-dropdown .dropdown-item:hover { background: var(--glass-bg); }
