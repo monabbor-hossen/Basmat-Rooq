@@ -158,3 +158,42 @@ body {
     background: rgba(212, 175, 55, 0.1) !important;
     color: #D4AF37 !important;
 }
+
+/* Sidebar Glassmorphism */
+.portal-sidebar {
+    width: 280px;
+    background: rgba(45, 0, 15, 0.95); /* Deep burgundy glass */
+    backdrop-filter: blur(15px);
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    position: fixed;
+    top: 70px; /* Below header */
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+}
+
+/* Navigation Links */
+.portal-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 12px 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+}
+
+.portal-sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.portal-sidebar .nav-link.active {
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.2), transparent);
+    color: #D4AF37; /* Gold Text */
+    border-left: 3px solid #D4AF37;
+}
+
+.portal-sidebar .nav-link.text-danger:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545 !important;
+}
