@@ -3,7 +3,7 @@ require_once __DIR__ . '/../app/Config/Config.php'; //
 require_once __DIR__ . '/../app/Config/Database.php'; 
 require_once __DIR__ . '/../app/Helpers/Security.php'; //
 require_once __DIR__ . '/../includes/header.php'; //
-
+Security::requireLogin();
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

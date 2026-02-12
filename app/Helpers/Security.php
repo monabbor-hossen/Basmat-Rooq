@@ -26,5 +26,17 @@ class Security {
     public static function clean($data) {
         return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
     }
+
+    public static function requireLogin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        // If the user_id session is not set, they are not logged in
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: " . BASE_URL . "public/login.php");
+            exit();
+        }
+    }
+
 }
 ?>
