@@ -2,7 +2,13 @@
     .section-padding { padding: 60px 0; }
     .display-1 { font-size: 3.5rem; }
     .glass-panel { padding: 25px; margin-bottom: 20px; }
+    
+/* Responsive Sidebar */
+    .rooq-sidebar { margin-inline-start: -260px; }
+    .rooq-sidebar.active { margin-inline-start: 0; }
+    .portal-main { margin-inline-start: 0; }
 }
+
 
 @media (max-width: 576px) {
     .display-1 { font-size: 2.5rem; }

@@ -90,3 +90,41 @@ body {
     justify-content: center;
     padding: 40px;
 }
+
+
+
+/* Portal Layout Structure */
+.rooq-navbar {
+    height: 70px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1050;
+}
+
+.rooq-sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 70px;
+    background: rgba(51, 0, 13, 0.95); /* Deep Burgundy */
+    border-inline-end: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+    z-index: 1040;
+}
+
+.portal-main {
+    margin-inline-start: 260px; /* Adapts for RTL/LTR automatically */
+    padding-top: 85px;
+    min-height: 100vh;
+}
+
+/* Glass Dropdown Styling */
+.glass-dropdown {
+    background: rgba(45, 45, 45, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+}
+
+.dropdown-item { color: #fff !important; transition: 0.2s; }
+.dropdown-item:hover { background: var(--rooq-gold); color: #000 !important; }
