@@ -1,41 +1,41 @@
-<aside class="portal-sidebar d-none d-lg-block">
-    <div class="sidebar-header p-4">
-        <small class="text-uppercase text-gold fw-bold" style="letter-spacing: 1px;">Menu</small>
+<aside class="portal-sidebar d-none d-lg-block" id="portalSidebar">
+    <div class="sidebar-content h-100 py-4">
+        <p class="px-4 text-white-50 small text-uppercase fw-bold mb-3">Main Menu</p>
+        <ul class="nav flex-column gap-1">
+            <li class="nav-item">
+                <a class="nav-link active-glass" href="dashboard.php">
+                    <i class="bi bi-grid-fill me-3"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="clients.php">
+                    <i class="bi bi-people me-3"></i> Clients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="milestones.php">
+                    <i class="bi bi-flag me-3"></i> Milestones
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="documents.php">
+                    <i class="bi bi-file-earmark-text me-3"></i> Documents
+                </a>
+            </li>
+        </ul>
+
+        <p class="px-4 text-white-50 small text-uppercase fw-bold mb-3 mt-4">System</p>
+        <ul class="nav flex-column gap-1">
+            <li class="nav-item">
+                <a class="nav-link" href="users.php">
+                    <i class="bi bi-shield-lock me-3"></i> User Access
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="settings.php">
+                    <i class="bi bi-gear me-3"></i> Settings
+                </a>
+            </li>
+        </ul>
     </div>
-    
-    <ul class="nav flex-column gap-2 px-3">
-        <li class="nav-item">
-            <a href="dashboard.php" class="nav-link active d-flex align-items-center">
-                <i class="bi bi-grid-fill me-3"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="milestones.php" class="nav-link d-flex align-items-center">
-                <i class="bi bi-diagram-3-fill me-3"></i>
-                <span>Milestones</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="documents.php" class="nav-link d-flex align-items-center">
-                <i class="bi bi-file-earmark-text-fill me-3"></i>
-                <span>Documents</span>
-            </a>
-        </li>
-        <li class="nav-item mt-4">
-            <small class="text-uppercase text-gold fw-bold px-3" style="letter-spacing: 1px;">Account</small>
-        </li>
-        <li class="nav-item">
-            <a href="profile.php" class="nav-link d-flex align-items-center">
-                <i class="bi bi-person-circle me-3"></i>
-                <span>Profile</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo BASE_URL; ?>public/logout.php" class="nav-link text-danger d-flex align-items-center">
-                <i class="bi bi-box-arrow-left me-3"></i>
-                <span>Logout</span>
-            </a>
-        </li>
-    </ul>
 </aside>

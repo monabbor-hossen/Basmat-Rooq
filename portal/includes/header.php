@@ -1,5 +1,4 @@
 <?php
-// portal/includes/header.php
 require_once __DIR__ . '/../../app/Config/Config.php';
 require_once __DIR__ . '/../../app/Helpers/Security.php';
 require_once __DIR__ . '/../../app/Helpers/Translator.php';
@@ -24,72 +23,67 @@ $text = $translator->getTranslation($lang);
         <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/bootstrap.rtl.min.css">
     <?php endif; ?>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/mobile.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        .portal-header {
-            background: rgba(128, 0, 32, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 10px 20px;
-        }
-        .profile-trigger {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            padding: 5px 15px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .profile-trigger:hover { background: rgba(212, 175, 55, 0.2); }
-        .avatar-circle {
-            width: 35px;
-            height: 35px;
-            background: #D4AF37;
-            color: #800020;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        .glass-dropdown {
-            background: rgba(45, 45, 45, 0.98);
-            backdrop-filter: blur(15px);
-            border: 1px solid #D4AF37;
-            border-radius: 15px;
-        }
-        .glass-dropdown .dropdown-item { color: white; padding: 10px 20px; }
-        .glass-dropdown .dropdown-item:hover { background: rgba(212, 175, 55, 0.2); color: #D4AF37; }
-    </style>
 </head>
-<body>
+<body class="portal-body">
 
 <header class="portal-header sticky-top">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <div class="header-left d-flex align-items-center">
-            <img src="<?php echo BASE_URL; ?>assets/img/logo.png" height="40" class="me-2">
-            <h4 class="text-white mb-0 fw-bold d-none d-md-block">BASMAT <span style="color: #D4AF37;">ROOQ</span></h4>
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-link text-white d-lg-none p-0" id="sidebarToggle">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <a href="dashboard.php" class="text-decoration-none d-flex align-items-center">
+                <img src="<?php echo BASE_URL; ?>assets/img/logo.png" height="40" alt="Logo">
+                </a>
         </div>
 
-        <div class="header-right d-flex align-items-center">
+        <div class="search-container d-none d-md-block mx-auto">
+            <div class="input-group glass-search">
+                <span class="input-group-text bg-transparent border-0 text-white-50"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control bg-transparent border-0 text-white" placeholder="Search licenses, clients..." aria-label="Search">
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-4">
+            <div class="position-relative d-none d-sm-block" style="cursor: pointer;">
+                <i class="bi bi-bell text-white fs-5 opacity-75 hover-gold"></i>
+                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-dark rounded-circle"></span>
+            </div>
+
             <div class="dropdown">
-                <div class="profile-trigger d-flex align-items-center" data-bs-toggle="dropdown">
-                    <div class="text-end me-2 d-none d-sm-block">
-                        <div class="text-white small fw-bold" style="line-height: 1;"><?php echo $username; ?></div>
-                        <small style="color: #D4AF37; font-size: 0.7rem;">Active Portfolio</small>
+                <div class="profile-trigger-refined d-flex align-items-center gap-3" data-bs-toggle="dropdown" aria-expanded="false">
+                    
+                    <div class="text-end d-none d-lg-block">
+                        <div class="user-name-text"><?php echo $username; ?></div>
+                        <div class="user-role-text text-uppercase">Admin</div>
                     </div>
-                    <div class="avatar-circle">
-                        <?php echo strtoupper(substr($username, 0, 1)); ?>
+                    
+                    <div class="avatar-circle-refined">
+                        <?php echo strtoupper(substr($username, 0, 2)); // Show first 2 letters like image (e.g., AB) ?>
                     </div>
-                    <i class="bi bi-chevron-down text-white ms-2 small"></i>
+
+                    <i class="bi bi-chevron-down dropdown-chevron"></i>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end glass-dropdown mt-2 shadow-lg">
-                    <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i> Profile Settings</a></li>
-                    <li><a class="dropdown-item" href="?lang=<?php echo ($lang == 'en' ? 'ar' : 'en'); ?>"><i class="bi bi-translate me-2"></i> <?php echo ($lang == 'en' ? 'العربية' : 'English'); ?></a></li>
-                    <li><hr class="dropdown-divider border-secondary"></li>
-                    <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>public/logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+
+                <ul class="dropdown-menu dropdown-menu-end glass-dropdown mt-3 shadow-lg border-0" style="background: rgba(20, 20, 20, 0.95);">
+                    <li class="d-lg-none px-3 py-2 text-white fw-bold border-bottom border-secondary border-opacity-25 mb-2">
+                        <?php echo $username; ?> <br>
+                        <small class="text-gold">Admin</small>
+                    </li>
+                    <li><a class="dropdown-item text-white-50 hover-white" href="profile.php"><i class="bi bi-person-gear me-2 text-gold"></i> Settings</a></li>
+                    <li><a class="dropdown-item text-white-50 hover-white" href="#"><i class="bi bi-activity me-2 text-gold"></i> Activity</a></li>
+                    <li><hr class="dropdown-divider bg-light opacity-10"></li>
+                    <li><a class="dropdown-item text-danger fw-bold" href="<?php echo BASE_URL; ?>public/logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </header>
+
+<div class="d-flex portal-wrapper">
+    <?php require_once 'sidebar.php'; ?>
+    
+    <main class="w-100 p-4">
