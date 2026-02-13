@@ -212,15 +212,7 @@ body {
     backdrop-filter: blur(5px);
 }
 
-/* --- Mobile Toggle --- */
-@media (max-width: 991px) {
-    .portal-sidebar {
-        position: fixed;
-        left: -260px;
-        z-index: 1040;
-    }
-    .portal-sidebar.show { left: 0; }
-}
+
 /* --- Right Side Profile Area Design --- */
 .profile-trigger-refined {
     cursor: pointer;
