@@ -112,13 +112,15 @@ if (!$client) {
 
                                 <div class="col-12">
                                     <label class="form-label text-gold small text-uppercase fw-bold">License Scope</label>
+                                    
                                     <select name="license_scope" class="form-select glass-input">
-                                        <option value="Construction" <?php echo ($client['license_scope'] == 'Construction') ? 'selected' : ''; ?>>Construction</option>
-                                        <option value="Trading" <?php echo ($client['license_scope'] == 'Trading') ? 'selected' : ''; ?>>Trading</option>
-                                        <option value="Services" <?php echo ($client['license_scope'] == 'Services') ? 'selected' : ''; ?>>Services</option>
-                                        <option value="Industrial" <?php echo ($client['license_scope'] == 'Industrial') ? 'selected' : ''; ?>>Industrial</option>
+                                        <option value="Construction">Construction</option>
+                                        <option value="Service License Processing"<?php echo ($client['license_scope'] == 'Service License Processing') ? 'selected' : ''; ?>>Service License Processing</option>
+                                        <option value="Service License Upgrade to Trading Licens"<?php echo ($client['license_scope'] == 'Service License Upgrade to Trading Licens') ? 'selected' : ''; ?>>Service License Upgrade to Trading Licens</option>
+                                        <option value="Industrial">Industrial</option>
                                     </select>
                                 </div>
+                                
 
                                 <div class="col-12 mt-4 d-flex gap-2">
                                     <button type="submit" class="btn btn-rooq-primary flex-grow-1 py-3 fw-bold">

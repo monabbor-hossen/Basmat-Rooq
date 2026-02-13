@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <label class="form-label text-gold small text-uppercase fw-bold">License Scope</label>
                                     <select name="license_scope" class="form-select glass-input">
                                         <option value="Construction">Construction</option>
-                                        <option value="Trading">Trading</option>
-                                        <option value="Services">Services</option>
+                                        <option value="Service License Processing">Service License Processing</option>
+                                        <option value="Service License Upgrade to Trading Licens">Service License Upgrade to Trading Licens</option>
                                         <option value="Industrial">Industrial</option>
                                     </select>
                                 </div>
