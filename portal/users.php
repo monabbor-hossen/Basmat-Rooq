@@ -112,28 +112,12 @@ function getRoleName($roleId) {
 </div>
 
 <style>
-    .bg-gold { background-color: #D4AF37; }
-    .text-gold { color: #D4AF37; }
-    
-    .avatar-small {
-        width: 32px;
-        height: 32px;
-        background: rgba(255,255,255,0.1);
-        color: #D4AF37;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 0.8rem;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-    }
 
-    .table-hover tbody tr:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
 </style>
 
-<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+<?php
+
+require_once 'includes/footer.php'
+
+?>
