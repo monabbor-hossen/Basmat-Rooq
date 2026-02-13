@@ -3,6 +3,39 @@
     .display-1 { font-size: 3.5rem; }
     .glass-panel { padding: 25px; margin-bottom: 20px; }
     
+
+/* assets/css/mobile.css */
+
+/* Default Mobile State: Hidden off-screen to the left */
+
+    .portal-sidebar {
+        position: fixed;
+        top: 60px; /* Height of your header */
+        left: -260px; /* Hide it completely */
+        width: 260px;
+        height: calc(100vh - 60px);
+        z-index: 1045;
+        transition: left 0.3s ease-in-out;
+        box-shadow: none;
+    }
+
+    /* Active State: Slide it in */
+    .portal-sidebar.show {
+        left: 0 !important; /* Force it to show */
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5); /* Add shadow for depth */
+    }
+    
+    /* Optional: Dim the background content when sidebar is open */
+    .portal-sidebar.show::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 260px;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+    }
 }
 
 
