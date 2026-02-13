@@ -28,7 +28,6 @@ $text = $translator->getTranslation($lang);
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/mobile.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="portal-body">
 
