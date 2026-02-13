@@ -67,7 +67,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </td>
 
                                     <td>
-                                        <span class="badge bg-gold text-dark border border-warning">
+                                        <span class="badge bg-gold text-white-50 border border-warning">
                                             <?php echo htmlspecialchars($client['license_scope']); ?>
                                         </span>
                                     </td>
