@@ -74,9 +74,11 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                     <td class="text-end pe-4">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
+                                            <a href="client-edit.php?id=<?php echo $client['client_id']; ?>" 
+                                                class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" 
+                                                title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
                                             <button class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" title="View Details">
                                                 <i class="bi bi-eye"></i>
                                             </button>
