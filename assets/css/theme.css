@@ -193,17 +193,7 @@ body {
 }
 
 /* --- Sidebar Styling --- */
-.portal-sidebar {
-    width: 260px;
-    background: linear-gradient(180deg, rgba(51, 0, 13, 0.95) 0%, rgba(20, 0, 5, 0.98) 100%);
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky;
-    top: 70px;
-    /* Below header */
-    height: calc(100vh - 70px);
-    overflow-y: auto;
-    transition: margin 0.3s ease;
-}
+
 
 .nav-link {
     color: rgba(255, 255, 255, 0.7);
@@ -222,6 +212,27 @@ body {
     color: #fff !important;
     border-left-color: var(--rooq-gold);
     backdrop-filter: blur(5px);
+}
+
+/* Sidebar Default (Mobile First approach) */
+.portal-sidebar {
+    position: fixed;
+    top: 60px; /* Below Header */
+    left: -100%; /* Hide completely off-screen */
+    width: 260px;
+    height: calc(100vh - 60px);
+    background: linear-gradient(180deg, rgba(51, 0, 13, 0.98) 0%, rgba(20, 0, 5, 0.99) 100%);
+    backdrop-filter: blur(10px);
+    z-index: 1040;
+    transition: left 0.3s ease-in-out; /* Smooth Slide Animation */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    overflow-y: auto;
+}
+
+/* Class to Slide it IN */
+.portal-sidebar.show {
+    left: 0 !important;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
 }
 
 

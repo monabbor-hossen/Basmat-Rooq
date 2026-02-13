@@ -7,11 +7,11 @@
 /* assets/css/mobile.css */
 
 /* Default Mobile State: Hidden off-screen to the left */
-
+/*
     .portal-sidebar {
         position: fixed;
-        top: 60px; /* Height of your header */
-        left: -260px; /* Hide it completely */
+        top: 60px; /* Height of your header *
+        left: -260px; /* Hide it completely *
         width: 260px;
         height: calc(100vh - 60px);
         z-index: 1045;
@@ -19,13 +19,13 @@
         box-shadow: none;
     }
 
-    /* Active State: Slide it in */
+    /* Active State: Slide it in *
     .portal-sidebar.show {
-        left: 0 !important; /* Force it to show */
-        box-shadow: 5px 0 15px rgba(0,0,0,0.5); /* Add shadow for depth */
+        left: 0 !important; /* Force it to show *
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5); /* Add shadow for depth *
     }
     
-    /* Optional: Dim the background content when sidebar is open */
+    /* Optional: Dim the background content when sidebar is open *
     .portal-sidebar.show::before {
         content: '';
         position: fixed;
@@ -35,9 +35,18 @@
         height: 100vh;
         background: rgba(0,0,0,0.5);
         z-index: 1040;
+    }*/
+}
+/* Desktop Styles (Reset to normal layout) */
+@media (min-width: 992px) {
+    .portal-sidebar {
+        position: sticky;
+        left: 0; /* Always visible */
+        height: calc(100vh - 60px);
+        background: transparent; /* Or keep dark background if preferred */
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
     }
 }
-
 
 @media (max-width: 576px) {
     .display-1 { font-size: 2.5rem; }

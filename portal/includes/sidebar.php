@@ -1,4 +1,4 @@
-<aside class="portal-sidebar d-none d-lg-block" id="portalSidebar">
+<aside class="portal-sidebar" id="portalSidebar">
     <div class="sidebar-content h-100 py-4">
         <p class="px-4 text-white-50 small text-uppercase fw-bold mb-3">Main Menu</p>
         <ul class="nav flex-column gap-1">

@@ -27,16 +27,16 @@ $text = $translator->getTranslation($lang);
     <?php endif; ?>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/mobile.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="portal-body">
 
 <header class="portal-header sticky-top">
     <div class="container-fluid d-flex align-items-center justify-content-between">
         
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-3">
             <button class="btn btn-link text-white d-lg-none p-0" id="sidebarToggle">
-                <i class="fa-solid fa-bars fa-xl"></i>
+                <i class="bi bi-list fs-2"></i>
             </button>
             <a href="dashboard.php" class="text-decoration-none d-flex align-items-center">
                 <img src="<?php echo BASE_URL; ?>assets/img/logo.png" height="50" alt="Logo">
