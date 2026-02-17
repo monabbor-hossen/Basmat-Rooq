@@ -136,9 +136,5 @@ if (!$client) {
     
 </style>
 <?php
-
-
 require_once 'includes/footer.php'
-
-
 ?>

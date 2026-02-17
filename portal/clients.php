@@ -3,16 +3,15 @@
 require_once 'includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 
-// 1. Fetch Clients
+// 1. Fetch Clients (Removed license_scope)
 $db = (new Database())->getConnection();
-$query = "SELECT client_id, company_name, client_name, phone_number, email, license_scope, created_at 
+$query = "SELECT client_id, company_name, client_name, phone_number, email, created_at 
           FROM clients 
           ORDER BY created_at DESC";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 
         <div class="container-fluid">
             
@@ -34,7 +33,6 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th class="py-3 ps-4 text-gold text-uppercase small">ID</th>
                                 <th class="py-3 text-gold text-uppercase small">Company Info</th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
-                                <th class="py-3 text-gold text-uppercase small">License Scope</th>
                                 <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
                         </thead>
@@ -46,7 +44,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-icon me-2 me-sm-3" style=" width:40px; height:40px;font-size: 1.2rem;border-radius: 10px;">
+                                            <div class="avatar-icon me-3">
                                                 <i class="bi bi-building"></i>
                                             </div>
                                             <div>
@@ -63,19 +61,13 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </div>
                                     </td>
 
-                                    <td>
-                                        <span class="badge bg-gold text-white-50 border border-warning">
-                                            <?php echo htmlspecialchars($client['license_scope']); ?>
-                                        </span>
-                                    </td>
-
                                     <td class="text-end pe-4">
                                         <div class="btn-group">
                                             <a href="client-edit.php?id=<?php echo $client['client_id']; ?>" 
-                                                class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" 
-                                                title="Edit">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
+                                               class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" 
+                                               title="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
                                             <button class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" title="View Details">
                                                 <i class="bi bi-eye"></i>
                                             </button>
@@ -85,7 +77,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-white-50">No clients found in the database.</td>
+                                    <td colspan="4" class="text-center py-5 text-white-50">No clients found.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -94,6 +86,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </main>
+
 <style>
     /* .avatar-icon {
         width: 40px;
@@ -108,10 +101,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         border: 1px solid rgba(212, 175, 55, 0.2);
     } */
 </style>
-
-<?php
+<?php 
 
 require_once 'includes/footer.php'
-
-
 ?>
