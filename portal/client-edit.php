@@ -110,10 +110,10 @@ if (!$client) {
                                     <label class="form-label text-gold small text-uppercase fw-bold">License Scope</label>
                                     
                                     <select name="license_scope" class="form-select glass-input">
-                                        <option value="Construction">Construction</option>
                                         <option value="Service License Processing"<?php echo ($client['license_scope'] == 'Service License Processing') ? 'selected' : ''; ?>>Service License Processing</option>
                                         <option value="Service License Upgrade to Trading Licens"<?php echo ($client['license_scope'] == 'Service License Upgrade to Trading Licens') ? 'selected' : ''; ?>>Service License Upgrade to Trading Licens</option>
-                                        <option value="Industrial">Industrial</option>
+                                        <option value="Trading License Processing"<?php echo ($client['license_scope'] == 'Trading License Processing') ? 'selected' : ''; ?>>Trading License Processing</option>
+
                                     </select>
                                 </div>
                                 
@@ -133,22 +133,7 @@ if (!$client) {
     </main>
 
 <style>
-    .glass-input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 12px 15px;
-    }
-    .glass-input:focus {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #D4AF37;
-        color: white;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-    }
-    select.glass-input option {
-        background-color: #33000d;
-        color: white;
-    }
+    
 </style>
 <?php
 

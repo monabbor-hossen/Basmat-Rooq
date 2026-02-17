@@ -95,7 +95,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </main>
 <style>
-    .avatar-icon {
+    /* .avatar-icon {
         width: 40px;
         height: 40px;
         background: rgba(212, 175, 55, 0.1);
@@ -106,7 +106,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         justify-content: center;
         font-size: 1.2rem;
         border: 1px solid rgba(212, 175, 55, 0.2);
-    }
+    } */
 </style>
 
 <?php

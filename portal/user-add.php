@@ -103,48 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
 <style>
-    .avatar-icon {
-        width: 60px;
-        height: 60px;
-        background: rgba(212, 175, 55, 0.1);
-        color: #D4AF37;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
-    }
-    
-    .glass-input {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        padding: 12px 15px;
-    }
-    
-    .glass-input:focus {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-color: #D4AF37 !important;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
-    }
 
-    /* Fix autofill background color in Chrome */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover, 
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: white;
-        -webkit-box-shadow: 0 0 0px 1000px #2b0c16 inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Dark dropdown options */
-    select.glass-input option {
-        background-color: #1a0509;
-        color: white;
-        padding: 10px;
-    }
 </style>
 
 <?php

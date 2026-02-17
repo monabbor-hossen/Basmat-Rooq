@@ -78,10 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="col-12">
                                     <label class="form-label text-gold small text-uppercase fw-bold">License Scope</label>
                                     <select name="license_scope" class="form-select glass-input">
-                                        <option value="Construction">Construction</option>
                                         <option value="Service License Processing">Service License Processing</option>
                                         <option value="Service License Upgrade to Trading Licens">Service License Upgrade to Trading Licens</option>
-                                        <option value="Industrial">Industrial</option>
+                                        <option value="Trading License Processing">Trading License Processing</option>
                                     </select>
                                 </div>
 
@@ -99,25 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
 <style>
-    .glass-input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 12px 15px;
-    }
-    .glass-input:focus {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #D4AF37;
-        color: white;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-    }
-    .glass-input::placeholder { color: rgba(255, 255, 255, 0.3); }
-    
-    /* Dark Select Options */
-    select.glass-input option {
-        background-color: #33000d;
-        color: white;
-    }
+
 </style>
 
 
