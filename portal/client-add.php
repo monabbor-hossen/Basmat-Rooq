@@ -150,7 +150,7 @@ $workflow_steps = [
                                             <?php if ($key === 'scope'): ?>
                                                 <option value="Trading License Processing">Trading License Processing</option>
                                                 <option value="Service License Processing">Service License Processing</option>
-                                                <option value="Service License Upgrade to Trading License">Service License Upgrade</option>
+                                                <option value="Service License Upgrade to Trading License">Service License Upgrade to Trading License</option>
                                             <?php else: ?>
                                                 <option value="In Progress">In Progress</option>
                                                 <option value="Applied">Applied</option>
