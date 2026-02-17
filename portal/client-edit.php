@@ -155,7 +155,10 @@ if (!$client) {
         color: white;
     }
 </style>
+<?php
 
-<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+require_once 'includes/footer.php'
+
+
+?>

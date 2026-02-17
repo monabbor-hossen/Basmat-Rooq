@@ -22,7 +22,7 @@
             </div>
             <div class="col-lg-6 reveal">
                 <div class="glass-panel text-center">
-                    <img src="<?php echo BASE_URL; ?>assets/img/icons/Ministry_of_Investment_Logo-Dark.svg" style="height: 100px; filter: invert(1);">
+                    <img src="<?php echo BASE_URL; ?>assets/img/icons/Ministry_of_Investment_Logo-Dark.svg" style="height: 100px;">
                     <h4 class="mt-3">MISA Strategic Partner</h4>
                 </div>
             </div>

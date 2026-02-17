@@ -111,10 +111,6 @@ function getRoleName($roleId) {
     </main>
 </div>
 
-<style>
-
-</style>
-
 
 <?php
 

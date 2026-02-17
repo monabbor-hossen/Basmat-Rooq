@@ -131,6 +131,7 @@ if (!$user) {
     select.glass-input option { color: black; }
 </style>
 
-<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php
+
+require_once 'includes/footer.php'
+?>
