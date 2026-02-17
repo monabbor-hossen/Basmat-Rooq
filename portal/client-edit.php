@@ -32,21 +32,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $db->beginTransaction();
 
-        // Update Client Info
-        $query_client = "UPDATE clients 
-                         SET company_name = :company, 
-                             client_name = :client, 
-                             phone_number = :phone, 
-                             email = :email, 
-                             trade_name_application = :trade
-                         WHERE client_id = :id";
-        
-        $stmt = $db->prepare($query_client);
-        $stmt->execute([
-            ':company' => $company, ':client' => $client, ':phone' => $phone,
-            ':email' => $email, ':trade' => $trade, ':id' => $client_id
-        ]);
+        // 1. Update Logic (Inside POST block)
+// Update the SQL query to include contract_value
+$query_client = "UPDATE clients 
+                 SET company_name = :company, 
+                     client_name = :client, 
+                     phone_number = :phone, 
+                     email = :email, 
+                     trade_name_application = :trade,
+                     contract_value = :val  /* <--- NEW */
+                 WHERE client_id = :id";
 
+$stmt = $db->prepare($query_client);
+$stmt->execute([
+    ':company' => $company, ':client' => $client, ':phone' => $phone,
+    ':email' => $email, ':trade' => $trade, 
+    ':val' => $_POST['contract_value'], /* <--- NEW */
+    ':id' => $client_id
+]);
         // Update Workflow (with update_date_at)
         $wf_data = [
             'license_scope_status' => $_POST['status_scope'],
@@ -138,109 +141,138 @@ $last_update = $data['update_date_at'] ? date('M d, Y h:i A', strtotime($data['u
 ?>
 
 
-        <div class="container-fluid">
-            <a href="clients.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
-                <i class="bi bi-arrow-left me-2"></i> Back to Clients
-            </a>
+<div class="container-fluid">
+    <a href="clients.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
+        <i class="bi bi-arrow-left me-2"></i> Back to Clients
+    </a>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card-box">
-                        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light border-opacity-10 pb-3">
-                            <div>
-                                <h4 class="text-white fw-bold mb-0">Edit Client Portfolio</h4>
-                                <small class="text-gold"><i class="bi bi-clock-history me-1"></i> Last Updated: <?php echo $last_update; ?></small>
-                            </div>
-                            <span class="badge bg-gold text-dark">ID: #<?php echo $data['client_id']; ?></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card-box">
+                <div
+                    class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light border-opacity-10 pb-3">
+                    <div>
+                        <h4 class="text-white fw-bold mb-0">Edit Client Portfolio</h4>
+                        <small class="text-gold"><i class="bi bi-clock-history me-1"></i> Last Updated:
+                            <?php echo $last_update; ?></small>
+                    </div>
+                    <span class="badge bg-gold text-dark">ID: #<?php echo $data['client_id']; ?></span>
+                </div>
+
+                <?php echo $message; ?>
+
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
+
+                    <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
+                    <div class="row g-3 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Company Name</label>
+                            <input type="text" name="company_name" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($data['company_name']); ?>" required>
                         </div>
-                        
-                        <?php echo $message; ?>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Client Rep Name</label>
+                            <input type="text" name="client_name" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($data['client_name']); ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Phone Number</label>
+                            <input type="tel" name="phone_number" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($data['phone_number']); ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Email Address</label>
+                            <input type="email" name="email" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($data['email']); ?>" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-white-50 small fw-bold">Trade Name Application</label>
+                            <input type="text" name="trade_name_application" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($data['trade_name_application'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-gold small fw-bold">Total Contract Value (SAR)</label>
+                            <input type="number" step="0.01" name="contract_value" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($data['contract_value']); ?>" required>
+                        </div>
+                    </div>
 
-                        <form method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
-
-                            <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
-                            <div class="row g-3 mb-5">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Company Name</label>
-                                    <input type="text" name="company_name" class="form-control glass-input" value="<?php echo htmlspecialchars($data['company_name']); ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Client Rep Name</label>
-                                    <input type="text" name="client_name" class="form-control glass-input" value="<?php echo htmlspecialchars($data['client_name']); ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Phone Number</label>
-                                    <input type="tel" name="phone_number" class="form-control glass-input" value="<?php echo htmlspecialchars($data['phone_number']); ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Email Address</label>
-                                    <input type="email" name="email" class="form-control glass-input" value="<?php echo htmlspecialchars($data['email']); ?>" required>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label text-white-50 small fw-bold">Trade Name Application</label>
-                                    <input type="text" name="trade_name_application" class="form-control glass-input" value="<?php echo htmlspecialchars($data['trade_name_application'] ?? ''); ?>">
-                                </div>
-                            </div>
-
-                            <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Workflow Status</h5>
-                            <div class="row g-3">
-                                <?php foreach($workflow_map as $field_name => $info): 
+                    <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Workflow Status</h5>
+                    <div class="row g-3">
+                        <?php foreach($workflow_map as $field_name => $info): 
                                     $current_val = $data[$info['db_col']] ?? 'In Process';
                                 ?>
-                                <div class="col-md-4 col-sm-6">
-                                    <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between">
-                                        <label class="text-white fw-bold mb-2 small text-uppercase"><?php echo $info['label']; ?></label>
-                                        <select name="<?php echo $field_name; ?>" class="form-select glass-select-sm">
-                                            <?php if ($field_name === 'status_scope'): ?>
-                                                <option value="Trading License Processing" <?php echo ($current_val == 'Trading License Processing') ? 'selected' : ''; ?>>Trading License Processing</option>
-                                                <option value="Service License Processing" <?php echo ($current_val == 'Service License Processing') ? 'selected' : ''; ?>>Service License Processing</option>
-                                                <option value="Service License Upgrade to Trading License" <?php echo ($current_val == 'Service License Upgrade to Trading License') ? 'selected' : ''; ?>>Service License Upgrade to Trading License</option>
-                                            <?php else: ?>
-                                                <option value="In Progress" <?php echo ($current_val == 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
-                                                <option value="Applied" <?php echo ($current_val == 'Applied') ? 'selected' : ''; ?>>Applied</option>
-                                                <option value="Pending Application" <?php echo ($current_val == 'Pending Application') ? 'selected' : ''; ?>>Pending Application</option>
-                                                <option value="Approved" <?php echo ($current_val == 'Approved') ? 'selected' : ''; ?> class="text-success fw-bold">Approved</option>
-                                            <?php endif; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between">
+                                <label
+                                    class="text-white fw-bold mb-2 small text-uppercase"><?php echo $info['label']; ?></label>
+                                <select name="<?php echo $field_name; ?>" class="form-select glass-select-sm">
+                                    <?php if ($field_name === 'status_scope'): ?>
+                                    <option value="Trading License Processing"
+                                        <?php echo ($current_val == 'Trading License Processing') ? 'selected' : ''; ?>>
+                                        Trading License Processing</option>
+                                    <option value="Service License Processing"
+                                        <?php echo ($current_val == 'Service License Processing') ? 'selected' : ''; ?>>
+                                        Service License Processing</option>
+                                    <option value="Service License Upgrade to Trading License"
+                                        <?php echo ($current_val == 'Service License Upgrade to Trading License') ? 'selected' : ''; ?>>
+                                        Service License Upgrade to Trading License</option>
+                                    <?php else: ?>
+                                    <option value="In Progress"
+                                        <?php echo ($current_val == 'In Progress') ? 'selected' : ''; ?>>In Progress
+                                    </option>
+                                    <option value="Applied"
+                                        <?php echo ($current_val == 'Applied') ? 'selected' : ''; ?>>Applied</option>
+                                    <option value="Pending Application"
+                                        <?php echo ($current_val == 'Pending Application') ? 'selected' : ''; ?>>Pending
+                                        Application</option>
+                                    <option value="Approved"
+                                        <?php echo ($current_val == 'Approved') ? 'selected' : ''; ?>
+                                        class="text-success fw-bold">Approved</option>
+                                    <?php endif; ?>
+                                </select>
                             </div>
-
-                            <div class="col-12 mt-5">
-                                <div class="d-flex gap-3">
-                                    <button type="submit" class="btn btn-rooq-primary flex-grow-1 py-3 fw-bold">Save Changes</button>
-                                    <a href="clients.php" class="btn btn-outline-light py-3 px-5">Cancel</a>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
-                </div>
+
+                    <div class="col-12 mt-5">
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-rooq-primary flex-grow-1 py-3 fw-bold">Save
+                                Changes</button>
+                            <a href="clients.php" class="btn btn-outline-light py-3 px-5">Cancel</a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+</div>
+</main>
 
-    <style>
-        .glass-input {
+<style>
+    .glass-input {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: white;
         padding: 12px 15px;
     }
+
     .glass-input:focus {
         background: rgba(255, 255, 255, 0.1);
         border-color: #D4AF37;
         color: white;
         box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
     }
-    
+
     .workflow-card {
         background: rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 10px;
         transition: all 0.3s ease;
     }
+
     .workflow-card:hover {
         background: rgba(212, 175, 55, 0.05);
         border-color: rgba(212, 175, 55, 0.3);
@@ -253,13 +285,14 @@ $last_update = $data['update_date_at'] ? date('M d, Y h:i A', strtotime($data['u
         font-weight: 600;
         font-size: 0.9rem;
     }
+
     .glass-select-sm option {
         background-color: #33000d;
         color: white;
         padding: 8px;
     }
-    </style>
+</style>
 
-    <?php
+<?php
 require_once 'includes/footer.php'
 ?>
