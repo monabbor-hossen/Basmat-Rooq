@@ -37,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_client_id = $db->lastInsertId();
 
         // B. Insert into Workflow Tracking Table (Removed trade_name_application)
+        
+// ... [Previous code remains the same] ...
+
+        // B. Insert into Workflow Tracking Table
+        // Added ':update_at' => date('Y-m-d H:i:s') to ensures it's set immediately
         $statuses = [
             ':cid' => $new_client_id,
             ':scope_st' => $_POST['status_scope'] ?? 'In Process',
@@ -47,20 +52,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':gosi_st' => $_POST['status_gosi'] ?? 'In Process',
             ':qiwa_st' => $_POST['status_qiwa'] ?? 'In Process',
             ':muqeem_st' => $_POST['status_muqeem'] ?? 'In Process',
-            ':coc_st' => $_POST['status_coc'] ?? 'In Process'
+            ':coc_st' => $_POST['status_coc'] ?? 'In Process',
+            ':update_at' => date('Y-m-d H:i:s') // <--- NEW DATE
         ];
 
-        // SQL Updated: Removed trade_name_application column
+        // SQL Updated: Added update_date_at
         $sql_wf = "INSERT INTO workflow_tracking 
                    (client_id, license_scope_status, hire_foreign_company, misa_application, 
                     sbc_application, article_association, 
-                    gosi, qiwa, muqeem, chamber_commerce) 
+                    gosi, qiwa, muqeem, chamber_commerce, update_date_at) 
                    VALUES 
                    (:cid, :scope_st, :hire_st, :misa_st, 
-                    :sbc_st, :art_st, :gosi_st, :qiwa_st, :muqeem_st, :coc_st)";
+                    :sbc_st, :art_st, :gosi_st, :qiwa_st, :muqeem_st, :coc_st, :update_at)";
 
         $stmt_wf = $db->prepare($sql_wf);
         $stmt_wf->execute($statuses);
+
+// ... [Rest of file] ...
 
         $db->commit(); // Commit Transaction
         $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Client and workflow initialized successfully!</div>";
@@ -84,8 +92,8 @@ $workflow_steps = [
     'status_muqeem' => 'MUQEEM',
     'status_coc' => 'Chamber of Commerce'
 ];
-?>
 
+?>
         <div class="container-fluid">
             <a href="clients.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
                 <i class="bi bi-arrow-left me-2"></i> Back to Clients
@@ -169,45 +177,7 @@ $workflow_steps = [
         </div>
     </main>
 
-<style>
-    .glass-input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 12px 15px;
-    }
-    .glass-input:focus {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #D4AF37;
-        color: white;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-    }
-    .glass-input::placeholder { color: rgba(255, 255, 255, 0.3); }
-    
-    .workflow-card {
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-    .workflow-card:hover {
-        background: rgba(212, 175, 55, 0.05);
-        border-color: rgba(212, 175, 55, 0.3);
-    }
 
-    .glass-select-sm {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #D4AF37;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-    .glass-select-sm option {
-        background-color: #33000d;
-        color: white;
-        padding: 8px;
-    }
-</style>
 
 <?php
 require_once 'includes/footer.php'
