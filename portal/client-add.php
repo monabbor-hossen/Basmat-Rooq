@@ -270,6 +270,6 @@ $workflow_steps = [
         modalElement.hide();
     }
 </script>
-<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php
+require_once 'includes/footer.php'
+?>

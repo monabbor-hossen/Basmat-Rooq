@@ -252,6 +252,7 @@ select.glass-input option {
         color: white;
         padding: 8px;
     }
+.glass-modal { background: rgba(20, 5, 10, 0.98); backdrop-filter: blur(20px); border: 1px solid #D4AF37; }
 
 /* Fix autofill background color in Chrome */
 input:-webkit-autofill,
