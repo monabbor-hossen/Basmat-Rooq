@@ -46,7 +46,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-icon me-3">
+                                            <div class="avatar-icon me-2 me-sm-3" style=" width:40px; height:40px;font-size: 1.2rem;border-radius: 10px;">
                                                 <i class="bi bi-building"></i>
                                             </div>
                                             <div>

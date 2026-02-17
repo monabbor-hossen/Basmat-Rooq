@@ -57,7 +57,7 @@ $text = $translator->getTranslation($lang);
             </div>
 
             <div class="dropdown">
-                <div class="profile-trigger-refined d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="profile-trigger-refined d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false">
                     
                     <div class="text-end d-none d-lg-block">
                         <div class="user-name-text"><?php echo $username; ?></div>
@@ -68,7 +68,7 @@ $text = $translator->getTranslation($lang);
                         <?php echo strtoupper(substr($username, 0, 2)); // Show first 2 letters like image (e.g., AB) ?>
                     </div>
 
-                    <i class="bi bi-chevron-down dropdown-chevron"></i>
+                    <i class="bi bi-chevron-down dropdown-chevron" style=" margin-left: 5px;"></i>
                 </div>
 
                 <ul class="dropdown-menu dropdown-menu-end glass-dropdown mt-3 shadow-lg border-0" style="background: rgba(20, 20, 20, 0.95);">
