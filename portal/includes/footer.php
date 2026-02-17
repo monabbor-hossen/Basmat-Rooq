@@ -1,6 +1,7 @@
 
 <script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script> 
 <script src="<?php echo BASE_URL; ?>assets/js/all.min.js"></script> 
+<script src="<?php echo BASE_URL; ?>assets/js/main.js"></script> 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     var toggleBtn = document.getElementById("sidebarToggle");

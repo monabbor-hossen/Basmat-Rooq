@@ -209,7 +209,7 @@ $workflow_steps = [
         </div>
     </div>
 </div>
-
+<!-- 
 <style>
     .glass-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; }
     .glass-input:focus { border-color: #D4AF37; background: rgba(255,255,255,0.1); color: white; }
@@ -269,7 +269,7 @@ $workflow_steps = [
 
         modalElement.hide();
     }
-</script>
+</script> -->
 <?php
 require_once 'includes/footer.php'
 ?>
