@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../app/Config/Config.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 require_once __DIR__ . '/../app/Helpers/Security.php';
-require_once 'includes/header.php'; // Header handles session check
+require_once 'includes/header.php';
 
 $client_id = $_GET['id'] ?? null;
 if (!$client_id) { header("Location: clients.php"); exit(); }
@@ -22,22 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
 
     $stmt = $db->prepare("INSERT INTO payments (client_id, amount, payment_method, payment_status, notes) VALUES (?, ?, ?, ?, ?)");
     if ($stmt->execute([$client_id, $amount, $method, $status, $note])) {
-        $message = "<div class='alert alert-success'>Payment recorded successfully!</div>";
+        $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Payment recorded successfully!</div>";
     }
 }
 
 // --- FETCH DATA ---
-// 1. Client Info
 $stmt = $db->prepare("SELECT * FROM clients WHERE client_id = ?");
 $stmt->execute([$client_id]);
 $client = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// 2. Payments List
 $stmt = $db->prepare("SELECT * FROM payments WHERE client_id = ? ORDER BY payment_date DESC");
 $stmt->execute([$client_id]);
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 3. Calculate Totals
+// Calculate Totals
 $total_paid = 0;
 foreach($payments as $p) {
     if($p['payment_status'] == 'Completed') $total_paid += $p['amount'];
@@ -83,19 +81,26 @@ $due_amount = $client['contract_value'] - $total_paid;
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <div class="card-box">
-                        <h5 class="text-gold mb-3"><i class="bi bi-plus-circle me-2"></i>Add Payment</h5>
-                        <form method="POST">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-gold mb-0"><i class="bi bi-plus-circle me-2"></i>Add Payment</h5>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="unlockPaymentForm">
+                                <label class="form-check-label text-white-50 small" for="unlockPaymentForm">Enable Edit</label>
+                            </div>
+                        </div>
+
+                        <form method="POST" id="paymentForm">
                             <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
                             <input type="hidden" name="add_payment" value="1">
 
                             <div class="mb-3">
                                 <label class="text-white-50 small mb-1">Amount</label>
-                                <input type="number" step="0.01" name="amount" class="form-control glass-input" required placeholder="0.00">
+                                <input type="number" step="0.01" name="amount" class="form-control glass-input" required placeholder="0.00" disabled>
                             </div>
 
                             <div class="mb-3">
                                 <label class="text-white-50 small mb-1">Payment Method</label>
-                                <select name="payment_method" class="form-select glass-input">
+                                <select name="payment_method" class="form-select glass-input" disabled>
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Card</option>
                                     <option value="Bank Transfer">Bank Transfer</option>
@@ -106,7 +111,7 @@ $due_amount = $client['contract_value'] - $total_paid;
 
                             <div class="mb-3">
                                 <label class="text-white-50 small mb-1">Status</label>
-                                <select name="payment_status" class="form-select glass-input">
+                                <select name="payment_status" class="form-select glass-input" disabled>
                                     <option value="Completed">Completed</option>
                                     <option value="Pending">Pending</option>
                                 </select>
@@ -114,10 +119,12 @@ $due_amount = $client['contract_value'] - $total_paid;
 
                             <div class="mb-3">
                                 <label class="text-white-50 small mb-1">Notes</label>
-                                <textarea name="notes" class="form-control glass-input" rows="2"></textarea>
+                                <textarea name="notes" class="form-control glass-input" rows="2" disabled></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-rooq-primary w-100 fw-bold">Record Payment</button>
+                            <button type="submit" class="btn btn-rooq-primary w-100 fw-bold" id="submitBtn" disabled>
+                                Record Payment
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -129,7 +136,6 @@ $due_amount = $client['contract_value'] - $total_paid;
                             <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                                 <thead>
                                     <tr class="text-white-50 border-bottom border-secondary">
-                                        <th>ID</th>
                                         <th>Date</th>
                                         <th>Method</th>
                                         <th>Status</th>
@@ -139,9 +145,16 @@ $due_amount = $client['contract_value'] - $total_paid;
                                 <tbody>
                                     <?php foreach($payments as $p): ?>
                                     <tr>
-                                        <td class="text-white-50 small">#<?php echo $p['payment_id']; ?></td>
-                                        <td><?php echo date('d M Y', strtotime($p['payment_date'])); ?></td>
-                                        <td><?php echo htmlspecialchars($p['payment_method']); ?></td>
+                                        <td>
+                                            <div class="text-white small"><?php echo date('d M Y', strtotime($p['payment_date'])); ?></div>
+                                            <div class="text-white-50" style="font-size: 0.75rem;">#<?php echo $p['payment_id']; ?></div>
+                                        </td>
+                                        <td>
+                                            <?php echo htmlspecialchars($p['payment_method']); ?>
+                                            <?php if($p['notes']): ?>
+                                                <i class="bi bi-info-circle ms-1 text-gold" data-bs-toggle="tooltip" title="<?php echo htmlspecialchars($p['notes']); ?>"></i>
+                                            <?php endif; ?>
+                                        </td>
                                         <td>
                                             <?php if($p['payment_status'] == 'Completed'): ?>
                                                 <span class="badge bg-success text-dark">Completed</span>
@@ -155,7 +168,7 @@ $due_amount = $client['contract_value'] - $total_paid;
                                     </tr>
                                     <?php endforeach; ?>
                                     <?php if(empty($payments)): ?>
-                                        <tr><td colspan="5" class="text-center text-white-50 py-3">No transactions found.</td></tr>
+                                        <tr><td colspan="4" class="text-center text-white-50 py-3">No transactions found.</td></tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
@@ -166,13 +179,46 @@ $due_amount = $client['contract_value'] - $total_paid;
         </div>
     </main>
 </div>
+
 <style>
     .glass-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; }
+    .glass-input:disabled { background: rgba(0,0,0,0.2); opacity: 0.6; cursor: not-allowed; }
     .glass-input:focus { border-color: #D4AF37; background: rgba(255,255,255,0.1); color: white; }
     .glass-input option { background: #33000d; }
     .border-warning { border: 1px solid rgba(255, 193, 7, 0.3) !important; }
     .border-danger { border: 1px solid rgba(220, 53, 69, 0.3) !important; }
+    
+    /* Toggle Switch Color */
+    .form-check-input:checked {
+        background-color: #D4AF37;
+        border-color: #D4AF37;
+    }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleSwitch = document.getElementById('unlockPaymentForm');
+    const form = document.getElementById('paymentForm');
+    const inputs = form.querySelectorAll('input, select, textarea, button');
+
+    toggleSwitch.addEventListener('change', function() {
+        const isEnabled = this.checked;
+        inputs.forEach(input => {
+            // Only toggle inputs that are NOT hidden fields (like csrf_token)
+            if (input.type !== 'hidden') {
+                input.disabled = !isEnabled;
+            }
+        });
+    });
+
+    // Initialize Tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+});
+</script>
+
 <?php
 require_once 'includes/footer.php'
 ?>
