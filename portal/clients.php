@@ -34,25 +34,26 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th class="py-3 ps-4 text-gold text-uppercase small">ID</th>
                         <th class="py-3 text-gold text-uppercase small">Company Info</th>
                         <th class="py-3 text-gold text-uppercase small">Contact Details</th>
+                        <th class="py-3 text-gold text-uppercase small">Payment</th>
                         <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (count($clients) > 0): ?>
                     <?php foreach ($clients as $client): 
-    $due = $client['contract_value'] - $client['total_paid'];
-    
-    // Determine Status Badge
-    if ($client['contract_value'] == 0) {
-        $status_badge = '<span class="badge bg-secondary">No Contract</span>';
-    } elseif ($due <= 0) {
-        $status_badge = '<span class="badge bg-success text-dark">Paid</span>';
-    } elseif ($client['total_paid'] > 0) {
-        $status_badge = '<span class="badge bg-warning text-dark">Partial</span>';
-    } else {
-        $status_badge = '<span class="badge bg-danger">Unpaid</span>';
-    }
-?>
+                        $due = $client['contract_value'] - $client['total_paid'];
+                        
+                        // Determine Status Badge
+                        if ($client['contract_value'] == 0) {
+                            $status_badge = '<span class="badge bg-secondary">No Contract</span>';
+                        } elseif ($due <= 0) {
+                            $status_badge = '<span class="badge bg-success text-dark">Paid</span>';
+                        } elseif ($client['total_paid'] > 0) {
+                            $status_badge = '<span class="badge bg-warning text-dark">Partial</span>';
+                        } else {
+                            $status_badge = '<span class="badge bg-danger">Unpaid</span>';
+                        }
+                    ?>
                     <tr>
                         <td class="ps-4 text-white-50">#<?php echo $client['client_id']; ?></td>
 
