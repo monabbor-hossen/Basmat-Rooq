@@ -136,9 +136,21 @@ $workflow_steps = [
                                 <div class="col-md-4 col-sm-6">
                                     <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between">
                                         <label class="text-white fw-bold mb-2 small text-uppercase"><?php echo $label; ?></label>
+                                        
                                         <select name="<?php echo $field_name; ?>" class="form-select glass-select-sm">
-                                            <option value="In Process" selected>In Process</option>
-                                            <option value="Approve">Approve</option>
+                                            
+                                            <?php if ($field_name === 'status_scope'): ?>
+                                                <option value="Trading License Processing">Trading License Processing</option>
+                                                <option value="Service License Processing">Service License Processing</option>
+                                                <option value="Service License Upgrade to Trading License">Service License Upgrade to Trading License</option>
+                                            
+                                            <?php else: ?>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Applied">Applied</option>
+                                                <option value="Pending Application">Pending Application</option>
+                                                <option value="Approved" class="text-success fw-bold">Approved</option>
+                                            <?php endif; ?>
+
                                         </select>
                                     </div>
                                 </div>
