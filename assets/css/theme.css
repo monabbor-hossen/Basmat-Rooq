@@ -198,17 +198,19 @@ body {
     color: white;
     padding: 12px 15px;
 }
+
 .glass-input:focus {
     background: rgba(255, 255, 255, 0.1);
     border-color: #D4AF37;
     color: white;
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
 }
+
 select.glass-input option {
     background-color: #33000d;
     color: white;
 }
-    
+
 .glass-input::placeholder {
     color: rgba(255, 255, 255, 0.3);
 }
@@ -230,7 +232,7 @@ select.glass-input option {
 
 /* Fix autofill background color in Chrome */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
+input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
     -webkit-text-fill-color: white;
     -webkit-box-shadow: 0 0 0px 1000px #2b0c16 inset;
@@ -238,7 +240,7 @@ input:-webkit-autofill:focus {
 }
 
 
-    
+
 /* --- Sidebar Styling --- */
 
 
@@ -264,14 +266,17 @@ input:-webkit-autofill:focus {
 /* Sidebar Default (Mobile First approach) */
 .portal-sidebar {
     position: fixed;
-    top: 60px; /* Below Header */
-    left: -100%; /* Hide completely off-screen */
+    top: 60px;
+    /* Below Header */
+    left: -100%;
+    /* Hide completely off-screen */
     width: 260px;
     height: calc(100vh - 60px);
     background: linear-gradient(180deg, rgba(51, 0, 13, 0.98) 0%, rgba(20, 0, 5, 0.99) 100%);
     backdrop-filter: blur(10px);
     z-index: 1040;
-    transition: left 0.3s ease-in-out; /* Smooth Slide Animation */
+    transition: left 0.3s ease-in-out;
+    /* Smooth Slide Animation */
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     overflow-y: auto;
 }
@@ -279,7 +284,7 @@ input:-webkit-autofill:focus {
 /* Class to Slide it IN */
 .portal-sidebar.show {
     left: 0 !important;
-    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
 }
 
 
