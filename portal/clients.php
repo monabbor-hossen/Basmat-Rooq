@@ -13,10 +13,7 @@ $stmt->execute();
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="d-flex portal-wrapper">
-    <?php require_once 'includes/sidebar.php'; ?>
 
-    <main class="w-100 p-4">
         <div class="container-fluid">
             
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -97,8 +94,6 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </main>
-</div>
-
 <style>
     .avatar-icon {
         width: 40px;

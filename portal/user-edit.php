@@ -69,10 +69,7 @@ if (!$user) {
 }
 ?>
 
-<div class="d-flex portal-wrapper">
-    <?php require_once 'includes/sidebar.php'; ?>
 
-    <main class="w-100 p-4">
         <div class="container-fluid">
             <a href="users.php" class="text-white-50 text-decoration-none mb-3 d-inline-block">
                 <i class="bi bi-arrow-left me-2"></i> Back to Users
@@ -112,7 +109,6 @@ if (!$user) {
             </div>
         </div>
     </main>
-</div>
 
 <style>
     .glass-input::placeholder {

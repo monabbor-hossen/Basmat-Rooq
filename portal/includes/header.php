@@ -50,14 +50,14 @@ $text = $translator->getTranslation($lang);
             </div>
         </div>
 
-        <div class="d-flex align-items-center gap-4">
-            <div class="position-relative d-none d-sm-block" style="cursor: pointer;">
+        <div class="d-flex align-items-center gap-sm-4 gap-2 ">
+            <div class="position-relative d-block" style="cursor: pointer;">
                 <i class="bi bi-bell text-white fs-5 opacity-75 hover-gold"></i>
                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-dark rounded-circle"></span>
             </div>
 
             <div class="dropdown">
-                <div class="profile-trigger-refined d-flex align-items-center gap-3" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="profile-trigger-refined d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
                     
                     <div class="text-end d-none d-lg-block">
                         <div class="user-name-text"><?php echo $username; ?></div>

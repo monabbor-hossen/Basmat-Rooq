@@ -64,10 +64,6 @@ if (!$client) {
 }
 ?>
 
-<div class="d-flex portal-wrapper">
-    <?php require_once 'includes/sidebar.php'; ?>
-
-    <main class="w-100 p-4">
         <div class="container-fluid">
             <a href="clients.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
                 <i class="bi bi-arrow-left me-2"></i> Back to Client List
@@ -135,7 +131,6 @@ if (!$client) {
             </div>
         </div>
     </main>
-</div>
 
 <style>
     .glass-input {
