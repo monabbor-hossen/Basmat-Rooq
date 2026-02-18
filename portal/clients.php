@@ -5,70 +5,79 @@ require_once __DIR__ . '/../app/Config/Database.php';
 
 $db = (new Database())->getConnection();
 
-// 1. Fetch Clients + Workflow Status + Payment Totals
-// We join workflow_tracking to get the status columns for progress calculation
+// 1. Fetch Clients with Workflow Status (Needed for Progress)
 $query = "SELECT c.*, 
           w.hire_foreign_company, w.misa_application, w.sbc_application, 
           w.article_association, w.qiwa, w.muqeem, w.gosi, w.chamber_commerce,
           COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
           FROM clients c 
-          LEFT JOIN workflow_tracking w ON c.client_id = w.client_id 
-          ORDER BY c.created_at DESC";
-
+          LEFT JOIN workflow_tracking w ON c.client_id = w.client_id";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 2. Pre-Calculate Values for Sorting
-// We loop through once to calculate Progress and Due, so we can sort by them
+// 2. Pre-calculate Data for Sorting
 foreach ($clients as &$client) {
     // A. Calculate Progress %
-    $steps = [
+    $steps_to_check = [
         $client['hire_foreign_company'] ?? '', $client['misa_application'] ?? '',
         $client['sbc_application'] ?? '',      $client['article_association'] ?? '',
         $client['qiwa'] ?? '',                 $client['muqeem'] ?? '',
         $client['gosi'] ?? '',                 $client['chamber_commerce'] ?? ''
     ];
-    $approved = 0;
-    foreach($steps as $s) { if($s === 'Approved') $approved++; }
-    $client['progress_calc'] = round(($approved / 8) * 100);
-    $client['approved_count'] = $approved;
+    $approved_count = 0;
+    foreach($steps_to_check as $status) { if($status === 'Approved') $approved_count++; }
+    $client['progress_val'] = ($approved_count / 8) * 100;
+    $client['approved_count'] = $approved_count;
 
-    // B. Calculate Due Amount
-    $client['due_calc'] = $client['contract_value'] - $client['total_paid'];
+    // B. Calculate Payment (Due Amount)
+    $client['due_val'] = $client['contract_value'] - $client['total_paid'];
 }
 unset($client); // Break reference
 
-// 3. Handle Sorting Request
-$sort = $_GET['sort'] ?? 'default';
-$order = $_GET['order'] ?? 'desc'; // desc or asc
+// 3. Handle Sorting Logic
+$sort = $_GET['sort'] ?? 'sl'; // Default sort
+$dir  = $_GET['dir'] ?? 'desc'; // Default direction
+$next_dir = ($dir === 'asc') ? 'desc' : 'asc';
 
-usort($clients, function($a, $b) use ($sort, $order) {
-    $result = 0;
+usort($clients, function($a, $b) use ($sort, $dir) {
+    $valA = $valB = 0;
+
     switch ($sort) {
-        case 'payment': // Sort by Due Amount (or you can change to total_paid)
-            $result = $a['due_calc'] <=> $b['due_calc'];
+        case 'company':
+            $valA = strtolower($a['company_name']);
+            $valB = strtolower($b['company_name']);
+            return ($dir === 'asc') ? strcmp($valA, $valB) : strcmp($valB, $valA);
+        case 'payment':
+            $valA = $a['due_val'];
+            $valB = $b['due_val'];
             break;
-        case 'progress': // Sort by Progress %
-            $result = $a['progress_calc'] <=> $b['progress_calc'];
+        case 'progress':
+            $valA = $a['progress_val'];
+            $valB = $b['progress_val'];
             break;
-        case 'sl': // Sort by ID (SL usually follows ID or Created Date)
-            $result = $a['client_id'] <=> $b['client_id'];
+        case 'sl':
+        default:
+            $valA = $a['client_id'];
+            $valB = $b['client_id'];
             break;
-        default: // Default: Sort by Created Date
-            return 0; // Keep SQL order (created_at DESC)
     }
-    return ($order === 'asc') ? $result : -$result;
+
+    if ($valA == $valB) return 0;
+    
+    // Numeric comparison
+    if ($dir === 'asc') return ($valA < $valB) ? -1 : 1;
+    else return ($valA > $valB) ? -1 : 1;
 });
 
-// Helper function to toggle sort order for links
-function sortLink($key, $currentSort, $currentOrder) {
-    $newOrder = ($currentSort === $key && $currentOrder === 'asc') ? 'desc' : 'asc';
+// Helper function for sort links
+function sortLink($key, $label, $currentSort, $nextDir) {
+    $active = ($currentSort === $key) ? 'text-white fw-bold' : 'text-gold';
     $icon = '';
     if ($currentSort === $key) {
-        $icon = ($currentOrder === 'asc') ? ' <i class="bi bi-arrow-up-short"></i>' : ' <i class="bi bi-arrow-down-short"></i>';
+        $icon = ($nextDir === 'asc') ? '<i class="bi bi-arrow-down-short"></i>' : '<i class="bi bi-arrow-up-short"></i>';
     }
-    return '<a href="?sort=' . $key . '&order=' . $newOrder . '" class="text-gold text-decoration-none text-uppercase small">' . $icon;
+    return "<a href='?sort=$key&dir=$nextDir' class='text-decoration-none text-uppercase small $active'>$label $icon</a>";
 }
 ?>
 
@@ -93,60 +102,55 @@ function sortLink($key, $currentSort, $currentOrder) {
                     <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.05);">
-                                <th class="py-3 ps-4">
-                                    <?php echo sortLink('sl', $sort, $order); ?> SL</a>
-                                </th>
-                                <th class="py-3 text-gold text-uppercase small">Company Info</th>
+                                <th class="py-3 ps-4"><?php echo sortLink('sl', 'SL NO', $sort, $next_dir); ?></th>
+                                <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
+                                <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
-                                
-                                <th class="py-3">
-                                    <?php echo sortLink('progress', $sort, $order); ?> Progress</a>
-                                </th>
-
-                                <th class="py-3">
-                                    <?php echo sortLink('payment', $sort, $order); ?> Payment</a>
-                                </th>
-                                
+                                <th class="py-3"><?php echo sortLink('payment', 'Payment (Due)', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (count($clients) > 0): ?>
                             <?php 
-                                $sl_no = 1; // Initialize Counter
+                                $sl_no = 1; // Serial Number Counter
                                 foreach ($clients as $client): 
-                                    $due = $client['due_calc'];
+                                    $due = $client['due_val'];
                                     
                                     // Status Badge Logic
-                                    if ($client['contract_value'] == 0) {
-                                        $status_badge = '<span class="badge bg-secondary">No Contract</span>';
-                                    } elseif ($due <= 0) {
-                                        $status_badge = '<span class="badge bg-success text-dark">Paid</span>';
-                                    } elseif ($client['total_paid'] > 0) {
-                                        $status_badge = '<span class="badge bg-warning text-dark">Partial</span>';
-                                    } else {
-                                        $status_badge = '<span class="badge bg-danger">Unpaid</span>';
-                                    }
+                                    if ($client['contract_value'] == 0) $status_badge = '<span class="badge bg-secondary">No Contract</span>';
+                                    elseif ($due <= 0) $status_badge = '<span class="badge bg-success text-dark">Paid</span>';
+                                    elseif ($client['total_paid'] > 0) $status_badge = '<span class="badge bg-warning text-dark">Partial</span>';
+                                    else $status_badge = '<span class="badge bg-danger">Unpaid</span>';
 
-                                    // Progress Bar Color
-                                    $prog = $client['progress_calc'];
-                                    $prog_color = 'bg-danger'; 
-                                    if($prog > 30) $prog_color = 'bg-warning';
-                                    if($prog > 70) $prog_color = 'bg-info';
-                                    if($prog == 100) $prog_color = 'bg-success';
+                                    // Progress Color
+                                    $prog = round($client['progress_val']);
+                                    $prog_color = ($prog == 100) ? 'bg-success' : (($prog > 30) ? 'bg-warning' : 'bg-danger');
                             ?>
                             <tr>
                                 <td class="ps-4 text-white-50 fw-bold"><?php echo $sl_no++; ?></td>
 
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-icon me-3">
+                                        <div class="avatar-icon me-3 flex-shrink-0">
                                             <i class="bi bi-building"></i>
                                         </div>
                                         <div>
                                             <div class="fw-bold text-white"><?php echo htmlspecialchars($client['company_name']); ?></div>
                                             <div class="small text-white-50"><?php echo htmlspecialchars($client['client_name']); ?></div>
                                         </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 6px; background: rgba(255,255,255,0.1); width: 80px;">
+                                            <div class="progress-bar <?php echo $prog_color; ?>" role="progressbar" style="width: <?php echo $prog; ?>%"></div>
+                                        </div>
+                                        <span class="small text-white fw-bold"><?php echo $prog; ?>%</span>
+                                    </div>
+                                    <div class="text-white-50" style="font-size: 0.7rem;">
+                                        <?php echo $client['approved_count']; ?>/8 Approved
                                     </div>
                                 </td>
 
@@ -160,18 +164,6 @@ function sortLink($key, $currentSort, $currentOrder) {
                                             <i class="bi bi-telephone text-gold me-2"></i>
                                             <span class="text-white-50 small"><?php echo htmlspecialchars($client['phone_number']); ?></span>
                                         </div>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" style="height: 6px; background: rgba(255,255,255,0.1); width: 80px;">
-                                            <div class="progress-bar <?php echo $prog_color; ?>" role="progressbar" style="width: <?php echo $prog; ?>%"></div>
-                                        </div>
-                                        <span class="small text-white fw-bold"><?php echo $prog; ?>%</span>
-                                    </div>
-                                    <div class="text-white-50" style="font-size: 0.7rem; margin-top: 2px;">
-                                        <?php echo $client['approved_count']; ?>/8 Approved
                                     </div>
                                 </td>
 
@@ -194,9 +186,6 @@ function sortLink($key, $currentSort, $currentOrder) {
                                             title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <button class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100" title="View Details">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
