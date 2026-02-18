@@ -10,14 +10,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pass  = $_POST['password'] ?? '';
     $token = $_POST['csrf_token'] ?? '';
 
-    // Attempt login using your rooqflow database
+    // Attempt login
     if ($auth->login($user, $pass, $token)) {
-        header("Location: ../portal/dashboard.php");
+        // Login Successful - Check Role for Redirect
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'client') {
+            // Redirect Client
+            header("Location: ../management/dashboard.php");
+        } else {
+            // Redirect Admin/Staff
+            header("Location: ../portal/dashboard.php");
+        }
         exit();
     } else {
-        session_start();
+        // Login Failed
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $_SESSION['error'] = "Invalid username, password, or security token.";
         header("Location: login.php");
         exit();
     }
+} else {
+    // If accessed directly without POST
+    header("Location: login.php");
+    exit();
 }
