@@ -2,12 +2,17 @@
 // portal/clients.php
 require_once 'includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
+require_once __DIR__ . '/../app/Helpers/ProgressCalc.php';
 
-// 1. Fetch Clients (Removed license_scope)
+
+// 1. Fetch Clients with Workflow Data
 $db = (new Database())->getConnection();
 $query = "SELECT c.*, 
+          w.hire_foreign_company, w.misa_application, w.sbc_application, 
+          w.article_association, w.qiwa, w.muqeem, w.gosi, w.chamber_commerce,
           COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
           FROM clients c 
+          LEFT JOIN workflow_tracking w ON c.client_id = w.client_id 
           ORDER BY c.created_at DESC";
 $stmt = $db->prepare($query);
 $stmt->execute();
@@ -34,6 +39,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th class="py-3 ps-4 text-gold text-uppercase small">ID</th>
                         <th class="py-3 text-gold text-uppercase small">Company Info</th>
                         <th class="py-3 text-gold text-uppercase small">Contact Details</th>
+                        <th class="py-3 text-gold text-uppercase small" style="width: 15%;">Progress</th>
                         <th class="py-3 text-gold text-uppercase small">Payment</th>
                         <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                     </tr>
@@ -53,13 +59,40 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         } else {
                             $status_badge = '<span class="badge bg-danger">Unpaid</span>';
                         }
+                        // 1. Calculate Progress for 8 specific steps
+                $steps_to_check = [
+                    $client['hire_foreign_company'] ?? '',
+                    $client['misa_application'] ?? '',
+                    $client['sbc_application'] ?? '',
+                    $client['article_association'] ?? '',
+                    $client['qiwa'] ?? '',
+                    $client['muqeem'] ?? '',
+                    $client['gosi'] ?? '',
+                    $client['chamber_commerce'] ?? ''
+                ];
+
+                $total_steps = 8;
+                $approved_count = 0;
+                foreach($steps_to_check as $status) {
+                    if($status === 'Approved') {
+                        $approved_count++;
+                    }
+                }
+                
+                $progress_percent = round(($approved_count / $total_steps) * 100);
+
+                // Dynamic Color
+                $prog_color = 'bg-danger'; 
+                if($progress_percent > 30) $prog_color = 'bg-warning';
+                if($progress_percent > 70) $prog_color = 'bg-info';
+                if($progress_percent == 100) $prog_color = 'bg-success';
                     ?>
                     <tr>
                         <td class="ps-4 text-white-50">#<?php echo $client['client_id']; ?></td>
 
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar-icon me-3">
+                                <div class="avatar-icon me-3" style="width: 40px; height: 40px; border-radius: 10px;font-size:1.2rem">
                                     <i class="bi bi-building"></i>
                                 </div>
                                 <div>
@@ -77,6 +110,19 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         class="bi bi-envelope me-2"></i><?php echo htmlspecialchars($client['email']); ?></span>
                                 <span class="text-white-50"><i
                                         class="bi bi-telephone me-2"></i><?php echo htmlspecialchars($client['phone_number']); ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-2"
+                                    style="height: 6px; background: rgba(255,255,255,0.1); width: 80px;">
+                                    <div class="progress-bar <?php echo $prog_color; ?>" role="progressbar"
+                                        style="width: <?php echo $progress_percent; ?>%"></div>
+                                </div>
+                                <span class="small text-white fw-bold"><?php echo $progress_percent; ?>%</span>
+                            </div>
+                            <div class="text-white-50" style="font-size: 0.7rem; margin-top: 2px;">
+                                <?php echo $approved_count; ?>/8 Approved
                             </div>
                         </td>
                         <td>
