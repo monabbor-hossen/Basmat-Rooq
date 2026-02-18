@@ -105,8 +105,8 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 <th class="py-3 ps-4"><?php echo sortLink('id', 'ID', $sort, $next_dir); ?></th>
                                 
                                 <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
-                                <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
+                                <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
@@ -141,17 +141,6 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                     </div>
                                 </td>
 
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" style="height: 6px; background: rgba(255,255,255,0.1); width: 80px;">
-                                            <div class="progress-bar <?php echo $prog_color; ?>" role="progressbar" style="width: <?php echo $prog; ?>%"></div>
-                                        </div>
-                                        <span class="small text-white fw-bold"><?php echo $prog; ?>%</span>
-                                    </div>
-                                    <div class="text-white-50" style="font-size: 0.7rem;">
-                                        <?php echo $client['approved_count']; ?>/8 Approved
-                                    </div>
-                                </td>
 
                                 <td>
                                     <div class="d-flex flex-column gap-1">
@@ -163,6 +152,17 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                             <i class="bi bi-telephone text-gold me-2"></i>
                                             <span class="text-white-50 small"><?php echo htmlspecialchars($client['phone_number']); ?></span>
                                         </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 6px; background: rgba(255,255,255,0.1); width: 80px;">
+                                            <div class="progress-bar <?php echo $prog_color; ?>" role="progressbar" style="width: <?php echo $prog; ?>%"></div>
+                                        </div>
+                                        <span class="small text-white fw-bold"><?php echo $prog; ?>%</span>
+                                    </div>
+                                    <div class="text-white-50" style="font-size: 0.7rem;">
+                                        <?php echo $client['approved_count']; ?>/8 Approved
                                     </div>
                                 </td>
 
