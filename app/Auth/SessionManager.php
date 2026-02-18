@@ -1,10 +1,10 @@
 <?php
 // app/Auth/SessionManager.php
 
-// 1. Initialize dependencies
 require_once dirname(__DIR__) . '/Config/Config.php';
 require_once dirname(__DIR__) . '/Config/Database.php';
 require_once dirname(__DIR__) . '/Helpers/Security.php';
+require_once dirname(__DIR__) . '/Helpers/RateLimiter.php'; // Load RateLimiter
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -12,24 +12,33 @@ if (session_status() === PHP_SESSION_NONE) {
 
 class SessionManager {
     private $db;
+    private $limiter;
 
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
+        $this->limiter = new RateLimiter(); // Initialize Limiter
     }
 
     /**
-     * Secure Login Function (Checks Admins AND Clients)
+     * Secure Login with Rate Limiting
+     * Returns TRUE on success, or throws Exception with error message on failure.
      */
     public function login($username, $password, $csrf_token) {
-        // A. Validate CSRF Token
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        // 1. Check Rate Limit
+        if ($this->limiter->isLocked($ip)) {
+            throw new Exception("Security Alert: Too many failed attempts. Your IP is locked for 15 minutes.");
+        }
+
+        // 2. Validate CSRF
         Security::checkCSRF($csrf_token);
 
-        // B. Sanitize input
         $clean_user = Security::clean($username);
 
         try {
-            // --- CHECK 1: ADMIN/STAFF (users table) ---
+            // --- CHECK ADMIN ---
             $query = "SELECT id, username, password, role FROM users WHERE username = :user LIMIT 1";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user', $clean_user);
@@ -38,53 +47,52 @@ class SessionManager {
 
             if ($user && password_verify($password, $user['password'])) {
                 $this->createSession($user, 'internal');
+                $this->limiter->reset($ip); // Login Success -> Reset Fail Counter
                 return true;
             }
 
-            // --- CHECK 2: CLIENTS (client_accounts table) ---
+            // --- CHECK CLIENT ---
             $query2 = "SELECT account_id, client_id, username, password_hash FROM client_accounts WHERE username = :user LIMIT 1";
             $stmt2 = $this->db->prepare($query2);
             $stmt2->bindParam(':user', $clean_user);
             $stmt2->execute();
             $client = $stmt2->fetch(PDO::FETCH_ASSOC);
 
-            // Note: client_add.php used 'password_hash' column
             if ($client && password_verify($password, $client['password_hash'])) {
                 $this->createSession($client, 'client');
+                $this->limiter->reset($ip); // Login Success -> Reset Fail Counter
                 return true;
             }
 
-            return false;
+            // 3. Login Failed -> Increment Counter
+            $error_msg = $this->limiter->increment($ip);
+            throw new Exception($error_msg);
 
         } catch (PDOException $e) {
             error_log("Auth Error: " . $e->getMessage());
-            return false;
+            throw new Exception("System error occurred.");
         }
     }
 
-    /**
-     * Establish Secure Session Data
-     */
     private function createSession($data, $type) {
         if ($type === 'internal') {
-            // Admin / Staff
             $_SESSION['user_id'] = $data['id'];
-            $_SESSION['role'] = $data['role']; // 'admin', 'manager', etc.
+            $_SESSION['role'] = $data['role'];
             $_SESSION['user_type'] = 'internal';
         } else {
-            // Client
-            $_SESSION['user_id'] = $data['account_id']; // Use account ID as user_id
-            $_SESSION['client_id'] = $data['client_id']; // Store specific client ID
+            $_SESSION['user_id'] = $data['account_id'];
+            $_SESSION['client_id'] = $data['client_id'];
             $_SESSION['role'] = 'client';
             $_SESSION['user_type'] = 'external';
         }
-
         $_SESSION['username'] = $data['username'];
         $_SESSION['last_regen'] = time();
-        
-        // Prevent Session Hijacking
         session_regenerate_id(true);
     }
+    
+    // ... logout and other methods remain the same
+
+
 
     /**
      * Logout
