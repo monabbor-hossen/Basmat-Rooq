@@ -102,13 +102,13 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                     <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.05);">
-                                <th class="py-3 ps-4"><?php echo sortLink('id', 'ID', $sort, $next_dir); ?></th>
+                                <th class="py-3 ps-2 text-end"><?php echo sortLink('id', 'ID', $sort, $next_dir); ?></th>
                                 
                                 <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
                                 <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
-                                <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
+                                <th class="py-3 text-center pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -177,6 +177,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                     <div class="btn-group">
                                         <a href="client-finance.php?id=<?php echo $client['client_id']; ?>" class="btn btn-sm btn-outline-warning border-0 opacity-75 hover-opacity-100"><i class="bi bi-cash-stack"></i></a>
                                         <a href="client-edit.php?id=<?php echo $client['client_id']; ?>" class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="#" class="btn btn-sm btn-outline-info text-light border-0 opacity-50 hover-opacity-100"><i class="bi bi-eye"></i></a>
                                     </div>
                                 </td>
                             </tr>
