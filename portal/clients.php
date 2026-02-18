@@ -105,11 +105,16 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </td>
 
                         <td>
-                            <div class="d-flex flex-column small">
-                                <span class="text-white-50"><i
-                                        class="bi bi-envelope me-2"></i><?php echo htmlspecialchars($client['email']); ?></span>
-                                <span class="text-white-50"><i
-                                        class="bi bi-telephone me-2"></i><?php echo htmlspecialchars($client['phone_number']); ?></span>
+                            <div class="d-flex flex-column gap-1">
+                                <div class="d-flex align-items-center text-nowrap">
+                                    <i class="bi bi-envelope text-gold me-2"></i>
+                                    <span class="text-white-50 small"><?php echo htmlspecialchars($client['email']); ?></span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center text-nowrap">
+                                    <i class="bi bi-telephone text-gold me-2"></i>
+                                    <span class="text-white-50 small"><?php echo htmlspecialchars($client['phone_number']); ?></span>
+                                </div>
                             </div>
                         </td>
                         <td>
@@ -178,6 +183,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         justify-content: center;
         font-size: 1.2rem;
         border: 1px solid rgba(212, 175, 55, 0.2);
+        flex-shrink: 0;
     }
 </style>
 <?php 
