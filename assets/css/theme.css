@@ -229,39 +229,46 @@ select.glass-input option {
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
 }
 
-    .workflow-card {
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-    .workflow-card:hover {
-        background: rgba(212, 175, 55, 0.05);
-        border-color: rgba(212, 175, 55, 0.3);
-    }
+.workflow-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
 
-    .glass-select-sm {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #D4AF37;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-    .glass-select-sm option {
-        background-color: #33000d;
-        color: white;
-        padding: 8px;
-    }
-.glass-modal { background: rgba(20, 5, 10, 0.98); backdrop-filter: blur(20px); border: 1px solid #D4AF37; }
+.workflow-card:hover {
+    background: rgba(212, 175, 55, 0.05);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.glass-select-sm {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #D4AF37;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.glass-select-sm option {
+    background-color: #33000d;
+    color: white;
+    padding: 8px;
+}
+
+.glass-modal {
+    background: rgba(20, 5, 10, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid #D4AF37;
+}
 
 /* Fix autofill background color in Chrome */
-input:-webkit-autofill,
+/* input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
     -webkit-text-fill-color: white;
     -webkit-box-shadow: 0 0 0px 1000px #2b0c16 inset;
-    transition: background-color 5000s ease-in-out 0s;
-}
+    transition: background-color 5s ease-in-out 0s;
+} */
 
 
 
@@ -392,5 +399,3 @@ input:-webkit-autofill:focus {
 .table-hover tbody tr:hover {
     background: rgba(255, 255, 255, 0.05);
 }
-
-
