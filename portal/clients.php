@@ -5,7 +5,7 @@ require_once __DIR__ . '/../app/Config/Database.php';
 
 $db = (new Database())->getConnection();
 
-// 1. Fetch Clients with Workflow Status (Needed for Progress)
+// 1. Fetch Clients
 $query = "SELECT c.*, 
           w.hire_foreign_company, w.misa_application, w.sbc_application, 
           w.article_association, w.qiwa, w.muqeem, w.gosi, w.chamber_commerce,
@@ -18,7 +18,7 @@ $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 2. Pre-calculate Data for Sorting
 foreach ($clients as &$client) {
-    // A. Calculate Progress %
+    // Progress Calculation
     $steps_to_check = [
         $client['hire_foreign_company'] ?? '', $client['misa_application'] ?? '',
         $client['sbc_application'] ?? '',      $client['article_association'] ?? '',
@@ -30,14 +30,14 @@ foreach ($clients as &$client) {
     $client['progress_val'] = ($approved_count / 8) * 100;
     $client['approved_count'] = $approved_count;
 
-    // B. Calculate Payment (Due Amount)
+    // Due Amount Calculation
     $client['due_val'] = $client['contract_value'] - $client['total_paid'];
 }
-unset($client); // Break reference
+unset($client);
 
-// 3. Handle Sorting Logic
-$sort = $_GET['sort'] ?? 'sl'; // Default sort
-$dir  = $_GET['dir'] ?? 'desc'; // Default direction
+// 3. Sorting Logic
+$sort = $_GET['sort'] ?? 'id'; // Default to ID
+$dir  = $_GET['dir'] ?? 'desc'; // Default Descending
 $next_dir = ($dir === 'asc') ? 'desc' : 'asc';
 
 usort($clients, function($a, $b) use ($sort, $dir) {
@@ -56,7 +56,7 @@ usort($clients, function($a, $b) use ($sort, $dir) {
             $valA = $a['progress_val'];
             $valB = $b['progress_val'];
             break;
-        case 'sl':
+        case 'id':
         default:
             $valA = $a['client_id'];
             $valB = $b['client_id'];
@@ -65,12 +65,12 @@ usort($clients, function($a, $b) use ($sort, $dir) {
 
     if ($valA == $valB) return 0;
     
-    // Numeric comparison
+    // Numeric Sort
     if ($dir === 'asc') return ($valA < $valB) ? -1 : 1;
     else return ($valA > $valB) ? -1 : 1;
 });
 
-// Helper function for sort links
+// Helper for Links
 function sortLink($key, $label, $currentSort, $nextDir) {
     $active = ($currentSort === $key) ? 'text-white fw-bold' : 'text-gold';
     $icon = '';
@@ -102,19 +102,18 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                     <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.05);">
-                                <th class="py-3 ps-4"><?php echo sortLink('sl', 'SL NO', $sort, $next_dir); ?></th>
+                                <th class="py-3 ps-4"><?php echo sortLink('id', 'ID', $sort, $next_dir); ?></th>
+                                
                                 <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
                                 <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
-                                <th class="py-3"><?php echo sortLink('payment', 'Payment (Due)', $sort, $next_dir); ?></th>
+                                <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (count($clients) > 0): ?>
-                            <?php 
-                                $sl_no = 1; // Serial Number Counter
-                                foreach ($clients as $client): 
+                            <?php foreach ($clients as $client): 
                                     $due = $client['due_val'];
                                     
                                     // Status Badge Logic
@@ -123,12 +122,12 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                     elseif ($client['total_paid'] > 0) $status_badge = '<span class="badge bg-warning text-dark">Partial</span>';
                                     else $status_badge = '<span class="badge bg-danger">Unpaid</span>';
 
-                                    // Progress Color
+                                    // Progress Logic
                                     $prog = round($client['progress_val']);
                                     $prog_color = ($prog == 100) ? 'bg-success' : (($prog > 30) ? 'bg-warning' : 'bg-danger');
                             ?>
                             <tr>
-                                <td class="ps-4 text-white-50 fw-bold"><?php echo $sl_no++; ?></td>
+                                <td class="ps-4 text-white-50 fw-bold">#<?php echo $client['client_id']; ?></td>
 
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -176,24 +175,14 @@ function sortLink($key, $label, $currentSort, $nextDir) {
 
                                 <td class="text-end pe-4">
                                     <div class="btn-group">
-                                        <a href="client-finance.php?id=<?php echo $client['client_id']; ?>"
-                                            class="btn btn-sm btn-outline-warning border-0 opacity-75 hover-opacity-100"
-                                            title="Manage Finance">
-                                            <i class="bi bi-cash-stack"></i>
-                                        </a>
-                                        <a href="client-edit.php?id=<?php echo $client['client_id']; ?>"
-                                            class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100"
-                                            title="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                        <a href="client-finance.php?id=<?php echo $client['client_id']; ?>" class="btn btn-sm btn-outline-warning border-0 opacity-75 hover-opacity-100"><i class="bi bi-cash-stack"></i></a>
+                                        <a href="client-edit.php?id=<?php echo $client['client_id']; ?>" class="btn btn-sm btn-outline-light border-0 opacity-50 hover-opacity-100"><i class="bi bi-pencil-square"></i></a>
                                     </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="6" class="text-center py-5 text-white-50">No clients found.</td>
-                            </tr>
+                            <tr><td colspan="6" class="text-center py-5 text-white-50">No clients found.</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -205,17 +194,9 @@ function sortLink($key, $label, $currentSort, $nextDir) {
 
 <style>
     .avatar-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(212, 175, 55, 0.1);
-        color: #D4AF37;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        flex-shrink: 0;
+        width: 40px; height: 40px; background: rgba(212, 175, 55, 0.1);
+        color: #D4AF37; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; border: 1px solid rgba(212, 175, 55, 0.2);
     }
 </style>
 
