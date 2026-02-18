@@ -10,73 +10,67 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// app/Auth/SessionManager.php
+
 class SessionManager {
-    private $db;
-
-    public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
-    }
-
     /**
-     * Secure Login Function
+     * Start the session securely with best-practice settings.
      */
-    public function login($username, $password, $csrf_token) {
-        // A. Validate CSRF Token for security
-        Security::checkCSRF($csrf_token);
-
-        // B. Sanitize inputs to prevent XSS and SQL Injection
-        $clean_user = Security::clean($username);
-
-        try {
-            // C. Securely query the 'rooqflow' database
-            $query = "SELECT id, username, password, role FROM users WHERE username = :user LIMIT 1";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':user', $clean_user);
-            $stmt->execute();
-
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // D. Verify password (assuming use of password_hash in DB)
-            if ($user && password_verify($password, $user['password'])) {
-                $this->createSession($user);
-                return true;
+    public static function start() {
+        if (session_status() === PHP_SESSION_NONE) {
+            // Security Settings
+            ini_set('session.use_only_cookies', 1);
+            ini_set('session.use_strict_mode', 1);
+            ini_set('session.cookie_httponly', 1);
+            
+            // Allow secure cookies if running on HTTPS
+            $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+            if ($secure) {
+                ini_set('session.cookie_secure', 1);
             }
-            return false;
-        } catch (PDOException $e) {
-            error_log("Auth Error: " . $e->getMessage());
-            return false;
+
+            session_set_cookie_params([
+                'lifetime' => 0, // Session cookie (until browser closes)
+                'path' => '/',
+                'domain' => '', 
+                'secure' => $secure,
+                'httponly' => true,
+                'samesite' => 'Strict'
+            ]);
+
+            session_start();
         }
     }
 
     /**
-     * Establish Secure Session Data
+     * Regenerate session ID to prevent Session Fixation attacks.
+     * Call this immediately after a successful login.
      */
-    private function createSession($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['last_regen'] = time();
-        
-        // Prevent Session Hijacking by regenerating ID
-        session_regenerate_id(true);
+    public static function regenerate() {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
     }
 
     /**
-     * Logout and destroy session
+     * Destroy the session (Logout).
      */
-    public function logout() {
-        $_SESSION = array();
-        session_destroy();
-        header("Location: " . BASE_URL . "public/login.php");
-        exit();
+    public static function destroy() {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_unset();
+            session_destroy();
+        }
     }
-
+    
     /**
-     * Check if user is logged in
+     * Check if a specific role is logged in.
      */
-    public static function isLoggedIn() {
-        return isset($_SESSION['user_id']);
+    public static function requireRole($role) {
+        self::start();
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== $role) {
+            header("Location: ../public/login.php");
+            exit();
+        }
     }
 }
 ?>
