@@ -399,3 +399,56 @@ input:-webkit-autofill:focus {
 .table-hover tbody tr:hover {
     background: rgba(255, 255, 255, 0.05);
 }
+
+/* --- View Modal Styles --- */
+.view-section-title {
+    color: #D4AF37;
+    /* Gold */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    margin-top: 20px;
+}
+
+.view-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.view-value {
+    color: white;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+
+.view-badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.badge-approved {
+    background: rgba(25, 135, 84, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(25, 135, 84, 0.3);
+}
+
+.badge-pending {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.badge-default {
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
