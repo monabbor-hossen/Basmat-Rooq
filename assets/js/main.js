@@ -185,3 +185,87 @@ function toggleMobileSearch() {
         }
     }
 }
+
+/* --- Live Search Logic --- */
+document.addEventListener("DOMContentLoaded", function() {
+    setupLiveSearch('desktopSearchInput', 'desktopSearchResults');
+    setupLiveSearch('mobileSearchInput', 'mobileSearchResults');
+});
+
+function setupLiveSearch(inputId, resultsId) {
+    const input = document.getElementById(inputId);
+    const resultsBox = document.getElementById(resultsId);
+
+    if (!input || !resultsBox) return;
+
+    let timeout = null;
+
+    input.addEventListener('input', function() {
+        clearTimeout(timeout);
+        const term = this.value.trim();
+
+        if (term.length < 2) {
+            resultsBox.classList.add('d-none');
+            return;
+        }
+
+        // Debounce API Call (Wait 300ms after typing stops)
+        timeout = setTimeout(() => {
+            fetch(`search_api.php?term=${encodeURIComponent(term)}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsBox.innerHTML = '';
+                    
+                    if (data.length > 0) {
+                        resultsBox.classList.remove('d-none');
+                        data.forEach(client => {
+                            // Create List Item
+                            const item = document.createElement('div');
+                            item.className = 'search-result-item p-2 border-bottom border-secondary border-opacity-25';
+                            item.style.cursor = 'pointer';
+                            
+                            // Highlight matching text logic could go here, keeping it simple:
+                            item.innerHTML = `
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-gold text-dark rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:30px;height:30px;font-weight:bold;">
+                                        ${client.company_name.substring(0,1).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <div class="text-white small fw-bold">${client.company_name}</div>
+                                        <div class="text-white-50" style="font-size: 0.7rem;">#${client.client_id} • ${client.email}</div>
+                                    </div>
+                                </div>
+                            `;
+
+                            // CLICK ACTION: Open Modal
+                            item.addEventListener('click', () => {
+                                // We simulate the button object expected by openViewModal
+                                // We reuse the function defined in previous answers
+                                const dummyBtn = document.createElement('button');
+                                dummyBtn.setAttribute('data-client', JSON.stringify(client));
+                                openViewModal(dummyBtn);
+                                
+                                // Hide results and mobile overlay
+                                resultsBox.classList.add('d-none');
+                                input.value = ''; // Clear input
+                                toggleMobileSearch(); // Close mobile overlay if open
+                            });
+
+                            resultsBox.appendChild(item);
+                        });
+                    } else {
+                        resultsBox.classList.add('d-none');
+                    }
+                })
+                .catch(err => console.error('Search Error:', err));
+        }, 300);
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
+            resultsBox.classList.add('d-none');
+        }
+    });
+}
+

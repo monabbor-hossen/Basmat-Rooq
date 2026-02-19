@@ -46,15 +46,16 @@ $text = $translator->getTranslation($lang);
             </a>
         </div>
 
-        <div class="search-container d-none d-lg-block mx-auto">
-            <form action="clients.php" method="GET">
+        <div class="search-container d-none d-lg-block mx-auto position-relative">
+            <form action="clients.php" method="GET" autocomplete="off">
                 <div class="input-group glass-search">
                     <span class="input-group-text bg-transparent border-0 text-white-50"><i class="bi bi-search"></i></span>
-                    <input type="text" name="search" class="form-control bg-transparent ps-0 border-0 text-white" 
+                    <input type="text" name="search" id="desktopSearchInput" class="form-control bg-transparent ps-0 border-0 text-white" 
                            placeholder="Search licenses, clients..." 
                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                 </div>
             </form>
+            <div id="desktopSearchResults" class="search-results-dropdown d-none"></div>
         </div>
 
         <div class="d-flex align-items-center gap-sm-4 gap-3">
@@ -99,21 +100,20 @@ $text = $translator->getTranslation($lang);
 </header>
 
 <div id="mobileSearchOverlay" class="d-none">
-    <div class="glass-search-popup p-4">
+    <div class="glass-search-popup p-4 position-relative">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="text-white fw-bold m-0">Search</h5>
             <button type="button" class="btn-close btn-close-white" onclick="toggleMobileSearch()"></button>
         </div>
-        <form action="clients.php" method="GET">
+        <form action="clients.php" method="GET" autocomplete="off">
             <div class="input-group border-bottom border-secondary">
-                <span class="input-group-text bg-transparent border-0 text-gold ps-0">
-                    <i class="bi bi-search fs-5"></i>
-                </span>
-                <input type="text" name="search" class="form-control bg-transparent border-0 text-white shadow-none fs-5" 
+                <span class="input-group-text bg-transparent border-0 text-gold ps-0"><i class="bi bi-search fs-5"></i></span>
+                <input type="text" name="search" id="mobileSearchInput" class="form-control bg-transparent border-0 text-white shadow-none fs-5" 
                        placeholder="Type name, ID, or email..." autofocus>
                 <button class="btn btn-sm btn-gold rounded-pill px-3" type="submit">GO</button>
             </div>
         </form>
+        <div id="mobileSearchResults" class="search-results-dropdown d-none" style="top: 140px; width: 88%; left: 6%;"></div>
     </div>
 </div>
 

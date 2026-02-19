@@ -218,9 +218,40 @@ select.glass-input option {
     color: rgba(255, 255, 255, 0.3);
 }
 
+/* --- Live Search Dropdown --- */
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 0 0 15px 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1050;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+}
 
+.search-result-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
 
+.search-result-item:last-child {
+    border-bottom: none !important;
+}
 
+/* Scrollbar for results */
+.search-results-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+.search-results-dropdown::-webkit-scrollbar-thumb {
+    background: #D4AF37;
+    border-radius: 3px;
+}
+
+/***************************************************/
 .avatar-icon {
     width: 60px;
     height: 60px;
