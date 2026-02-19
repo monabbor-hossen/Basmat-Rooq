@@ -3,9 +3,7 @@ require_once __DIR__ . '/../../app/Config/Config.php';
 require_once __DIR__ . '/../../app/Helpers/Security.php';
 require_once __DIR__ . '/../../app/Helpers/Translator.php';
 
-// Check Login using your SessionManager or Security helper
-// Security::requireLogin(); 
-// (Assuming session is started in Config or Security)
+// Security::requireLogin(); // Uncomment if you use this
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 $lang = $_SESSION['lang'] ?? 'en';
@@ -46,21 +44,19 @@ $text = $translator->getTranslation($lang);
             </a>
         </div>
 
-        <div class="search-container d-none d-lg-block mx-auto position-relative">
+        <div class="search-container d-none d-md-block mx-auto position-relative">
             <form action="clients.php" method="GET" autocomplete="off">
                 <div class="input-group glass-search">
                     <span class="input-group-text bg-transparent border-0 text-white-50"><i class="bi bi-search"></i></span>
-                    <input type="text" name="search" id="desktopSearchInput" class="form-control bg-transparent ps-0 border-0 text-white" 
-                           placeholder="Search licenses, clients..." 
-                           value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <input type="text" name="search" id="desktopSearchInput" class="form-control bg-transparent border-0 text-white" placeholder="Search licenses, clients..." aria-label="Search">
                 </div>
             </form>
             <div id="desktopSearchResults" class="search-results-dropdown d-none"></div>
         </div>
 
-        <div class="d-flex align-items-center gap-sm-4 gap-3">
+        <div class="d-flex align-items-center gap-sm-4 gap-2 ">
             
-            <button class="btn btn-link text-white p-0 d-lg-none opacity-75 hover-gold" onclick="toggleMobileSearch()">
+            <button class="btn btn-link text-white p-0 d-md-none opacity-75 hover-gold" onclick="toggleMobileSearch()">
                 <i class="bi bi-search fs-5"></i>
             </button>
 
@@ -71,22 +67,18 @@ $text = $translator->getTranslation($lang);
 
             <div class="dropdown">
                 <div class="profile-trigger-refined d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false">
-                    
                     <div class="text-end d-none d-lg-block">
-                        <div class="user-name-text"><?php echo htmlspecialchars($username); ?></div>
+                        <div class="user-name-text"><?php echo $username; ?></div>
                         <div class="user-role-text text-uppercase">Admin</div>
                     </div>
-                    
                     <div class="avatar-circle-refined">
                         <?php echo strtoupper(substr($username, 0, 2)); ?>
                     </div>
-
                     <i class="bi bi-chevron-down dropdown-chevron" style=" margin-left: 5px;"></i>
                 </div>
-
                 <ul class="dropdown-menu dropdown-menu-end glass-dropdown mt-3 shadow-lg border-0" style="background: rgba(20, 20, 20, 0.95);">
                     <li class="d-lg-none px-3 py-2 text-white fw-bold border-bottom border-secondary border-opacity-25 mb-2">
-                        <?php echo htmlspecialchars($username); ?> <br>
+                        <?php echo $username; ?> <br>
                         <small class="text-gold">Admin</small>
                     </li>
                     <li><a class="dropdown-item text-white-50 hover-white" href="profile.php"><i class="bi bi-person-gear me-2 text-gold"></i> Settings</a></li>
@@ -108,8 +100,7 @@ $text = $translator->getTranslation($lang);
         <form action="clients.php" method="GET" autocomplete="off">
             <div class="input-group border-bottom border-secondary">
                 <span class="input-group-text bg-transparent border-0 text-gold ps-0"><i class="bi bi-search fs-5"></i></span>
-                <input type="text" name="search" id="mobileSearchInput" class="form-control bg-transparent border-0 text-white shadow-none fs-5" 
-                       placeholder="Type name, ID, or email..." autofocus>
+                <input type="text" name="search" id="mobileSearchInput" class="form-control bg-transparent border-0 text-white shadow-none fs-5" placeholder="Type name..." autofocus>
                 <button class="btn btn-sm btn-gold rounded-pill px-3" type="submit">GO</button>
             </div>
         </form>
@@ -119,5 +110,4 @@ $text = $translator->getTranslation($lang);
 
 <div class="d-flex portal-wrapper">
     <?php require_once 'sidebar.php'; ?>
-    
     <main class="w-100 p-4">

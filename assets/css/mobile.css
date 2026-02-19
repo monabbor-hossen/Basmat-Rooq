@@ -64,27 +64,3 @@
     .profile-trigger { padding: 4px !important; }
 }
 
-/* --- Mobile Search Overlay --- */
-#mobileSearchOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9); /* Dark background */
-    z-index: 9999;
-    backdrop-filter: blur(8px); /* Blur effect */
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 15vh; /* Starts slightly from top */
-}
-
-.glass-search-popup {
-    width: 90%;
-    max-width: 600px;
-    background: #1a1a1a;
-    border: 1px solid rgba(212, 175, 55, 0.3); /* Gold border */
-    border-radius: 15px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}

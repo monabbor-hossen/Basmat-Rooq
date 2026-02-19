@@ -169,23 +169,6 @@ function openViewModal(button) {
     if(viewModalElement) viewModalElement.show();
 }
 
-/* --- Mobile Search Toggle --- */
-function toggleMobileSearch() {
-    var overlay = document.getElementById('mobileSearchOverlay');
-    if (overlay) {
-        if (overlay.classList.contains('d-none')) {
-            // Show Overlay
-            overlay.classList.remove('d-none');
-            // Focus on the input automatically
-            var input = overlay.querySelector('input');
-            if(input) setTimeout(() => input.focus(), 100);
-        } else {
-            // Hide Overlay
-            overlay.classList.add('d-none');
-        }
-    }
-}
-
 /* --- Live Search Logic --- */
 document.addEventListener("DOMContentLoaded", function() {
     setupLiveSearch('desktopSearchInput', 'desktopSearchResults');
@@ -209,48 +192,37 @@ function setupLiveSearch(inputId, resultsId) {
             return;
         }
 
-        // Debounce API Call (Wait 300ms after typing stops)
+        // 300ms Delay to prevent too many requests
         timeout = setTimeout(() => {
-            fetch(`search_api.php?term=${encodeURIComponent(term)}`)
+            fetch(`../portal/search_api.php?term=${encodeURIComponent(term)}`)
                 .then(response => response.json())
                 .then(data => {
                     resultsBox.innerHTML = '';
-                    
                     if (data.length > 0) {
                         resultsBox.classList.remove('d-none');
                         data.forEach(client => {
-                            // Create List Item
+                            // Create Result Item
                             const item = document.createElement('div');
                             item.className = 'search-result-item p-2 border-bottom border-secondary border-opacity-25';
                             item.style.cursor = 'pointer';
-                            
-                            // Highlight matching text logic could go here, keeping it simple:
                             item.innerHTML = `
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-sm bg-gold text-dark rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:30px;height:30px;font-weight:bold;">
-                                        ${client.company_name.substring(0,1).toUpperCase()}
-                                    </div>
+                                    <div class="avatar-small me-2">${client.company_name.substring(0,1).toUpperCase()}</div>
                                     <div>
                                         <div class="text-white small fw-bold">${client.company_name}</div>
-                                        <div class="text-white-50" style="font-size: 0.7rem;">#${client.client_id} • ${client.email}</div>
+                                        <div class="text-white-50" style="font-size: 0.7rem;">#${client.client_id}</div>
                                     </div>
                                 </div>
                             `;
-
-                            // CLICK ACTION: Open Modal
+                            // Click opens the View Modal
                             item.addEventListener('click', () => {
-                                // We simulate the button object expected by openViewModal
-                                // We reuse the function defined in previous answers
                                 const dummyBtn = document.createElement('button');
                                 dummyBtn.setAttribute('data-client', JSON.stringify(client));
                                 openViewModal(dummyBtn);
-                                
-                                // Hide results and mobile overlay
                                 resultsBox.classList.add('d-none');
-                                input.value = ''; // Clear input
-                                toggleMobileSearch(); // Close mobile overlay if open
+                                input.value = '';
+                                toggleMobileSearch(); // Close mobile overlay
                             });
-
                             resultsBox.appendChild(item);
                         });
                     } else {
@@ -261,7 +233,7 @@ function setupLiveSearch(inputId, resultsId) {
         }, 300);
     });
 
-    // Hide dropdown when clicking outside
+    // Close when clicking outside
     document.addEventListener('click', function(e) {
         if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
             resultsBox.classList.add('d-none');
@@ -269,3 +241,16 @@ function setupLiveSearch(inputId, resultsId) {
     });
 }
 
+// Mobile Toggle Function
+function toggleMobileSearch() {
+    var overlay = document.getElementById('mobileSearchOverlay');
+    if (overlay) {
+        if (overlay.classList.contains('d-none')) {
+            overlay.classList.remove('d-none');
+            var input = overlay.querySelector('input');
+            if(input) setTimeout(() => input.focus(), 100);
+        } else {
+            overlay.classList.add('d-none');
+        }
+    }
+}

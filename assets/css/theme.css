@@ -217,7 +217,6 @@ select.glass-input option {
 .glass-input::placeholder {
     color: rgba(255, 255, 255, 0.3);
 }
-
 /* --- Live Search Dropdown --- */
 .search-results-dropdown {
     position: absolute;
@@ -238,17 +237,26 @@ select.glass-input option {
     background: rgba(212, 175, 55, 0.1);
 }
 
-.search-result-item:last-child {
-    border-bottom: none !important;
+/* Mobile Overlay */
+#mobileSearchOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    padding-top: 15vh;
 }
-
-/* Scrollbar for results */
-.search-results-dropdown::-webkit-scrollbar {
-    width: 6px;
-}
-.search-results-dropdown::-webkit-scrollbar-thumb {
-    background: #D4AF37;
-    border-radius: 3px;
+.glass-search-popup {
+    width: 90%;
+    max-width: 600px;
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 15px;
 }
 
 /***************************************************/
