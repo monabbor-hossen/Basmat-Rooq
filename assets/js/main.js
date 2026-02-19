@@ -170,6 +170,7 @@ function openViewModal(button) {
 }
 
 /* --- Live Search Logic --- */
+/* --- Live Search Logic (Updated for Debugging) --- */
 document.addEventListener("DOMContentLoaded", function() {
     setupLiveSearch('desktopSearchInput', 'desktopSearchResults');
     setupLiveSearch('mobileSearchInput', 'mobileSearchResults');
@@ -192,36 +193,48 @@ function setupLiveSearch(inputId, resultsId) {
             return;
         }
 
-        // 300ms Delay to prevent too many requests
+        // Debounce 300ms
         timeout = setTimeout(() => {
-            fetch(`../portal/search_api.php?term=${encodeURIComponent(term)}`)
-                .then(response => response.json())
+            fetch(`search_api.php?term=${encodeURIComponent(term)}`)
+                .then(async response => {
+                    const text = await response.text(); // Read raw text first
+                    
+                    // Try parsing JSON
+                    try {
+                        const data = JSON.parse(text);
+                        if (!response.ok) throw new Error(data.message || "Server Error " + response.status);
+                        return data;
+                    } catch (e) {
+                        // If JSON parse fails, throw the raw text (HTML Error)
+                        throw new Error("Invalid Response: " + text.substring(0, 100) + "..."); 
+                    }
+                })
                 .then(data => {
                     resultsBox.innerHTML = '';
                     if (data.length > 0) {
                         resultsBox.classList.remove('d-none');
                         data.forEach(client => {
-                            // Create Result Item
                             const item = document.createElement('div');
                             item.className = 'search-result-item p-2 border-bottom border-secondary border-opacity-25';
                             item.style.cursor = 'pointer';
                             item.innerHTML = `
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-small me-2">${client.company_name.substring(0,1).toUpperCase()}</div>
+                                    <div class="avatar-small me-2" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.2);color:#D4AF37;border-radius:50%;font-weight:bold;">
+                                        ${client.company_name.substring(0,1).toUpperCase()}
+                                    </div>
                                     <div>
                                         <div class="text-white small fw-bold">${client.company_name}</div>
                                         <div class="text-white-50" style="font-size: 0.7rem;">#${client.client_id}</div>
                                     </div>
                                 </div>
                             `;
-                            // Click opens the View Modal
                             item.addEventListener('click', () => {
                                 const dummyBtn = document.createElement('button');
                                 dummyBtn.setAttribute('data-client', JSON.stringify(client));
                                 openViewModal(dummyBtn);
                                 resultsBox.classList.add('d-none');
                                 input.value = '';
-                                toggleMobileSearch(); // Close mobile overlay
+                                toggleMobileSearch(); 
                             });
                             resultsBox.appendChild(item);
                         });
@@ -229,11 +242,14 @@ function setupLiveSearch(inputId, resultsId) {
                         resultsBox.classList.add('d-none');
                     }
                 })
-                .catch(err => console.error('Search Error:', err));
+                .catch(err => {
+                    console.error('SEARCH DEBUG ERROR:', err);
+                    // Optional: Alert the user for easier debugging
+                    // alert("Search Error: " + err.message); 
+                });
         }, 300);
     });
 
-    // Close when clicking outside
     document.addEventListener('click', function(e) {
         if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
             resultsBox.classList.add('d-none');
@@ -242,15 +258,18 @@ function setupLiveSearch(inputId, resultsId) {
 }
 
 // Mobile Toggle Function
+/* --- Mobile Search Toggle (Updated) --- */
 function toggleMobileSearch() {
     var overlay = document.getElementById('mobileSearchOverlay');
     if (overlay) {
-        if (overlay.classList.contains('d-none')) {
-            overlay.classList.remove('d-none');
+        // Toggle the 'show' class defined in theme.css
+        if (overlay.classList.contains('show')) {
+            overlay.classList.remove('show');
+        } else {
+            overlay.classList.add('show');
+            // Auto-focus input
             var input = overlay.querySelector('input');
             if(input) setTimeout(() => input.focus(), 100);
-        } else {
-            overlay.classList.add('d-none');
         }
     }
 }

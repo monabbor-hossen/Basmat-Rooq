@@ -1,14 +1,16 @@
-<div class="modal fade" id="viewClientModal" tabindex="-1" aria-hidden="true">
+
+
+<div class="modal fade" id="viewClientModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content glass-modal">
-            <div class="modal-header border-bottom border-white border-opacity-10">
+            <div class="modal-header border-bottom justify-content-between border-white border-opacity-10">
                 <div>
-                    <h5 class="modal-title text-white fw-bold" id="view_company_name">Company Name</h5>
+                    <h5 class="modal-title text-white fw-bold mb-0" id="view_company_name">Company Name</h5>
                     <span class="badge bg-gold text-dark mt-1" id="view_client_id">#ID</span>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="#" id="view_edit_btn" class="btn btn-sm btn-outline-warning d-flex align-items-center">
-                        <i class="bi bi-pencil-square me-2"></i> Edit
+                        <i class="bi bi-pencil-square me-2"></i> Edit Client
                     </a>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -17,31 +19,62 @@
             <div class="modal-body p-4">
                 <div class="row">
                     <div class="col-md-6 border-end border-white border-opacity-10">
-                        <h6 class="view-section-title" style="color:#D4AF37;font-size:0.8rem;text-transform:uppercase;margin-bottom:15px;">Contact Info</h6>
-                        <div class="mb-3"><small class="text-white-50 d-block">Client Name</small><span class="text-white" id="v_name">-</span></div>
-                        <div class="mb-3"><small class="text-white-50 d-block">Phone</small><span class="text-white" id="v_phone">-</span></div>
-                        <div class="mb-3"><small class="text-white-50 d-block">Email</small><span class="text-white" id="v_email">-</span></div>
+                        <h6 class="view-section-title">Contact Information</h6>
+                        
+                        <div class="view-label">Client Name</div>
+                        <div class="view-value" id="v_name">-</div>
+
+                        <div class="view-label">Phone Number</div>
+                        <div class="view-value" id="v_phone">-</div>
+
+                        <div class="view-label">Email Address</div>
+                        <div class="view-value" id="v_email">-</div>
+
+                        <div class="view-label">Trade Name App</div>
+                        <div class="view-value" id="v_trade">-</div>
                     </div>
+
                     <div class="col-md-6 ps-md-4">
-                        <h6 class="view-section-title" style="color:#D4AF37;font-size:0.8rem;text-transform:uppercase;margin-bottom:15px;">Finance</h6>
+                        <h6 class="view-section-title">Financial Overview</h6>
+                        
                         <div class="row">
-                            <div class="col-6 mb-3"><small class="text-white-50 d-block">Contract</small><span class="text-gold fw-bold" id="v_contract">-</span></div>
-                            <div class="col-6 mb-3"><small class="text-white-50 d-block">Paid</small><span class="text-success fw-bold" id="v_paid">-</span></div>
-                            <div class="col-12"><small class="text-white-50 d-block">Due Balance</small><span class="text-white fw-bold" id="v_due">-</span></div>
+                            <div class="col-6">
+                                <div class="view-label">Contract Value</div>
+                                <div class="view-value text-gold" id="v_contract">-</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="view-label">Paid Amount</div>
+                                <div class="view-value text-success" id="v_paid">-</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="view-label">Due Balance</div>
+                                <div class="view-value" id="v_due">-</div>
+                            </div>
                         </div>
+
+                        <h6 class="view-section-title mt-4">License Scope</h6>
+                        <div id="badge_scope" class="view-badge badge-default">-</div>
                     </div>
                 </div>
-                <h6 class="view-section-title mt-4" style="color:#D4AF37;font-size:0.8rem;text-transform:uppercase;margin-bottom:15px;">Workflow Status</h6>
+
+                <h6 class="view-section-title">Workflow Progress</h6>
                 <div class="row g-2">
-                    <div class="col-6 col-md-3"><small class="text-white-50">MISA</small><div id="badge_misa" class="badge bg-secondary d-block">-</div></div>
-                    <div class="col-6 col-md-3"><small class="text-white-50">Commercial</small><div id="badge_coc" class="badge bg-secondary d-block">-</div></div>
-                    <div class="col-6 col-md-3"><small class="text-white-50">Qiwa</small><div id="badge_qiwa" class="badge bg-secondary d-block">-</div></div>
-                    <div class="col-6 col-md-3"><small class="text-white-50">Muqeem</small><div id="badge_muqeem" class="badge bg-secondary d-block">-</div></div>
-                    </div>
+                    <div class="col-md-3 col-6"><div class="view-label">Hire Foreign Co.</div><div id="badge_hire" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">MISA App</div><div id="badge_misa" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">SBC App</div><div id="badge_sbc" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">Art. Association</div><div id="badge_art" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">Qiwa</div><div id="badge_qiwa" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">Muqeem</div><div id="badge_muqeem" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">GOSI</div><div id="badge_gosi" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-3 col-6"><div class="view-label">Chamber of Comm.</div><div id="badge_coc" class="view-badge badge-default">-</div></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
 <script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script> 
 <script src="<?php echo BASE_URL; ?>assets/js/all.min.js"></script> 
 <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script> 

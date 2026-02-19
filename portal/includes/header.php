@@ -91,7 +91,7 @@ $text = $translator->getTranslation($lang);
     </div>
 </header>
 
-<div id="mobileSearchOverlay" class="d-none">
+<div id="mobileSearchOverlay">
     <div class="glass-search-popup p-4 position-relative">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="text-white fw-bold m-0">Search</h5>

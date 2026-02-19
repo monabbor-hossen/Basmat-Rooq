@@ -236,8 +236,7 @@ select.glass-input option {
 .search-result-item:hover {
     background: rgba(212, 175, 55, 0.1);
 }
-
-/* Mobile Overlay */
+/* --- Mobile Search Overlay --- */
 #mobileSearchOverlay {
     position: fixed;
     top: 0;
@@ -247,10 +246,15 @@ select.glass-input option {
     background: rgba(0, 0, 0, 0.9);
     z-index: 9999;
     backdrop-filter: blur(8px);
-    display: flex;
+    
+    /* FIX: Hidden by default */
+    display: none; 
+    
     justify-content: center;
     padding-top: 15vh;
 }
+
+
 .glass-search-popup {
     width: 90%;
     max-width: 600px;
@@ -258,7 +262,6 @@ select.glass-input option {
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 15px;
 }
-
 /***************************************************/
 .avatar-icon {
     width: 60px;
