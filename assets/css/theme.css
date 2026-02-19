@@ -173,6 +173,9 @@ body {
     width: 35%;
     min-width: 300px;
 }
+.search-container .glass-search .form-control:focus{
+    box-shadow: none;    
+}
 
 .glass-search {
     background: rgba(255, 255, 255, 0.1);

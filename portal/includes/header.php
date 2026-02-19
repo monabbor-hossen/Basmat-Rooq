@@ -46,7 +46,7 @@ $text = $translator->getTranslation($lang);
         <div class="search-container d-none d-md-block mx-auto">
             <div class="input-group glass-search">
                 <span class="input-group-text bg-transparent border-0 text-white-50"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control bg-transparent border-0 text-white" placeholder="Search licenses, clients..." aria-label="Search">
+                <input type="text" class="form-control bg-transparent ps-0 border-0 text-white" placeholder="Search licenses, clients..." aria-label="Search">
             </div>
         </div>
 
