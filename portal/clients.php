@@ -74,12 +74,12 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                     <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.05);">
-                                <th class="py-3 ps-4"><?php echo sortLink('id', 'SL No', $sort, $next_dir); ?></th>
+                                <th class="py-3 ps-2 text-end"><?php echo sortLink('id', 'SL', $sort, $next_dir); ?></th>
                                 <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
                                 <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
                                 <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
-                                <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
+                                <th class="py-3 text-center pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,7 +101,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 <td class="ps-4 text-white-50 fw-bold">#<?php echo $client['client_id']; ?></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-icon me-3 flex-shrink-0"><i class="bi bi-building"></i></div>
+                                        <div class="avatar-icon me-2 flex-shrink-0"><i class="bi bi-building"></i></div>
                                         <div>
                                             <div class="fw-bold text-white"><?php echo htmlspecialchars($client['company_name']); ?></div>
                                             <div class="small text-white-50"><?php echo htmlspecialchars($client['client_name']); ?></div>
