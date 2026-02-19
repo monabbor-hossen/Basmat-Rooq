@@ -68,10 +68,6 @@ function sortLink($key, $label, $currentSort, $nextDir) {
 }
 ?>
 
-<div class="d-flex portal-wrapper">
-    <?php require_once 'includes/sidebar.php'; ?>
-
-    <main class="w-100 p-4">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div><h3 class="text-white fw-bold mb-0">Client Portfolios</h3><p class="text-white-50 small mb-0">Manage active MISA licenses and investments</p></div>
@@ -158,7 +154,6 @@ function sortLink($key, $label, $currentSort, $nextDir) {
             </div>
         </div>
     </main>
-</div>
 
 <style>
     .avatar-icon { width: 40px; height: 40px; background: rgba(212, 175, 55, 0.1); color: #D4AF37; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(212, 175, 55, 0.2); }

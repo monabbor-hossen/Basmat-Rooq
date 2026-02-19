@@ -110,7 +110,8 @@ function openViewModal(button) {
     setVal('v_name', client.client_name);
     setVal('v_phone', client.phone_number);
     setVal('v_email', client.email);
-    // setVal('v_trade', client.trade_name_application); // Add if you have this field
+    setVal('v_trade', client.trade_name_application); // Add if you have this field
+    setVal('badge_scope', client.license_scope_status); // Add if you have this field
 
     // 4. Financials
     var totalPaid = parseFloat(client.total_paid || 0);
