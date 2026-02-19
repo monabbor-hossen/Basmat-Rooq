@@ -76,6 +76,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
 
             <div class="card-box p-0 overflow-hidden">
                 <div class="table-responsive">
+                    
                     <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.05);">
