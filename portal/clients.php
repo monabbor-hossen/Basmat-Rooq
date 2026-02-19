@@ -78,7 +78,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
                                 <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-gold text-uppercase small">Contact Details</th>
-                                <th class="py-3"><?php echo sortLink('payment', 'Payment (Due)', $sort, $next_dir); ?></th>
+                                <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
                                 <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                             </tr>
                         </thead>

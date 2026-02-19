@@ -230,7 +230,7 @@ function setupLiveSearch(inputId, resultsId) {
                                             <div>
                                                 <div class="text-white small fw-bold">${client.company_name}</div>
                                                 <div class="text-white-50" style="font-size: 0.7rem;">
-                                                    #${client.client_id} • ${client.phone_number || ''}
+                                                    #${client.client_id} • ${client.client_name || ''} • ${client.phone_number || ''} • ${client.email || ''}
                                                 </div>
                                             </div>
                                         </div>
