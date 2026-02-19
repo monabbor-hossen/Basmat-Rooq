@@ -1,5 +1,3 @@
-
-
 <div class="modal fade" id="viewClientModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content glass-modal">
@@ -15,12 +13,12 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
             </div>
-            
+
             <div class="modal-body p-4">
                 <div class="row">
                     <div class="col-md-6 border-end border-white border-opacity-10">
                         <h6 class="view-section-title">Contact Information</h6>
-                        
+
                         <div class="view-label">Client Name</div>
                         <div class="view-value" id="v_name">-</div>
 
@@ -36,7 +34,7 @@
 
                     <div class="col-md-6 ps-md-4">
                         <h6 class="view-section-title">Financial Overview</h6>
-                        
+
                         <div class="row">
                             <div class="col-6">
                                 <div class="view-label">Contract Value</div>
@@ -56,17 +54,46 @@
                         <div id="badge_scope" class="view-badge badge-default">-</div>
                     </div>
                 </div>
+                <div class="mt-4">
+                    <h6 class="view-section-title"
+                        style="color:#D4AF37;font-size:0.8rem;text-transform:uppercase;margin-bottom:15px;">
+                        <i class="bi bi-diagram-3 me-2"></i>Workflow Progress
+                    </h6>
 
-                <h6 class="view-section-title">Workflow Progress</h6>
-                <div class="row g-2">
-                    <div class="col-md-4 col-6"><div class="view-label">Hire Foreign Co.</div><div id="badge_hire" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">MISA App</div><div id="badge_misa" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">SBC App</div><div id="badge_sbc" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">Art. Association</div><div id="badge_art" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">Qiwa</div><div id="badge_qiwa" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">Muqeem</div><div id="badge_muqeem" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">GOSI</div><div id="badge_gosi" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-4 col-6"><div class="view-label">Chamber of Comm.</div><div id="badge_coc" class="view-badge badge-default">-</div></div>
+                    <div id="workflow_grid" class="workflow-grid">
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">Hire Foreign Co.</div>
+                            <div id="badge_hire" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">MISA App</div>
+                            <div id="badge_misa" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">SBC App</div>
+                            <div id="badge_sbc" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">Art. Association</div>
+                            <div id="badge_art" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">Qiwa</div>
+                            <div id="badge_qiwa" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">Muqeem</div>
+                            <div id="badge_muqeem" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">GOSI</div>
+                            <div id="badge_gosi" class="view-badge badge-default">-</div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="view-label">Chamber of Comm.</div>
+                            <div id="badge_coc" class="view-badge badge-default">-</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,32 +102,32 @@
 
 
 
-<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script> 
-<script src="<?php echo BASE_URL; ?>assets/js/all.min.js"></script> 
-<script src="<?php echo BASE_URL; ?>assets/js/main.js"></script> 
+<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo BASE_URL; ?>assets/js/all.min.js"></script>
+<script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var toggleBtn = document.getElementById("sidebarToggle");
-    var sidebar = document.getElementById("portalSidebar");
+    document.addEventListener("DOMContentLoaded", function () {
+        var toggleBtn = document.getElementById("sidebarToggle");
+        var sidebar = document.getElementById("portalSidebar");
 
-    if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener("click", function(e) {
-            e.preventDefault(); // Stop page from jumping
-            sidebar.classList.toggle("show"); // Add/Remove 'show' CSS class
-        });
-        
-        // Optional: Close sidebar if clicking outside on mobile
-        document.addEventListener("click", function(e) {
-            if (window.innerWidth < 992 && 
-                !sidebar.contains(e.target) && 
-                !toggleBtn.contains(e.target)) {
-                sidebar.classList.remove("show");
-            }
-        });
-    } else {
-        console.error("Sidebar or Toggle Button ID not found!");
-    }
-});
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener("click", function (e) {
+                e.preventDefault(); // Stop page from jumping
+                sidebar.classList.toggle("show"); // Add/Remove 'show' CSS class
+            });
+
+            // Optional: Close sidebar if clicking outside on mobile
+            document.addEventListener("click", function (e) {
+                if (window.innerWidth < 992 &&
+                    !sidebar.contains(e.target) &&
+                    !toggleBtn.contains(e.target)) {
+                    sidebar.classList.remove("show");
+                }
+            });
+        } else {
+            console.error("Sidebar or Toggle Button ID not found!");
+        }
+    });
 </script>
 
 </body>

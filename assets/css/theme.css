@@ -277,7 +277,7 @@ select.glass-input option {
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
 }
 
-.workflow-card {
+/* .workflow-card {
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
@@ -287,6 +287,75 @@ select.glass-input option {
 .workflow-card:hover {
     background: rgba(212, 175, 55, 0.05);
     border-color: rgba(212, 175, 55, 0.3);
+} */
+
+/* --- Workflow Cards --- */
+.workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.workflow-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.workflow-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.workflow-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #444; /* Default Color */
+}
+
+/* Status Colors for the side strip */
+.card-status-approved::before { background: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
+.card-status-pending::before { background: #f1c40f; box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+.card-status-process::before { background: #3498db; }
+.card-status-default::before { background: #555; }
+
+.wf-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wf-status {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+}
+
+.wf-note {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 6px;
+    min-height: 40px;
+    border-left: 2px solid rgba(255,255,255,0.1);
 }
 
 .glass-select-sm {

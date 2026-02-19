@@ -6,12 +6,21 @@ require_once __DIR__ . '/../app/Config/Database.php';
 $db = (new Database())->getConnection();
 
 // 1. Fetch Clients
-$query = "SELECT c.*, 
-          w.license_scope_status, w.hire_foreign_company, w.misa_application, w.sbc_application, 
-          w.article_association, w.qiwa, w.muqeem, w.gosi, w.chamber_commerce,
+// $query = "SELECT c.*, 
+//           w.license_scope_status, w.hire_foreign_company, w.misa_application, w.sbc_application, 
+//           w.article_association, w.qiwa, w.muqeem, w.gosi, w.chamber_commerce,
+//           COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
+//           FROM clients c 
+//           LEFT JOIN workflow_tracking w ON c.client_id = w.client_id";
+// Change this line:
+// $query = "SELECT c.*, w.license_scope_status, ...";
+
+// To this (Select ALL from workflow):
+$query = "SELECT c.*, w.*, 
           COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
           FROM clients c 
           LEFT JOIN workflow_tracking w ON c.client_id = w.client_id";
+
 $stmt = $db->prepare($query);
 $stmt->execute();
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
