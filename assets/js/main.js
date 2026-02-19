@@ -111,8 +111,36 @@ function openViewModal(button) {
     setVal('v_phone', client.phone_number);
     setVal('v_email', client.email);
     setVal('v_trade', client.trade_name_application); // Add if you have this field
-    setVal('badge_scope', client.license_scope_status); // Add if you have this field
+    // --- LICENSE SCOPE SECTION ---
+    var scopeStatus = client.license_scope_status || 'Pending';
+    var scopeNote   = client.license_scope_note || ''; // Ensure column name matches DB
 
+    // 1. Set Status Text
+    var scopeBadge = document.getElementById('badge_scope');
+    if (scopeBadge) {
+        scopeBadge.innerText = scopeStatus;
+        
+        // Apply Colors
+        scopeBadge.className = 'view-badge'; // Reset
+        if (scopeStatus === 'Approved' || scopeStatus.includes('Done')) {
+            scopeBadge.classList.add('badge-approved');
+        } else if (scopeStatus === 'Pending' || scopeStatus === 'Applied') {
+            scopeBadge.classList.add('badge-pending');
+        } else {
+            scopeBadge.classList.add('badge-default');
+        }
+    }
+
+    // 2. Set Note Text
+    var scopeNoteEl = document.getElementById('note_scope');
+    if (scopeNoteEl) {
+        if (scopeNote && scopeNote !== '-') {
+            scopeNoteEl.innerText = scopeNote;
+            scopeNoteEl.style.display = 'block'; // Show if exists
+        } else {
+            scopeNoteEl.style.display = 'none';  // Hide if empty
+        }
+    }
     // 4. Financials
     var totalPaid = parseFloat(client.total_paid || 0);
     var contract = parseFloat(client.contract_value || 0);
@@ -129,6 +157,7 @@ function openViewModal(button) {
 
         // Define Steps Map
         var steps = [
+            
             { key: 'hire', label: 'Foreign Hire', icon: 'bi-briefcase', status: client.hire_foreign_company, note: client.hire_foreign_company_note },
             { key: 'misa', label: 'MISA License', icon: 'bi-award', status: client.misa_application, note: client.misa_application_note },
             { key: 'sbc',  label: 'SBC App',      icon: 'bi-building', status: client.sbc_application, note: client.sbc_application_note },

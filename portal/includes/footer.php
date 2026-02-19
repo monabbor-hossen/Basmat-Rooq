@@ -52,6 +52,7 @@
 
                         <h6 class="view-section-title mt-4">License Scope</h6>
                         <div id="badge_scope" class="view-badge badge-default">-</div>
+                        <div id="note_scope" class="wf-note mt-2" style="display:none;">-</div>
                     </div>
                 </div>
                 <div class="mt-4">
