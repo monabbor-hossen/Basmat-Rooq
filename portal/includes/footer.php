@@ -59,14 +59,14 @@
 
                 <h6 class="view-section-title">Workflow Progress</h6>
                 <div class="row g-2">
-                    <div class="col-md-3 col-6"><div class="view-label">Hire Foreign Co.</div><div id="badge_hire" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">MISA App</div><div id="badge_misa" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">SBC App</div><div id="badge_sbc" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">Art. Association</div><div id="badge_art" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">Qiwa</div><div id="badge_qiwa" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">Muqeem</div><div id="badge_muqeem" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">GOSI</div><div id="badge_gosi" class="view-badge badge-default">-</div></div>
-                    <div class="col-md-3 col-6"><div class="view-label">Chamber of Comm.</div><div id="badge_coc" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">Hire Foreign Co.</div><div id="badge_hire" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">MISA App</div><div id="badge_misa" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">SBC App</div><div id="badge_sbc" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">Art. Association</div><div id="badge_art" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">Qiwa</div><div id="badge_qiwa" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">Muqeem</div><div id="badge_muqeem" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">GOSI</div><div id="badge_gosi" class="view-badge badge-default">-</div></div>
+                    <div class="col-md-4 col-6"><div class="view-label">Chamber of Comm.</div><div id="badge_coc" class="view-badge badge-default">-</div></div>
                 </div>
             </div>
         </div>
