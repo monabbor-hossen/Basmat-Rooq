@@ -1,13 +1,22 @@
 @media (max-width: 991px) {
-    .section-padding { padding: 60px 0; }
-    .display-1 { font-size: 3.5rem; }
-    .glass-panel { padding: 25px; margin-bottom: 20px; }
-    
+    .section-padding {
+        padding: 60px 0;
+    }
 
-/* assets/css/mobile.css */
+    .display-1 {
+        font-size: 3.5rem;
+    }
 
-/* Default Mobile State: Hidden off-screen to the left */
-/*
+    .glass-panel {
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+
+    /* assets/css/mobile.css */
+
+    /* Default Mobile State: Hidden off-screen to the left */
+    /*
     .portal-sidebar {
         position: fixed;
         top: 60px; /* Height of your header *
@@ -37,36 +46,64 @@
         z-index: 1040;
     }*/
 }
+
 /* Desktop Styles (Reset to normal layout) */
 @media (min-width: 992px) {
     .portal-sidebar {
         position: sticky;
-        left: 0; /* Always visible */
+        left: 0;
+        /* Always visible */
         height: calc(100vh - 60px);
-        background: transparent; /* Or keep dark background if preferred */
+        background: transparent;
+        /* Or keep dark background if preferred */
         border-right: 1px solid rgba(255, 255, 255, 0.05);
     }
 }
 
 @media (max-width: 576px) {
-    .display-1 { font-size: 2.5rem; }
-    .nav-buttons { display: flex; flex-direction: column; gap: 10px; }
-    .navbar .btn {padding: 8px 18px;font-size: 14px;}
-    .section-padding .glass-panel img {height: 80px !important;}
+    .display-1 {
+        font-size: 2.5rem;
+    }
+
+    .nav-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .navbar .btn {
+        padding: 8px 18px;
+        font-size: 14px;
+    }
+
+    .section-padding .glass-panel img {
+        height: 80px !important;
+    }
 
     /* New Class to Show the Overlay */
-#mobileSearchOverlay.show {
-    display: flex !important;
-}
+    #mobileSearchOverlay.show {
+        display: flex !important;
+    }
 
 }
 
 
 
 @media (max-width: 768px) {
-    .portal-header { height: 60px; }
-    .header-brand img { height: 28px; }
-    .profile-avatar { width: 34px; height: 34px; }
-    .profile-trigger { padding: 4px !important; }
-}
+    .portal-header {
+        height: 60px;
+    }
 
+    .header-brand img {
+        height: 28px;
+    }
+
+    .profile-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    .profile-trigger {
+        padding: 4px !important;
+    }
+}
