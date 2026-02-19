@@ -168,3 +168,20 @@ function openViewModal(button) {
     // 5. Show Modal
     if(viewModalElement) viewModalElement.show();
 }
+
+/* --- Mobile Search Toggle --- */
+function toggleMobileSearch() {
+    var overlay = document.getElementById('mobileSearchOverlay');
+    if (overlay) {
+        if (overlay.classList.contains('d-none')) {
+            // Show Overlay
+            overlay.classList.remove('d-none');
+            // Focus on the input automatically
+            var input = overlay.querySelector('input');
+            if(input) setTimeout(() => input.focus(), 100);
+        } else {
+            // Hide Overlay
+            overlay.classList.add('d-none');
+        }
+    }
+}
