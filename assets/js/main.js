@@ -79,10 +79,10 @@ function togglePassword(inputId, iconId) {
 /* --- View Client Modal Logic --- */
 var viewModalElement;
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     // Initialize View Modal
     var viewEl = document.getElementById('viewClientModal');
-    if(viewEl) {
+    if (viewEl) {
         viewModalElement = new bootstrap.Modal(viewEl);
     }
 });
@@ -100,7 +100,7 @@ function openViewModal(button) {
     // 2. Set Header Info & Edit Link
     document.getElementById('view_company_name').innerText = client.company_name;
     document.getElementById('view_client_id').innerText = "#" + client.client_id;
-    
+
     // Set Edit Button Href
     var editBtn = document.getElementById('view_edit_btn');
     editBtn.href = "client-edit.php?id=" + client.client_id;
@@ -108,7 +108,7 @@ function openViewModal(button) {
     // 3. Populate Basic Fields helper
     function setVal(id, val) {
         var el = document.getElementById(id);
-        if(el) el.innerText = val ? val : '-';
+        if (el) el.innerText = val ? val : '-';
     }
 
     // Basic Info
@@ -116,20 +116,26 @@ function openViewModal(button) {
     setVal('v_phone', client.phone_number);
     setVal('v_email', client.email);
     setVal('v_trade', client.trade_name_application);
-    setVal('v_contract', parseFloat(client.contract_value).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' SAR');
-    
+    setVal('v_contract', parseFloat(client.contract_value).toLocaleString('en-US', {
+        minimumFractionDigits: 2
+    }) + ' SAR');
+
     // Financial Info
     // We need to calculate Due here since it might be calculated in PHP
     var totalPaid = parseFloat(client.total_paid || 0);
     var contract = parseFloat(client.contract_value || 0);
     var due = contract - totalPaid;
 
-    setVal('v_paid', totalPaid.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' SAR');
-    setVal('v_due', due > 0 ? due.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' SAR' : 'Fully Paid');
-    
+    setVal('v_paid', totalPaid.toLocaleString('en-US', {
+        minimumFractionDigits: 2
+    }) + ' SAR');
+    setVal('v_due', due > 0 ? due.toLocaleString('en-US', {
+        minimumFractionDigits: 2
+    }) + ' SAR' : 'Fully Paid');
+
     // Colorize Due Amount
     var dueEl = document.getElementById('v_due');
-    if(due > 0) dueEl.classList.add('text-danger');
+    if (due > 0) dueEl.classList.add('text-danger');
     else dueEl.classList.remove('text-danger');
 
     // 4. Populate Workflow Statuses
@@ -137,23 +143,23 @@ function openViewModal(button) {
         'scope': client.license_scope_status,
         'hire': client.hire_foreign_company,
         'misa': client.misa_application,
-        'sbc':  client.sbc_application,
-        'art':  client.article_association,
+        'sbc': client.sbc_application,
+        'art': client.article_association,
         'qiwa': client.qiwa,
         'muqeem': client.muqeem,
         'gosi': client.gosi,
-        'coc':  client.chamber_commerce
+        'coc': client.chamber_commerce
     };
 
     for (var key in steps) {
         var status = steps[key] || 'In Process';
         var badge = document.getElementById('badge_' + key);
-        
+
         if (badge) {
             badge.innerText = status;
             // Reset Classes
             badge.className = 'view-badge';
-            
+
             // Add Color Class
             if (status === 'Approved' || status.includes('Trading') || status.includes('Service')) {
                 badge.classList.add('badge-approved');
@@ -166,12 +172,12 @@ function openViewModal(button) {
     }
 
     // 5. Show Modal
-    if(viewModalElement) viewModalElement.show();
+    if (viewModalElement) viewModalElement.show();
 }
 
 /* --- Live Search Logic --- */
 /* --- Live Search Logic (Updated for Debugging) --- */
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     setupLiveSearch('desktopSearchInput', 'desktopSearchResults');
     setupLiveSearch('mobileSearchInput', 'mobileSearchResults');
 });
@@ -184,7 +190,7 @@ function setupLiveSearch(inputId, resultsId) {
 
     let timeout = null;
 
-    input.addEventListener('input', function() {
+    input.addEventListener('input', function () {
         clearTimeout(timeout);
         const term = this.value.trim();
 
@@ -198,7 +204,7 @@ function setupLiveSearch(inputId, resultsId) {
             fetch(`search_api.php?term=${encodeURIComponent(term)}`)
                 .then(async response => {
                     const text = await response.text(); // Read raw text first
-                    
+
                     // Try parsing JSON
                     try {
                         const data = JSON.parse(text);
@@ -206,7 +212,7 @@ function setupLiveSearch(inputId, resultsId) {
                         return data;
                     } catch (e) {
                         // If JSON parse fails, throw the raw text (HTML Error)
-                        throw new Error("Invalid Response: " + text.substring(0, 100) + "..."); 
+                        throw new Error("Invalid Response: " + text.substring(0, 100) + "...");
                     }
                 })
                 .then(data => {
@@ -217,24 +223,25 @@ function setupLiveSearch(inputId, resultsId) {
                             const item = document.createElement('div');
                             item.className = 'search-result-item p-2 border-bottom border-secondary border-opacity-25';
                             item.style.cursor = 'pointer';
-                            item.innerHTML = `
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-small me-2" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.2);color:#D4AF37;border-radius:50%;font-weight:bold;">
-                                        ${client.company_name.substring(0,1).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <div class="text-white small fw-bold">${client.company_name}</div>
-                                        <div class="text-white-50" style="font-size: 0.7rem;">#${client.client_id}</div>
-                                    </div>
-                                </div>
-                            `;
+                            item.innerHTML = `<div class="d-flex align-items-center">
+                                            <div class="avatar-small me-2" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.2);color:#D4AF37;border-radius:50%;font-weight:bold;">
+                                                ${client.company_name.substring(0,1).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <div class="text-white small fw-bold">${client.company_name}</div>
+                                                <div class="text-white-50" style="font-size: 0.7rem;">
+                                                    #${client.client_id} • ${client.phone_number || ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
                             item.addEventListener('click', () => {
                                 const dummyBtn = document.createElement('button');
                                 dummyBtn.setAttribute('data-client', JSON.stringify(client));
                                 openViewModal(dummyBtn);
                                 resultsBox.classList.add('d-none');
                                 input.value = '';
-                                toggleMobileSearch(); 
+                                toggleMobileSearch();
                             });
                             resultsBox.appendChild(item);
                         });
@@ -250,7 +257,7 @@ function setupLiveSearch(inputId, resultsId) {
         }, 300);
     });
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
             resultsBox.classList.add('d-none');
         }
@@ -269,7 +276,7 @@ function toggleMobileSearch() {
             overlay.classList.add('show');
             // Auto-focus input
             var input = overlay.querySelector('input');
-            if(input) setTimeout(() => input.focus(), 100);
+            if (input) setTimeout(() => input.focus(), 100);
         }
     }
 }

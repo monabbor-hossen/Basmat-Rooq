@@ -31,7 +31,7 @@ try {
     // 6. Database Connection
     $db = (new Database())->getConnection();
 
-    // 7. QUERY (FIXED: Unique Placeholders :s1, :s2, :s3)
+    // 7. QUERY (Added phone_number)
     $sql = "SELECT c.*, 
             w.hire_foreign_company, w.misa_application, w.sbc_application, 
             w.article_association, w.qiwa, w.muqeem, w.gosi, w.chamber_commerce,
@@ -42,17 +42,19 @@ try {
             WHERE (c.company_name LIKE :s1 
                OR c.client_name LIKE :s2 
                OR c.email LIKE :s3 
+               OR c.phone_number LIKE :s4 
                OR c.client_id = :sid) 
             LIMIT 5";
 
     $stmt = $db->prepare($sql);
     
-    // 8. EXECUTE (FIXED: Bind all unique keys)
+    // 8. EXECUTE (Added :s4 binding)
     $likeTerm = "%$term%";
     $stmt->execute([
         ':s1'  => $likeTerm,
         ':s2'  => $likeTerm,
         ':s3'  => $likeTerm,
+        ':s4'  => $likeTerm, // Phone Number Match
         ':sid' => intval($term)
     ]);
 
