@@ -44,13 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statuses = [':cid' => $new_client_id, ':update_at' => date('Y-m-d H:i:s')];
         
         $db_keys = [
-            'hire' => 'hire', 'misa' => 'misa', 'sbc' => 'sbc', 
-            'article' => 'art', 'gosi' => 'gosi', 'qiwa' => 'qiwa', 'coc' => 'coc'
+            'scope' => 'scope', 'hire' => 'hire', 'misa' => 'misa', 'sbc' => 'sbc', 
+            'article' => 'art', 'gosi' => 'gosi', 'qiwa' => 'qiwa', 'muqeem' => 'muqeem', 'coc' => 'coc'
         ];
         
-        // Loop through and check if the toggle was ON or OFF
+        // DEFINE THE 3 REQUIRED STEPS HERE
+        $required_steps = ['scope', 'qiwa', 'muqeem']; 
+        
         foreach($db_keys as $post_key => $db_key) {
-            if (isset($_POST['enable_'.$post_key])) {
+            // If it's a required step, OR if the toggle was turned ON
+            if (in_array($post_key, $required_steps) || isset($_POST['enable_'.$post_key])) {
                 $statuses[":{$db_key}_st"] = $_POST['status_'.$post_key];
                 $statuses[":{$db_key}_nt"] = $_POST['note_'.$post_key];
             } else {
@@ -74,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt_wf = $db->prepare($sql_wf);
         $stmt_wf->execute($statuses);
-
         $db->commit();
         $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Client and Account created successfully!</div>";
 
@@ -167,27 +169,36 @@ $workflow_steps = [
                         </div>
                     </div>
 
+
                     <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Initial Workflow Status</h5>
                     <div class="row g-3">
-                        <?php foreach($workflow_steps as $key => $label): ?>
+                        <?php 
+                            // DEFINE REQUIRED STEPS FOR UI
+                            $required_steps = ['scope', 'qiwa', 'muqeem']; 
+                            
+                            foreach($workflow_steps as $key => $label): 
+                                $is_required = in_array($key, $required_steps);
+                            ?>
                         <div class="col-md-4 col-sm-6">
                             <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative"
                                 id="card_<?php echo $key; ?>">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label
-                                        class="text-white fw-bold small text-uppercase mb-0"><?php echo $label; ?></label>
+                                        <label class="text-white fw-bold small text-uppercase mb-0">
+                                            <?php echo $label; ?>
+                                        </label>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="form-check form-switch m-0 p-0 d-flex align-items-center">
-                                            <input class="form-check-input m-0 cursor-pointer" type="checkbox"
+                                        <div class="form-check form-switch m-0 p-0 d-flex align-items-center"
+                                            title="<?php echo $is_required ? 'This step is required' : 'Toggle optional step'; ?>">
+                                            <input class="form-check-input m-0 cursor-pointer <?php echo $is_required ? 'd-none' : ''; ?>" type="checkbox"
                                                 name="enable_<?php echo $key; ?>" id="enable_<?php echo $key; ?>"
                                                 value="1" checked onchange="toggleWorkflowCard('<?php echo $key; ?>')"
-                                                style="width: 2.2em; height: 1.1em;">
+                                                style="width: 2.2em; height: 1.1em;"
+                                                <?php echo $is_required ? 'disabled' : ''; ?>>
                                         </div>
-
-                                        <button type="button" class="btn btn-sm btn-link text-gold p-0 ms-2"
-                                            id="btn_edit_<?php echo $key; ?>"
-                                            onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i
-                                                class="bi bi-pencil-square fs-6"></i></button>
+                                    <button type="button" class="btn btn-sm btn-link text-gold p-0 ms-2"
+                                        id="btn_edit_<?php echo $key; ?>"
+                                        onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i
+                                            class="bi bi-pencil-square fs-6"></i></button>
                                     </div>
                                 </div>
                                 <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>"
@@ -198,9 +209,9 @@ $workflow_steps = [
                                     <option value="Service License Upgrade to Trading License">Service License Upgrade
                                     </option>
                                     <?php else: ?>
+                                    <option value="Pending Application">Pending Application</option>
                                     <option value="In Progress">In Progress</option>
                                     <option value="Applied">Applied</option>
-                                    <option value="Pending Application">Pending Application</option>
                                     <option value="Approved">Approved</option>
                                     <?php endif; ?>
                                 </select>
