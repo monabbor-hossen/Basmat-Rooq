@@ -446,7 +446,7 @@ select.glass-input option {
 }
 .card-status-process .wf-status {
     background: rgba(52, 152, 219, 0.1);
-    color: #3498db;
+    color: var(--status-process);
     border-color: rgba(52, 152, 219, 0.3);
 }
 .card-status-default .wf-status {
@@ -472,7 +472,7 @@ select.glass-input option {
 
 .wf-note i {
     color: var(--rooq-gold);
-    font-size: 0.9rem;
+    font-size: var(--fs-base);
     margin-top: 2px;
 }
 
