@@ -75,11 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'qiwa' => 'qiwa', 'muqeem' => 'muqeem', 'coc' => 'chamber_commerce'
         ];
 
-        // Check toggles and set values
+        // DEFINE THE 3 REQUIRED STEPS HERE
+        $required_steps = ['scope', 'qiwa', 'muqeem']; 
+
         foreach($db_cols as $post_key => $st_col) {
             $nt_col = ($post_key === 'scope') ? 'license_scope_note' : $st_col . '_note';
             
-            if (isset($_POST['enable_'.$post_key])) {
+            // If required step OR toggle is ON
+            if (in_array($post_key, $required_steps) || isset($_POST['enable_'.$post_key])) {
                 $wf_data[$st_col] = $_POST['status_'.$post_key];
                 $wf_data[$nt_col] = $_POST['note_'.$post_key];
             } else {
@@ -103,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         muqeem = :muqeem, muqeem_note = :muqeem_note, chamber_commerce = :chamber_commerce, chamber_commerce_note = :chamber_commerce_note,
                         update_date_at = :update_at WHERE client_id = :client_id";
         } else {
-            // (Keep your existing INSERT statement here)
             $sql_wf = "INSERT INTO workflow_tracking 
                         (license_scope_status, license_scope_note, hire_foreign_company, hire_foreign_company_note, 
                          misa_application, misa_application_note, sbc_application, sbc_application_note,
@@ -233,32 +235,42 @@ $workflow_steps = [
 
                             <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Workflow Status</h5>
                             <div class="row g-3">
-                                <?php foreach($workflow_steps as $key => $info): 
-                                    $current_val = $data[$info['db_st']] ?? 'In Process';
-                                    $current_note = $data[$info['db_nt']] ?? '';
-                                    $is_enabled = ($current_val !== 'Not Required'); // Check if it was saved as Not Required
-                                ?>
+                                <?php 
+                                    $required_steps = ['scope', 'qiwa', 'muqeem']; 
+
+                                    foreach($workflow_steps as $key => $info): 
+                                        $current_val = $data[$info['db_st']] ?? 'In Process';
+                                        $current_note = $data[$info['db_nt']] ?? '';
+                                        
+                                        $is_required = in_array($key, $required_steps);
+                                        // Step is enabled if it is REQUIRED or if it wasn't saved as 'Not Required'
+                                        $is_enabled = $is_required || ($current_val !== 'Not Required'); 
+                                    ?>
                                 <div class="col-md-4 col-sm-6">
                                     <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative"
                                         id="card_<?php echo $key; ?>"
                                         style="<?php echo !$is_enabled ? 'opacity: 0.5;' : ''; ?>">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label
-                                                class="text-white fw-bold small text-uppercase mb-0"><?php echo $info['label']; ?></label>
+                                                <label class="text-white fw-bold small text-uppercase mb-0">
+                                                    <?php echo $info['label']; ?>
+                                                    
+                                                </label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="form-check form-switch m-0 p-0 d-flex align-items-center">
-                                                    <input class="form-check-input m-0 form-check-input-gold cursor-pointer" type="checkbox"
+                                                <div class="form-check form-switch m-0 p-0 d-flex align-items-center"
+                                                    title="<?php echo $is_required ? 'This step is required' : 'Toggle optional step'; ?>">
+                                                    <input class="form-check-input m-0 cursor-pointer <?php echo $is_required ? 'd-none' : ''; ?>" type="checkbox"
                                                         name="enable_<?php echo $key; ?>"
                                                         id="enable_<?php echo $key; ?>" value="1"
                                                         <?php echo $is_enabled ? 'checked' : ''; ?>
+                                                        <?php echo $is_required ? 'disabled' : ''; ?>
                                                         onchange="toggleWorkflowCard('<?php echo $key; ?>')"
                                                         style="width: 2.2em; height: 1.1em;">
                                                 </div>
-                                                <button type="button" class="btn btn-sm btn-link text-gold p-0"
-                                                    id="btn_edit_<?php echo $key; ?>"
-                                                    onclick="openEditModal('<?php echo $key; ?>', '<?php echo $info['label']; ?>')"
-                                                    <?php echo !$is_enabled ? 'disabled' : ''; ?>><i
-                                                        class="bi bi-pencil-square fs-6"></i></button>
+                                            <button type="button" class="btn btn-sm btn-link text-gold p-0"
+                                                id="btn_edit_<?php echo $key; ?>"
+                                                onclick="openEditModal('<?php echo $key; ?>', '<?php echo $info['label']; ?>')"
+                                                <?php echo !$is_enabled ? 'disabled' : ''; ?>><i
+                                                    class="bi bi-pencil-square fs-6"></i></button>
                                             </div>
                                         </div>
 
@@ -301,7 +313,6 @@ $workflow_steps = [
                                 </div>
                                 <?php endforeach; ?>
                             </div>
-
                             <div class="col-12 mt-5"><button type="submit"
                                     class="btn btn-rooq-primary w-100 py-3 fw-bold">Save Changes</button></div>
                         </form>

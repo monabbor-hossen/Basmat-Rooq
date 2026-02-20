@@ -195,7 +195,7 @@ $workflow_steps = [
                                                 style="width: 2.2em; height: 1.1em;"
                                                 <?php echo $is_required ? 'disabled' : ''; ?>>
                                         </div>
-                                    <button type="button" class="btn btn-sm btn-link text-gold p-0 ms-2"
+                                    <button type="button" class="btn btn-sm btn-link text-gold p-0"
                                         id="btn_edit_<?php echo $key; ?>"
                                         onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i
                                             class="bi bi-pencil-square fs-6"></i></button>
