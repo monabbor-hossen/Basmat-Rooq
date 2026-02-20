@@ -105,6 +105,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                         <th class="py-3 ps-2 text-end"><?php echo sortLink('id', 'SL', $sort, $next_dir); ?></th>
                         <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
                         <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
+                        <th class="py-3">Status</th>
                         <th class="py-3 text-gold text-uppercase small">Contact Details</th>
                         <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
                         <th class="py-3 text-center pe-4 text-gold text-uppercase small">Actions</th>
@@ -152,6 +153,19 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 Approved
                             </div>
                         </td>
+                        <td class="align-middle text-center">
+    <?php if(!empty($client['account_id'])): ?>
+        <div class="form-check form-switch d-flex justify-content-center m-0">
+            <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
+                   id="status_c_<?php echo $client['account_id']; ?>" 
+                   <?php echo ($client['account_status'] == 1) ? 'checked' : ''; ?>
+                   onchange="toggleAccountStatus(this, <?php echo $client['account_id']; ?>, 'client')"
+                   style="width: 2.5em; height: 1.25em;">
+        </div>
+    <?php else: ?>
+        <span class="badge bg-secondary">No Account</span>
+    <?php endif; ?>
+</td>
                         <td>
                             <div class="d-flex flex-column gap-1">
                                 <div class="d-flex align-items-center text-nowrap"><i

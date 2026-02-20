@@ -385,3 +385,26 @@ function toggleWorkflowCard(key) {
         editBtn.disabled = true;
     }
 }
+
+/* --- Account Status Toggle --- */
+function toggleAccountStatus(element, id, type) {
+    const isChecked = element.checked ? 1 : 0;
+    
+    fetch('toggle_status_api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, type: type, status: isChecked })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert("Error updating status: " + data.error);
+            element.checked = !isChecked; // Revert visually on error
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("A network error occurred.");
+        element.checked = !isChecked; // Revert
+    });
+}
