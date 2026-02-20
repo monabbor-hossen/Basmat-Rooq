@@ -61,7 +61,7 @@
                         <i class="bi bi-diagram-3 me-2"></i>Workflow Progress
                     </h6>
 
-                    <div id="workflow_grid" class="workflow-grid">
+                    <div id="workflow_grid" class="row g-3 mt-2">
                         <div class="col-md-4 col-6">
                             <div class="view-label">Hire Foreign Co.</div>
                             <div id="badge_hire" class="view-badge badge-default">-</div>

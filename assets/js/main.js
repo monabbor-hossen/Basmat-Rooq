@@ -221,7 +221,7 @@ function openViewModal(button) {
             // Skip disabled steps
             if (status === 'Not Required') return; 
             
-            // 1. Determine Main Card Class (CSS handles all inner colors now)
+            // 1. Determine Main Card Class
             var colorClass = 'card-status-default';
             if (status === 'Approved' || status.includes('Done')) {
                 colorClass = 'card-status-approved';
@@ -231,21 +231,28 @@ function openViewModal(button) {
                 colorClass = 'card-status-process';
             }
 
-            // 2. Generate Beautiful Note HTML (Includes a chat icon)
+            // 2. Generate Beautiful Note HTML
             var noteHtml = '';
             if (step.note && step.note.trim() !== '') {
                 noteHtml = `<div class="wf-note"><i class="bi bi-chat-left-text"></i> <div>${step.note}</div></div>`;
             }
 
-            // 3. Create Clean HTML
+            // 3. Create Bootstrap Column Wrapper
+            var colWrapper = document.createElement('div');
+            // Mobile: full width, Tablet: half width, Large Desktop: 1/3 width
+            colWrapper.className = 'col-12 col-md-6 col-xl-4'; 
+
+            // 4. Create Card (Added h-100 for equal height rows)
             var card = document.createElement('div');
-            card.className = `workflow-card ${colorClass}`;
+            card.className = `workflow-card h-100 ${colorClass}`;
             card.innerHTML = `
                 <div class="wf-title"><i class="bi ${step.icon}"></i> ${step.label}</div>
                 <div class="wf-status">${status}</div>
                 ${noteHtml}
             `;
-            grid.appendChild(card);
+            
+            colWrapper.appendChild(card);
+            grid.appendChild(colWrapper);
         });
     }
 
