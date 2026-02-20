@@ -95,5 +95,7 @@ $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 </div>
 
 <script src="<?php echo BASE_URL; ?>assets/js/bootstrap.min.js"></script>
+
+<script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
 </body>
 </html>
