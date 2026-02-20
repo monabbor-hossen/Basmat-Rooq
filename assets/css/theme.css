@@ -20,9 +20,7 @@
     /* --- Glass Whites (rgba 255, 255, 255) --- */
     --glass-03: rgba(255, 255, 255, 0.03);
     --glass-05: rgba(255, 255, 255, 0.05);
-    /* Formally --glass */
     --glass-10: rgba(255, 255, 255, 0.1);
-    /* Formally --glass-border */
     --glass-15: rgba(255, 255, 255, 0.15);
     --glass-20: rgba(255, 255, 255, 0.2);
     --glass-30: rgba(255, 255, 255, 0.3);
@@ -32,6 +30,7 @@
 
     /* --- Glass Blacks (rgba 0, 0, 0) --- */
     --black-20: rgba(0, 0, 0, 0.2);
+    --black-25: rgba(0, 0, 0, 0.25);
     --black-30: rgba(0, 0, 0, 0.3);
     --black-50: rgba(0, 0, 0, 0.5);
     --black-80: rgba(0, 0, 0, 0.8);
@@ -60,6 +59,9 @@
     --badge-warning-border: rgba(255, 193, 7, 0.3);
 
     --status-process: #3498db;
+    --status-process-glow: rgba(52, 152, 219, 0.5);
+    --badge-process-bg: rgba(52, 152, 219, 0.1);
+    --badge-process-border: rgba(52, 152, 219, 0.3);
 
     /* --- Font Sizes --- */
     --fs-xxs: 0.75rem;
@@ -70,6 +72,12 @@
     --fs-lg: 1.1rem;
     --fs-xl: 1.2rem;
     --fs-xxl: 1.8rem;
+
+    /* --- Font Weights --- */
+    --fw-medium: 500;
+    --fw-semi: 600;
+    --fw-bold: 700;
+    --fw-extra: 800;
 }
 
 body {
@@ -106,7 +114,7 @@ body {
     background: linear-gradient(45deg, var(--rooq-gold), var(--white));
     color: var(--rooq-burgundy);
     border: none;
-    font-weight: bold;
+    font-weight: var(--fw-bold);
     border-radius: 50px;
     padding: 12px 35px;
 }
@@ -125,7 +133,7 @@ body {
     color: var(--white);
 }
 
-/* --- Login Split Screen (Updated) --- */
+/* --- Login Split Screen --- */
 .login-wrapper {
     min-height: 100vh;
     display: flex;
@@ -142,7 +150,6 @@ body {
     overflow: hidden;
 }
 
-/* Futuristic Pattern Overlay */
 .login-brand-side::before {
     content: '';
     position: absolute;
@@ -203,7 +210,7 @@ body {
 
 .avatar-letter {
     color: var(--rooq-burgundy);
-    font-weight: 800;
+    font-weight: var(--fw-extra);
     font-size: var(--fs-lg);
 }
 
@@ -326,6 +333,7 @@ select.glass-input option {
     background-color: var(--rooq-gold);
     border-color: var(--rooq-gold);
 }
+
 /***************************************************/
 .avatar-icon {
     width: 60px;
@@ -340,6 +348,7 @@ select.glass-input option {
     border: 1px solid var(--gold-30);
     box-shadow: 0 0 15px var(--gold-10);
 }
+
 /* =========================================
    PREMIUM WORKFLOW CARDS
    ========================================= */
@@ -351,8 +360,7 @@ select.glass-input option {
 }
 
 .workflow-card {
-    /* Subtle gradient glass background */
-    background: linear-gradient(145deg, var(--glass-05) 0%, rgba(0,0,0,0.2) 100%);
+    background: linear-gradient(145deg, var(--glass-05) 0%, var(--black-20) 100%);
     border: 1px solid var(--glass-10);
     border-radius: 16px;
     padding: 20px;
@@ -368,10 +376,9 @@ select.glass-input option {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px var(--black-50);
     border-color: var(--gold-30);
-    background: linear-gradient(145deg, var(--glass-10) 0%, rgba(0,0,0,0.3) 100%);
+    background: linear-gradient(145deg, var(--glass-10) 0%, var(--black-30) 100%);
 }
 
-/* Eye-Catching Glowing Left Border Strip */
 .workflow-card::before {
     content: '';
     position: absolute;
@@ -384,19 +391,19 @@ select.glass-input option {
 }
 
 .workflow-card:hover::before {
-    width: 8px; /* Slightly expand the glow on hover */
+    width: 8px;
 }
 
 /* Root Status Definitions */
 .card-status-approved::before { background: var(--status-success); box-shadow: 2px 0 15px var(--status-success-glow); }
 .card-status-pending::before  { background: var(--status-warning); box-shadow: 2px 0 15px var(--status-warning-glow); }
-.card-status-process::before  { background: var(--status-process); box-shadow: 2px 0 15px rgba(52, 152, 219, 0.5); }
+.card-status-process::before  { background: var(--status-process); box-shadow: 2px 0 15px var(--status-process-glow); }
 .card-status-default::before  { background: var(--status-default); }
 
 /* Beautiful Icon & Title Alignment */
 .wf-title {
     font-size: var(--fs-base);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     color: var(--white);
     margin: 0;
     display: flex;
@@ -405,7 +412,6 @@ select.glass-input option {
     letter-spacing: 0.5px;
 }
 
-/* Icon Highlight Box */
 .wf-title i {
     display: flex;
     align-items: center;
@@ -419,51 +425,51 @@ select.glass-input option {
     box-shadow: 0 2px 10px var(--gold-10);
 }
 
-/* Pill-Shaped Vibrant Badges */
 .wf-status {
     font-size: var(--fs-xs);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     padding: 6px 14px;
-    border-radius: 50px; /* Pill shape */
+    border-radius: 50px;
     display: inline-flex;
     align-items: center;
     width: fit-content;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 1px solid transparent;
+    border: 1px solid var(--transparent);
 }
 
-/* Status Pill Colors managed directly by the card's parent class */
 .card-status-approved .wf-status {
     background: var(--badge-success-bg);
     color: var(--status-success);
     border-color: var(--badge-success-border);
 }
+
 .card-status-pending .wf-status {
     background: var(--badge-warning-bg);
     color: var(--badge-warning-text);
     border-color: var(--badge-warning-border);
 }
+
 .card-status-process .wf-status {
-    background: rgba(52, 152, 219, 0.1);
+    background: var(--badge-process-bg);
     color: var(--status-process);
-    border-color: rgba(52, 152, 219, 0.3);
+    border-color: var(--badge-process-border);
 }
+
 .card-status-default .wf-status {
     background: var(--glass-10);
     color: var(--badge-text-default);
     border-color: var(--glass-10);
 }
 
-/* Clean, modern note block */
 .wf-note {
     font-size: var(--fs-xs);
     color: var(--glass-80);
-    background: rgba(0, 0, 0, 0.25);
+    background: var(--black-25);
     padding: 12px 15px;
     border-radius: 8px;
     border-left: 3px solid var(--glass-20);
-    margin-top: auto; /* Pushes to bottom if card height stretches */
+    margin-top: auto;
     line-height: 1.5;
     font-style: italic;
     display: flex;
@@ -480,7 +486,7 @@ select.glass-input option {
     background-color: var(--glass-10);
     border: 1px solid var(--glass-20);
     color: var(--rooq-gold);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
     font-size: var(--fs-base);
 }
 
@@ -516,7 +522,6 @@ select.glass-input option {
     backdrop-filter: blur(5px);
 }
 
-/* Sidebar Default (Mobile First approach) */
 .portal-sidebar {
     position: fixed;
     top: 60px;
@@ -531,7 +536,6 @@ select.glass-input option {
     overflow-y: auto;
 }
 
-/* Class to Slide it IN */
 .portal-sidebar.show {
     left: 0 !important;
     box-shadow: 10px 0 30px var(--black-50);
@@ -551,10 +555,9 @@ select.glass-input option {
     border-color: var(--gold-20);
 }
 
-/* Name and Role Text Styling */
 .user-name-text {
     color: var(--white);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     font-size: var(--fs-md);
     line-height: 1.2;
 }
@@ -562,11 +565,10 @@ select.glass-input option {
 .user-role-text {
     color: var(--rooq-gold);
     font-size: var(--fs-xxs);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
     letter-spacing: 0.5px;
 }
 
-/* Avatar Circle Styling matching the image */
 .avatar-circle-refined {
     width: 42px;
     height: 42px;
@@ -576,7 +578,7 @@ select.glass-input option {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
+    font-weight: var(--fw-extra);
     font-size: var(--fs-xl);
     box-shadow: 0 0 10px var(--gold-30);
     border: 2px solid var(--glass-10);
@@ -602,7 +604,7 @@ select.glass-input option {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
+    font-weight: var(--fw-bold);
     font-size: var(--fs-xs);
     border: 1px solid var(--gold-30);
 }
@@ -632,7 +634,7 @@ select.glass-input option {
 
 .view-value {
     color: var(--white);
-    font-weight: 500;
+    font-weight: var(--fw-medium);
     font-size: var(--fs-md);
     margin-bottom: 15px;
 }
@@ -641,7 +643,7 @@ select.glass-input option {
     padding: 5px 10px;
     border-radius: 5px;
     font-size: var(--fs-xs);
-    font-weight: bold;
+    font-weight: var(--fw-bold);
     display: inline-block;
 }
 
