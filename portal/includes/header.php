@@ -31,7 +31,9 @@ $text = $translator->getTranslation($lang);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="portal-body">
-
+<div id="global-loader" class="global-loader">
+    <div class="rooq-spinner"></div>
+</div>
 <header class="portal-header sticky-top">
     <div class="container-fluid d-flex align-items-center justify-content-between">
         

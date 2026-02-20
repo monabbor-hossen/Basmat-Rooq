@@ -79,6 +79,44 @@
     --fw-bold: 700;
     --fw-extra: 800;
 }
+/* =========================================
+   GLOBAL PAGE LOADER
+   ========================================= */
+.global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at top right, var(--bg-radial-start), var(--bg-radial-end));
+    z-index: 99999; /* Ensure it covers EVERYTHING */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Class to fade out the loader */
+.global-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Premium Gold Spinner */
+.rooq-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--glass-10);
+    border-top: 4px solid var(--rooq-gold);
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    box-shadow: 0 0 20px var(--gold-10);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 body {
     background: radial-gradient(circle at top right, var(--bg-radial-start), var(--bg-radial-end));

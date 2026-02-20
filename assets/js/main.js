@@ -409,3 +409,37 @@ function toggleLoginStatus(type, id, checkbox) {
         checkbox.checked = !isChecked; // Revert switch
     });
 }
+
+
+/* =========================================
+   GLOBAL PAGE LOADER LOGIC
+   ========================================= */
+// 1. Hide loader when page finishes loading
+window.addEventListener('load', function() {
+    const loader = document.getElementById('global-loader');
+    if (loader) {
+        // Slight delay makes the transition feel smoother
+        setTimeout(() => {
+            loader.classList.add('hidden');
+        }, 300); 
+    }
+});
+
+// 2. Show loader when clicking links to navigate away
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all links that do NOT open in a new tab, and are NOT anchor/JS links
+    const links = document.querySelectorAll('a:not([target="_blank"]):not([href^="#"]):not([href^="javascript"]):not([href=""])');
+    
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Ignore if user is holding CTRL/CMD to open in new tab
+            if (e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) return;
+
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                // Show loader immediately
+                loader.classList.remove('hidden');
+            }
+        });
+    });
+});

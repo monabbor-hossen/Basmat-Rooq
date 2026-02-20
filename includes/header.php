@@ -39,7 +39,9 @@ $text = $translator->getTranslation($lang);
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/mobile.css">
 </head>
 <body>
-
+<div id="global-loader" class="global-loader">
+    <div class="rooq-spinner"></div>
+</div>
 <nav class="navbar navbar-expand-lg" style="background-color: var(--rooq-burgundy); border-bottom: 3px solid var(--rooq-gold);">
     <div class="container">
         <a class="navbar-brand text-white fw-bold" href="<?php echo BASE_URL; ?>">
