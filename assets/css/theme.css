@@ -322,6 +322,10 @@ select.glass-input option {
     border-radius: 15px;
 }
 
+.form-check-input-gold:checked {
+    background-color: var(--rooq-gold);
+    border-color: var(--rooq-gold);
+}
 /***************************************************/
 .avatar-icon {
     width: 60px;
@@ -336,92 +340,140 @@ select.glass-input option {
     border: 1px solid var(--gold-30);
     box-shadow: 0 0 15px var(--gold-10);
 }
-
-/* --- Workflow Cards --- */
+/* =========================================
+   PREMIUM WORKFLOW CARDS
+   ========================================= */
 .workflow-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .workflow-card {
-    background: var(--glass-03);
+    /* Subtle gradient glass background */
+    background: linear-gradient(145deg, var(--glass-05) 0%, rgba(0,0,0,0.2) 100%);
     border: 1px solid var(--glass-10);
-    border-radius: 12px;
-    padding: 15px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .workflow-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px var(--black-30);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--black-50);
     border-color: var(--gold-30);
+    background: linear-gradient(145deg, var(--glass-10) 0%, rgba(0,0,0,0.3) 100%);
 }
 
+/* Eye-Catching Glowing Left Border Strip */
 .workflow-card::before {
     content: '';
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
-    width: 4px;
+    width: 5px;
     background: var(--wf-line);
+    transition: width 0.3s ease;
 }
 
-/* Status Colors for the side strip */
-.card-status-approved::before {
-    background: var(--status-success);
-    box-shadow: 0 0 10px var(--status-success-glow);
+.workflow-card:hover::before {
+    width: 8px; /* Slightly expand the glow on hover */
 }
 
-.card-status-pending::before {
-    background: var(--status-warning);
-    box-shadow: 0 0 10px var(--status-warning-glow);
-}
+/* Root Status Definitions */
+.card-status-approved::before { background: var(--status-success); box-shadow: 2px 0 15px var(--status-success-glow); }
+.card-status-pending::before  { background: var(--status-warning); box-shadow: 2px 0 15px var(--status-warning-glow); }
+.card-status-process::before  { background: var(--status-process); box-shadow: 2px 0 15px rgba(52, 152, 219, 0.5); }
+.card-status-default::before  { background: var(--status-default); }
 
-.card-status-process::before {
-    background: var(--status-process);
-}
-
-.card-status-default::before {
-    background: var(--status-default);
-}
-
-.form-check-input-gold:checked {
-    background-color: var(--rooq-gold);
-    border-color: var(--rooq-gold);
-}
-
+/* Beautiful Icon & Title Alignment */
 .wf-title {
-    font-size: var(--fs-sm);
-    font-weight: bold;
+    font-size: var(--fs-base);
+    font-weight: 700;
     color: var(--white);
-    margin-bottom: 5px;
+    margin: 0;
     display: flex;
     align-items: center;
+    gap: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* Icon Highlight Box */
+.wf-title i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--gold-10);
+    border-radius: 10px;
+    color: var(--rooq-gold);
+    font-size: var(--fs-lg);
+    box-shadow: 0 2px 10px var(--gold-10);
+}
+
+/* Pill-Shaped Vibrant Badges */
+.wf-status {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 50px; /* Pill shape */
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+}
+
+/* Status Pill Colors managed directly by the card's parent class */
+.card-status-approved .wf-status {
+    background: var(--badge-success-bg);
+    color: var(--status-success);
+    border-color: var(--badge-success-border);
+}
+.card-status-pending .wf-status {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+    border-color: var(--badge-warning-border);
+}
+.card-status-process .wf-status {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border-color: rgba(52, 152, 219, 0.3);
+}
+.card-status-default .wf-status {
+    background: var(--glass-10);
+    color: var(--badge-text-default);
+    border-color: var(--glass-10);
+}
+
+/* Clean, modern note block */
+.wf-note {
+    font-size: var(--fs-xs);
+    color: var(--glass-80);
+    background: rgba(0, 0, 0, 0.25);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 3px solid var(--glass-20);
+    margin-top: auto; /* Pushes to bottom if card height stretches */
+    line-height: 1.5;
+    font-style: italic;
+    display: flex;
     gap: 8px;
 }
 
-.wf-status {
-    font-size: var(--fs-xxs);
-    padding: 2px 8px;
-    border-radius: 4px;
-    display: inline-block;
-    background: var(--glass-10);
-    margin-bottom: 10px;
-}
-
-.wf-note {
-    font-size: var(--fs-xxs);
-    color: var(--glass-50);
-    background: var(--black-20);
-    padding: 8px;
-    border-radius: 6px;
-    min-height: 40px;
-    border-left: 2px solid var(--glass-10);
+.wf-note i {
+    color: var(--rooq-gold);
+    font-size: 0.9rem;
+    margin-top: 2px;
 }
 
 .glass-select-sm {

@@ -218,36 +218,31 @@ function openViewModal(button) {
         steps.forEach(step => {
             var status = step.status || 'Pending';
             
-            // Skip this card completely if it's turned off (Not Required)
+            // Skip disabled steps
             if (status === 'Not Required') return; 
             
-            // Determine Color Class
+            // 1. Determine Main Card Class (CSS handles all inner colors now)
             var colorClass = 'card-status-default';
-            var badgeColor = 'text-white-50';
-            
             if (status === 'Approved' || status.includes('Done')) {
                 colorClass = 'card-status-approved';
-                badgeColor = 'text-success';
             } else if (status === 'Pending' || status === 'Applied') {
                 colorClass = 'card-status-pending';
-                badgeColor = 'text-warning';
             } else if (status === 'In Process') {
                 colorClass = 'card-status-process';
-                badgeColor = 'text-info';
             }
 
-            // NEW: Only generate the Note HTML if a note actually exists
+            // 2. Generate Beautiful Note HTML (Includes a chat icon)
             var noteHtml = '';
             if (step.note && step.note.trim() !== '') {
-                noteHtml = `<div class="wf-note mt-2">${step.note}</div>`;
+                noteHtml = `<div class="wf-note"><i class="bi bi-chat-left-text"></i> <div>${step.note}</div></div>`;
             }
 
-            // Create HTML
+            // 3. Create Clean HTML
             var card = document.createElement('div');
             card.className = `workflow-card ${colorClass}`;
             card.innerHTML = `
-                <div class="wf-title"><i class="bi ${step.icon} text-gold"></i> ${step.label}</div>
-                <div class="wf-status ${badgeColor} m-0">${status}</div>
+                <div class="wf-title"><i class="bi ${step.icon}"></i> ${step.label}</div>
+                <div class="wf-status">${status}</div>
                 ${noteHtml}
             `;
             grid.appendChild(card);
