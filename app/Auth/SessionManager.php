@@ -39,28 +39,38 @@ class SessionManager {
 
         try {
             // --- CHECK ADMIN ---
-            $query = "SELECT id, username, password, role FROM users WHERE username = :user LIMIT 1";
+            // Added 'status' to SELECT
+            $query = "SELECT id, username, password, role, status FROM users WHERE username = :user LIMIT 1";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user', $clean_user);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
+                // Check if account is active
+                if ($user['status'] == 0) {
+                    throw new Exception("Your account has been deactivated. Please contact an administrator.");
+                }
                 $this->createSession($user, 'internal');
-                $this->limiter->reset($ip); // Login Success -> Reset Fail Counter
+                $this->limiter->reset($ip);
                 return true;
             }
 
             // --- CHECK CLIENT ---
-            $query2 = "SELECT account_id, client_id, username, password_hash FROM client_accounts WHERE username = :user LIMIT 1";
+            // Added 'status' to SELECT
+            $query2 = "SELECT account_id, client_id, username, password_hash, status FROM client_accounts WHERE username = :user LIMIT 1";
             $stmt2 = $this->db->prepare($query2);
             $stmt2->bindParam(':user', $clean_user);
             $stmt2->execute();
             $client = $stmt2->fetch(PDO::FETCH_ASSOC);
 
             if ($client && password_verify($password, $client['password_hash'])) {
+                 // Check if account is active
+                 if ($client['status'] == 0) {
+                    throw new Exception("Your account has been deactivated. Please contact support.");
+                }
                 $this->createSession($client, 'client');
-                $this->limiter->reset($ip); // Login Success -> Reset Fail Counter
+                $this->limiter->reset($ip);
                 return true;
             }
 
