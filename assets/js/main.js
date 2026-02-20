@@ -78,9 +78,9 @@ function togglePassword(inputId, iconId) {
 /* --- View Client Modal Logic --- */
 var viewModalElement;
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     var viewEl = document.getElementById('viewClientModal');
-    if(viewEl) {
+    if (viewEl) {
         viewModalElement = new bootstrap.Modal(viewEl);
     }
 });
@@ -97,14 +97,14 @@ function openViewModal(button) {
     // 2. Set Header Info
     document.getElementById('view_company_name').innerText = client.company_name;
     document.getElementById('view_client_id').innerText = "#" + client.client_id;
-    
+
     var editBtn = document.getElementById('view_edit_btn');
-    if(editBtn) editBtn.href = "client-edit.php?id=" + client.client_id;
+    if (editBtn) editBtn.href = "client-edit.php?id=" + client.client_id;
 
     // 3. Populate Basic Info helper
     function setVal(id, val) {
         var el = document.getElementById(id);
-        if(el) el.innerText = val ? val : '-';
+        if (el) el.innerText = val ? val : '-';
     }
 
     setVal('v_name', client.client_name);
@@ -113,13 +113,13 @@ function openViewModal(button) {
     setVal('v_trade', client.trade_name_application); // Add if you have this field
     // --- LICENSE SCOPE SECTION ---
     var scopeStatus = client.license_scope_status || 'Pending';
-    var scopeNote   = client.license_scope_note || ''; // Ensure column name matches DB
+    var scopeNote = client.license_scope_note || ''; // Ensure column name matches DB
 
     // 1. Set Status Text
     var scopeBadge = document.getElementById('badge_scope');
     if (scopeBadge) {
         scopeBadge.innerText = scopeStatus;
-        
+
         // Apply Colors
         scopeBadge.className = 'view-badge'; // Reset
         if (scopeStatus === 'Approved' || scopeStatus.includes('Done')) {
@@ -138,7 +138,7 @@ function openViewModal(button) {
             scopeNoteEl.innerText = scopeNote;
             scopeNoteEl.style.display = 'block'; // Show if exists
         } else {
-            scopeNoteEl.style.display = 'none';  // Hide if empty
+            scopeNoteEl.style.display = 'none'; // Hide if empty
         }
     }
     // 4. Financials
@@ -157,25 +157,76 @@ function openViewModal(button) {
 
         // Define Steps Map
         var steps = [
-            
-            { key: 'hire', label: 'Foreign Hire', icon: 'bi-briefcase', status: client.hire_foreign_company, note: client.hire_foreign_company_note },
-            { key: 'misa', label: 'MISA License', icon: 'bi-award', status: client.misa_application, note: client.misa_application_note },
-            { key: 'sbc',  label: 'SBC App',      icon: 'bi-building', status: client.sbc_application, note: client.sbc_application_note },
-            { key: 'art',  label: 'Art. Assoc.',  icon: 'bi-file-text', status: client.article_association, note: client.article_association_note },
-            { key: 'qiwa', label: 'Qiwa',         icon: 'bi-people', status: client.qiwa, note: client.qiwa_note },
-            { key: 'muq',  label: 'Muqeem',       icon: 'bi-person-badge', status: client.muqeem, note: client.muqeem_note },
-            { key: 'gosi', label: 'GOSI',         icon: 'bi-shield-check', status: client.gosi, note: client.gosi_note },
-            { key: 'coc',  label: 'Chamber',      icon: 'bi-bank', status: client.chamber_commerce, note: client.chamber_commerce_note }
-        ];
 
+            {
+                key: 'hire',
+                label: 'Foreign Hire',
+                icon: 'bi-briefcase',
+                status: client.hire_foreign_company,
+                note: client.hire_foreign_company_note
+            },
+            {
+                key: 'misa',
+                label: 'MISA License',
+                icon: 'bi-award',
+                status: client.misa_application,
+                note: client.misa_application_note
+            },
+            {
+                key: 'sbc',
+                label: 'SBC App',
+                icon: 'bi-building',
+                status: client.sbc_application,
+                note: client.sbc_application_note
+            },
+            {
+                key: 'art',
+                label: 'Art. Assoc.',
+                icon: 'bi-file-text',
+                status: client.article_association,
+                note: client.article_association_note
+            },
+            {
+                key: 'qiwa',
+                label: 'Qiwa',
+                icon: 'bi-people',
+                status: client.qiwa,
+                note: client.qiwa_note
+            },
+            {
+                key: 'muq',
+                label: 'Muqeem',
+                icon: 'bi-person-badge',
+                status: client.muqeem,
+                note: client.muqeem_note
+            },
+            {
+                key: 'gosi',
+                label: 'GOSI',
+                icon: 'bi-shield-check',
+                status: client.gosi,
+                note: client.gosi_note
+            },
+            {
+                key: 'coc',
+                label: 'Chamber',
+                icon: 'bi-bank',
+                status: client.chamber_commerce,
+                note: client.chamber_commerce_note
+            }
+        ];
         steps.forEach(step => {
             var status = step.status || 'Pending';
+
+            // NEW: Skip this card completely if it's turned off
+            if (status === 'Not Required') return;
+
             var note = step.note || 'No notes available.';
-            
+
             // Determine Color Class
             var colorClass = 'card-status-default';
             var badgeColor = 'text-white-50';
-            
+
             if (status === 'Approved' || status.includes('Done')) {
                 colorClass = 'card-status-approved';
                 badgeColor = 'text-success';
@@ -200,7 +251,7 @@ function openViewModal(button) {
     }
 
     // 6. Show Modal
-    if(viewModalElement) viewModalElement.show();
+    if (viewModalElement) viewModalElement.show();
 }
 /* --- Live Search Logic --- */
 /* --- Live Search Logic (Updated for Debugging) --- */
@@ -312,9 +363,9 @@ function toggleMobileSearch() {
 /* --- Workflow Toggle (Optional Cards) --- */
 function toggleWorkflowCard(key) {
     const checkbox = document.getElementById('enable_' + key);
-    const card     = document.getElementById('card_' + key);
-    const select   = document.getElementById('select_' + key);
-    const editBtn  = document.getElementById('btn_edit_' + key);
+    const card = document.getElementById('card_' + key);
+    const select = document.getElementById('select_' + key);
+    const editBtn = document.getElementById('btn_edit_' + key);
 
     if (checkbox.checked) {
         // Turn ON

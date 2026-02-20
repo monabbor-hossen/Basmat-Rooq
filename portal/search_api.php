@@ -62,8 +62,29 @@ try {
 
     // 9. Format Results
     foreach ($results as &$row) {
+        // Due Calculation
         $row['due_val'] = floatval($row['contract_value']) - floatval($row['total_paid']);
         
+        // Progress Calculation
+        $steps = [
+            $row['hire_foreign_company'], $row['misa_application'], $row['sbc_application'], 
+            $row['article_association'], $row['qiwa'], $row['muqeem'], $row['gosi'], $row['chamber_commerce']
+        ];
+        
+        $approved = 0;
+        $active_steps = 0;
+        
+        foreach($steps as $s) {
+            if ($s !== 'Not Required') {
+                $active_steps++;
+                if ($s === 'Approved') $approved++;
+            }
+        }
+        
+        $row['progress_val'] = ($active_steps > 0) ? round(($approved / $active_steps) * 100) : 0;
+        $row['approved_count'] = $approved;
+        $row['total_active_steps'] = $active_steps;
+
         // Clean Strings
         array_walk_recursive($row, function(&$item){
             if(is_string($item)) {
