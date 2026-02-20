@@ -124,14 +124,14 @@ body {
 
 .profile-trigger:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: #D4AF37;
+    border-color: var(--rooq-gold);
 }
 
 /* Futuristic Avatar */
 .profile-avatar {
     width: 38px;
     height: 38px;
-    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    background: linear-gradient(135deg, var(--rooq-gold) 0%, #B8860B 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -141,7 +141,7 @@ body {
 }
 
 .avatar-letter {
-    color: #800020;
+    color: var(--rooq-burgundy);
     font-weight: 800;
     font-size: 1.1rem;
 }

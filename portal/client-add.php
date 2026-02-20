@@ -189,7 +189,7 @@ $workflow_steps = [
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="form-check form-switch m-0 p-0 d-flex align-items-center"
                                             title="<?php echo $is_required ? 'This step is required' : 'Toggle optional step'; ?>">
-                                            <input class="form-check-input m-0 cursor-pointer <?php echo $is_required ? 'd-none' : ''; ?>" type="checkbox"
+                                            <input class="form-check-input m-0 form-check-input-gold cursor-pointer <?php echo $is_required ? 'd-none' : ''; ?>" type="checkbox"
                                                 name="enable_<?php echo $key; ?>" id="enable_<?php echo $key; ?>"
                                                 value="1" checked onchange="toggleWorkflowCard('<?php echo $key; ?>')"
                                                 style="width: 2.2em; height: 1.1em;"

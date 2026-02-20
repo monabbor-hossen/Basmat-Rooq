@@ -217,16 +217,14 @@ function openViewModal(button) {
         ];
         steps.forEach(step => {
             var status = step.status || 'Pending';
-
-            // NEW: Skip this card completely if it's turned off
-            if (status === 'Not Required') return;
-
-            var note = step.note || 'No notes available.';
-
+            
+            // Skip this card completely if it's turned off (Not Required)
+            if (status === 'Not Required') return; 
+            
             // Determine Color Class
             var colorClass = 'card-status-default';
             var badgeColor = 'text-white-50';
-
+            
             if (status === 'Approved' || status.includes('Done')) {
                 colorClass = 'card-status-approved';
                 badgeColor = 'text-success';
@@ -238,13 +236,19 @@ function openViewModal(button) {
                 badgeColor = 'text-info';
             }
 
+            // NEW: Only generate the Note HTML if a note actually exists
+            var noteHtml = '';
+            if (step.note && step.note.trim() !== '') {
+                noteHtml = `<div class="wf-note mt-2">${step.note}</div>`;
+            }
+
             // Create HTML
             var card = document.createElement('div');
             card.className = `workflow-card ${colorClass}`;
             card.innerHTML = `
                 <div class="wf-title"><i class="bi ${step.icon} text-gold"></i> ${step.label}</div>
-                <div class="wf-status ${badgeColor}">${status}</div>
-                <div class="wf-note">${note}</div>
+                <div class="wf-status ${badgeColor} m-0">${status}</div>
+                ${noteHtml}
             `;
             grid.appendChild(card);
         });
