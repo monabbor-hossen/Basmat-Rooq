@@ -54,7 +54,7 @@
         height: calc(100vh - 60px);
         background: transparent;
         /* Or keep dark background if preferred */
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        border-right: 1px solid var(--glass);
     }
 }
 
