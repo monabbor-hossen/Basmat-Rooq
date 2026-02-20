@@ -307,3 +307,24 @@ function toggleMobileSearch() {
         }
     }
 }
+
+
+/* --- Workflow Toggle (Optional Cards) --- */
+function toggleWorkflowCard(key) {
+    const checkbox = document.getElementById('enable_' + key);
+    const card     = document.getElementById('card_' + key);
+    const select   = document.getElementById('select_' + key);
+    const editBtn  = document.getElementById('btn_edit_' + key);
+
+    if (checkbox.checked) {
+        // Turn ON
+        card.style.opacity = '1';
+        select.disabled = false;
+        editBtn.disabled = false;
+    } else {
+        // Turn OFF (Optional)
+        card.style.opacity = '0.5';
+        select.disabled = true;
+        editBtn.disabled = true;
+    }
+}

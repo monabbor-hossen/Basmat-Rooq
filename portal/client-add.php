@@ -40,21 +40,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_acc = $db->prepare($sql_acc);
             $stmt_acc->execute([':cid' => $new_client_id, ':user' => $username, ':pass' => $hashed_password]);
         }
-
-        // C. Insert Workflow
-        $statuses = [
-            ':cid' => $new_client_id,
-            ':scope_st' => $_POST['status_scope'], ':scope_nt' => $_POST['note_scope'],
-            ':hire_st'  => $_POST['status_hire'],  ':hire_nt'  => $_POST['note_hire'],
-            ':misa_st'  => $_POST['status_misa'],  ':misa_nt'  => $_POST['note_misa'],
-            ':sbc_st'   => $_POST['status_sbc'],   ':sbc_nt'   => $_POST['note_sbc'],
-            ':art_st'   => $_POST['status_article'],':art_nt'  => $_POST['note_article'],
-            ':gosi_st'  => $_POST['status_gosi'],  ':gosi_nt'  => $_POST['note_gosi'],
-            ':qiwa_st'  => $_POST['status_qiwa'],  ':qiwa_nt'  => $_POST['note_qiwa'],
-            ':muqeem_st'=> $_POST['status_muqeem'],':muqeem_nt'=> $_POST['note_muqeem'],
-            ':coc_st'   => $_POST['status_coc'],   ':coc_nt'   => $_POST['note_coc'],
-            ':update_at'=> date('Y-m-d H:i:s')
+// C. Insert Workflow
+        $statuses = [':cid' => $new_client_id, ':update_at' => date('Y-m-d H:i:s')];
+        
+        $db_keys = [
+            'hire' => 'hire', 'misa' => 'misa', 'sbc' => 'sbc', 
+            'article' => 'art', 'gosi' => 'gosi', 'qiwa' => 'qiwa', 'coc' => 'coc'
         ];
+        
+        // Loop through and check if the toggle was ON or OFF
+        foreach($db_keys as $post_key => $db_key) {
+            if (isset($_POST['enable_'.$post_key])) {
+                $statuses[":{$db_key}_st"] = $_POST['status_'.$post_key];
+                $statuses[":{$db_key}_nt"] = $_POST['note_'.$post_key];
+            } else {
+                $statuses[":{$db_key}_st"] = 'Not Required';
+                $statuses[":{$db_key}_nt"] = '';
+            }
+        }
 
         $sql_wf = "INSERT INTO workflow_tracking 
                    (client_id, license_scope_status, license_scope_note, 
@@ -99,102 +102,128 @@ $workflow_steps = [
 ];
 ?>
 
-        <div class="container-fluid">
-            <a href="clients.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
-                <i class="bi bi-arrow-left me-2"></i> Back to Clients
-            </a>
+<div class="container-fluid">
+    <a href="clients.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
+        <i class="bi bi-arrow-left me-2"></i> Back to Clients
+    </a>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card-box">
-                        <h4 class="text-white fw-bold mb-4 border-bottom border-light border-opacity-10 pb-3">Add New Client</h4>
-                        <?php echo $message; ?>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card-box">
+                <h4 class="text-white fw-bold mb-4 border-bottom border-light border-opacity-10 pb-3">Add New Client
+                </h4>
+                <?php echo $message; ?>
 
-                        <form method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
-                            <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
-                            <div class="row g-3 mb-5">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Company Name</label>
-                                    <input type="text" name="company_name" class="form-control glass-input" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Client Rep Name</label>
-                                    <input type="text" name="client_name" class="form-control glass-input" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Phone Number</label>
-                                    <input type="tel" name="phone_number" class="form-control glass-input" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Email Address</label>
-                                    <input type="email" name="email" class="form-control glass-input" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Trade Name Application</label>
-                                    <input type="text" name="trade_name_application" class="form-control glass-input">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-gold small fw-bold">Total Contract Value (SAR)</label>
-                                    <input type="number" step="0.01" name="contract_value" class="form-control glass-input" placeholder="0.00" required>
-                                </div>
-                            </div>
-
-                            <h5 class="text-gold mb-3"><i class="bi bi-shield-lock me-2"></i>Client Portal Access</h5>
-                            <div class="row g-3 mb-5 p-3 rounded" style="background: rgba(0,0,0,0.2);">
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Username</label>
-                                    <input type="text" name="account_username" class="form-control glass-input" placeholder="Create a username" autocomplete="off">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-white-50 small fw-bold">Password</label>
-                                    <div class="input-group">
-                                       <input type="password" name="account_password" id="acc_pass" class="form-control glass-input" placeholder="Create a password" autocomplete="new-password">
-                                        <button class="btn glass-input border-start-0 text-white-50" type="button" onclick="togglePassword('acc_pass', 'pass_icon')">
-                                            <i class="bi bi-eye" id="pass_icon"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Initial Workflow Status</h5>
-                            <div class="row g-3">
-                                <?php foreach($workflow_steps as $key => $label): ?>
-                                <div class="col-md-4 col-sm-6">
-                                    <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label class="text-white fw-bold small text-uppercase mb-0"><?php echo $label; ?></label>
-                                            <button type="button" class="btn btn-sm btn-link text-gold p-0 ms-2" onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i class="bi bi-pencil-square fs-6"></i></button>
-                                        </div>
-                                        <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>" class="form-select glass-select-sm">
-                                            <?php if ($key === 'scope'): ?>
-                                                <option value="Trading License Processing">Trading License Processing</option>
-                                                <option value="Service License Processing">Service License Processing</option>
-                                                <option value="Service License Upgrade to Trading License">Service License Upgrade</option>
-                                            <?php else: ?>
-                                                <option value="In Progress">In Progress</option>
-                                                <option value="Applied">Applied</option>
-                                                <option value="Pending Application">Pending Application</option>
-                                                <option value="Approved">Approved</option>
-                                            <?php endif; ?>
-                                        </select>
-                                        <div id="note_indicator_<?php echo $key; ?>" class="mt-2 text-gold small fst-italic d-none"><i class="bi bi-sticky-fill me-1"></i> Note added</div>
-                                        <input type="hidden" name="note_<?php echo $key; ?>" id="input_note_<?php echo $key; ?>" value="">
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-
-                            <div class="col-12 mt-5">
-                                <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold">Create Client Account</button>
-                            </div>
-                        </form>
+                    <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
+                    <div class="row g-3 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Company Name</label>
+                            <input type="text" name="company_name" class="form-control glass-input" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Client Rep Name</label>
+                            <input type="text" name="client_name" class="form-control glass-input" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Phone Number</label>
+                            <input type="tel" name="phone_number" class="form-control glass-input" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Email Address</label>
+                            <input type="email" name="email" class="form-control glass-input" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Trade Name Application</label>
+                            <input type="text" name="trade_name_application" class="form-control glass-input">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-gold small fw-bold">Total Contract Value (SAR)</label>
+                            <input type="number" step="0.01" name="contract_value" class="form-control glass-input"
+                                placeholder="0.00" required>
+                        </div>
                     </div>
-                </div>
+
+                    <h5 class="text-gold mb-3"><i class="bi bi-shield-lock me-2"></i>Client Portal Access</h5>
+                    <div class="row g-3 mb-5 p-3 rounded" style="background: rgba(0,0,0,0.2);">
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Username</label>
+                            <input type="text" name="account_username" class="form-control glass-input"
+                                placeholder="Create a username" autocomplete="off">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Password</label>
+                            <div class="input-group">
+                                <input type="password" name="account_password" id="acc_pass"
+                                    class="form-control glass-input" placeholder="Create a password"
+                                    autocomplete="new-password">
+                                <button class="btn glass-input border-start-0 text-white-50" type="button"
+                                    onclick="togglePassword('acc_pass', 'pass_icon')">
+                                    <i class="bi bi-eye" id="pass_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Initial Workflow Status</h5>
+                    <div class="row g-3">
+                        <?php foreach($workflow_steps as $key => $label): ?>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative"
+                                id="card_<?php echo $key; ?>">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label
+                                        class="text-white fw-bold small text-uppercase mb-0"><?php echo $label; ?></label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch m-0 p-0 d-flex align-items-center">
+                                            <input class="form-check-input m-0 cursor-pointer" type="checkbox"
+                                                name="enable_<?php echo $key; ?>" id="enable_<?php echo $key; ?>"
+                                                value="1" checked onchange="toggleWorkflowCard('<?php echo $key; ?>')"
+                                                style="width: 2.2em; height: 1.1em;">
+                                        </div>
+
+                                        <button type="button" class="btn btn-sm btn-link text-gold p-0 ms-2"
+                                            id="btn_edit_<?php echo $key; ?>"
+                                            onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i
+                                                class="bi bi-pencil-square fs-6"></i></button>
+                                    </div>
+                                </div>
+                                <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>"
+                                    class="form-select glass-select-sm">
+                                    <?php if ($key === 'scope'): ?>
+                                    <option value="Trading License Processing">Trading License Processing</option>
+                                    <option value="Service License Processing">Service License Processing</option>
+                                    <option value="Service License Upgrade to Trading License">Service License Upgrade
+                                    </option>
+                                    <?php else: ?>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Applied">Applied</option>
+                                    <option value="Pending Application">Pending Application</option>
+                                    <option value="Approved">Approved</option>
+                                    <?php endif; ?>
+                                </select>
+                                <div id="note_indicator_<?php echo $key; ?>"
+                                    class="mt-2 text-gold small fst-italic d-none"><i
+                                        class="bi bi-sticky-fill me-1"></i> Note added</div>
+                                <input type="hidden" name="note_<?php echo $key; ?>" id="input_note_<?php echo $key; ?>"
+                                    value="">
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="col-12 mt-5">
+                        <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold">Create Client
+                            Account</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+</div>
+</main>
 
 <?php require_once 'includes/footer.php'; ?>
 <div class="modal fade" id="workflowModal" tabindex="-1" aria-hidden="true">
@@ -206,12 +235,15 @@ $workflow_steps = [
             </div>
             <div class="modal-body">
                 <input type="hidden" id="current_field_key">
-                <div class="mb-3"><label class="form-label text-gold small fw-bold">Status</label><select id="modal_status_select" class="form-select glass-input"></select></div>
-                <div class="mb-3"><label class="form-label text-gold small fw-bold">Note / Remark</label><textarea id="modal_note_text" class="form-control glass-input" rows="3"></textarea></div>
+                <div class="mb-3"><label class="form-label text-gold small fw-bold">Status</label><select
+                        id="modal_status_select" class="form-select glass-input"></select></div>
+                <div class="mb-3"><label class="form-label text-gold small fw-bold">Note / Remark</label><textarea
+                        id="modal_note_text" class="form-control glass-input" rows="3"></textarea></div>
             </div>
             <div class="modal-footer border-top border-white border-opacity-10">
                 <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-rooq-primary btn-sm px-4" onclick="saveModalChanges()">Save Changes</button>
+                <button type="button" class="btn btn-rooq-primary btn-sm px-4" onclick="saveModalChanges()">Save
+                    Changes</button>
             </div>
         </div>
     </div>

@@ -66,19 +66,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // C. Update Workflow
-        $wf_data = [
-            'license_scope_status' => $_POST['status_scope'], 'license_scope_note' => $_POST['note_scope'],
-            'hire_foreign_company' => $_POST['status_hire'],  'hire_foreign_company_note' => $_POST['note_hire'],
-            'misa_application'     => $_POST['status_misa'],  'misa_application_note' => $_POST['note_misa'],
-            'sbc_application'      => $_POST['status_sbc'],   'sbc_application_note' => $_POST['note_sbc'],
-            'article_association'  => $_POST['status_article'],'article_association_note' => $_POST['note_article'],
-            'gosi'                 => $_POST['status_gosi'],  'gosi_note' => $_POST['note_gosi'],
-            'qiwa'                 => $_POST['status_qiwa'],  'qiwa_note' => $_POST['note_qiwa'],
-            'muqeem'               => $_POST['status_muqeem'],'muqeem_note' => $_POST['note_muqeem'],
-            'chamber_commerce'     => $_POST['status_coc'],   'chamber_commerce_note' => $_POST['note_coc'],
-            'client_id'            => $client_id,
-            'update_at'            => date('Y-m-d H:i:s')
+        $wf_data = ['client_id' => $client_id, 'update_at' => date('Y-m-d H:i:s')];
+        
+        $db_cols = [
+            'scope' => 'license_scope_status', 'hire' => 'hire_foreign_company',
+            'misa' => 'misa_application', 'sbc' => 'sbc_application',
+            'article' => 'article_association', 'gosi' => 'gosi',
+            'qiwa' => 'qiwa', 'muqeem' => 'muqeem', 'coc' => 'chamber_commerce'
         ];
+
+        // Check toggles and set values
+        foreach($db_cols as $post_key => $st_col) {
+            $nt_col = ($post_key === 'scope') ? 'license_scope_note' : $st_col . '_note';
+            
+            if (isset($_POST['enable_'.$post_key])) {
+                $wf_data[$st_col] = $_POST['status_'.$post_key];
+                $wf_data[$nt_col] = $_POST['note_'.$post_key];
+            } else {
+                $wf_data[$st_col] = 'Not Required';
+                $wf_data[$nt_col] = '';
+            }
+        }
 
         // Check/Upsert Workflow
         $check = $db->prepare("SELECT id FROM workflow_tracking WHERE client_id = ?");
@@ -95,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         muqeem = :muqeem, muqeem_note = :muqeem_note, chamber_commerce = :chamber_commerce, chamber_commerce_note = :chamber_commerce_note,
                         update_date_at = :update_at WHERE client_id = :client_id";
         } else {
+            // (Keep your existing INSERT statement here)
             $sql_wf = "INSERT INTO workflow_tracking 
                         (license_scope_status, license_scope_note, hire_foreign_company, hire_foreign_company_note, 
                          misa_application, misa_application_note, sbc_application, sbc_application_note,
@@ -159,8 +168,12 @@ $workflow_steps = [
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="card-box">
-                        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light border-opacity-10 pb-3">
-                            <div><h4 class="text-white fw-bold mb-0">Edit Client</h4><small class="text-gold">Updated: <?php echo $last_update; ?></small></div>
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light border-opacity-10 pb-3">
+                            <div>
+                                <h4 class="text-white fw-bold mb-0">Edit Client</h4><small class="text-gold">Updated:
+                                    <?php echo $last_update; ?></small>
+                            </div>
                             <span class="badge bg-gold text-dark">ID: #<?php echo $data['client_id']; ?></span>
                         </div>
                         <?php echo $message; ?>
@@ -170,25 +183,48 @@ $workflow_steps = [
 
                             <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
                             <div class="row g-3 mb-5">
-                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Company Name</label><input type="text" name="company_name" class="form-control glass-input" value="<?php echo htmlspecialchars($data['company_name']); ?>" required></div>
-                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Client Rep Name</label><input type="text" name="client_name" class="form-control glass-input" value="<?php echo htmlspecialchars($data['client_name']); ?>" required></div>
-                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Phone Number</label><input type="tel" name="phone_number" class="form-control glass-input" value="<?php echo htmlspecialchars($data['phone_number']); ?>" required></div>
-                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Email Address</label><input type="email" name="email" class="form-control glass-input" value="<?php echo htmlspecialchars($data['email']); ?>" required></div>
-                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Trade Name</label><input type="text" name="trade_name_application" class="form-control glass-input" value="<?php echo htmlspecialchars($data['trade_name_application'] ?? ''); ?>"></div>
-                                <div class="col-md-6"><label class="form-label text-gold small fw-bold">Contract Value</label><input type="number" step="0.01" name="contract_value" class="form-control glass-input" value="<?php echo htmlspecialchars($data['contract_value'] ?? 0); ?>"></div>
+                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Company
+                                        Name</label><input type="text" name="company_name"
+                                        class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['company_name']); ?>" required></div>
+                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Client Rep
+                                        Name</label><input type="text" name="client_name"
+                                        class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['client_name']); ?>" required></div>
+                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Phone
+                                        Number</label><input type="tel" name="phone_number"
+                                        class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['phone_number']); ?>" required></div>
+                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Email
+                                        Address</label><input type="email" name="email" class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['email']); ?>" required></div>
+                                <div class="col-md-6"><label class="form-label text-white-50 small fw-bold">Trade
+                                        Name</label><input type="text" name="trade_name_application"
+                                        class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['trade_name_application'] ?? ''); ?>">
+                                </div>
+                                <div class="col-md-6"><label class="form-label text-gold small fw-bold">Contract
+                                        Value</label><input type="number" step="0.01" name="contract_value"
+                                        class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['contract_value'] ?? 0); ?>"></div>
                             </div>
 
                             <h5 class="text-gold mb-3"><i class="bi bi-shield-lock me-2"></i>Client Portal Access</h5>
                             <div class="row g-3 mb-5 p-3 rounded" style="background: rgba(0,0,0,0.2);">
                                 <div class="col-md-6">
                                     <label class="form-label text-white-50 small fw-bold">Username</label>
-                                    <input type="text" name="account_username" class="form-control glass-input" value="<?php echo htmlspecialchars($data['acc_username'] ?? ''); ?>" placeholder="No account set">
+                                    <input type="text" name="account_username" class="form-control glass-input"
+                                        value="<?php echo htmlspecialchars($data['acc_username'] ?? ''); ?>"
+                                        placeholder="No account set">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-white-50 small fw-bold">New Password</label>
                                     <div class="input-group">
-                                        <input type="password" name="account_password" id="acc_pass" class="form-control glass-input border-end-0" placeholder="Leave empty to keep current">
-                                        <button class="btn glass-input border-start-0 text-white-50" type="button" onclick="togglePassword('acc_pass', 'pass_icon')">
+                                        <input type="password" name="account_password" id="acc_pass"
+                                            class="form-control glass-input border-end-0"
+                                            placeholder="Leave empty to keep current">
+                                        <button class="btn glass-input border-start-0 text-white-50" type="button"
+                                            onclick="togglePassword('acc_pass', 'pass_icon')">
                                             <i class="bi bi-eye" id="pass_icon"></i>
                                         </button>
                                     </div>
@@ -200,33 +236,74 @@ $workflow_steps = [
                                 <?php foreach($workflow_steps as $key => $info): 
                                     $current_val = $data[$info['db_st']] ?? 'In Process';
                                     $current_note = $data[$info['db_nt']] ?? '';
+                                    $is_enabled = ($current_val !== 'Not Required'); // Check if it was saved as Not Required
                                 ?>
                                 <div class="col-md-4 col-sm-6">
-                                    <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative">
+                                    <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative"
+                                        id="card_<?php echo $key; ?>"
+                                        style="<?php echo !$is_enabled ? 'opacity: 0.5;' : ''; ?>">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label class="text-white fw-bold small text-uppercase mb-0"><?php echo $info['label']; ?></label>
-                                            <button type="button" class="btn btn-sm btn-link text-gold p-0 ms-2" onclick="openEditModal('<?php echo $key; ?>', '<?php echo $info['label']; ?>')"><i class="bi bi-pencil-square fs-6"></i></button>
+                                            <label
+                                                class="text-white fw-bold small text-uppercase mb-0"><?php echo $info['label']; ?></label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="form-check form-switch m-0 p-0 d-flex align-items-center">
+                                                    <input class="form-check-input m-0 form-check-input-gold cursor-pointer" type="checkbox"
+                                                        name="enable_<?php echo $key; ?>"
+                                                        id="enable_<?php echo $key; ?>" value="1"
+                                                        <?php echo $is_enabled ? 'checked' : ''; ?>
+                                                        onchange="toggleWorkflowCard('<?php echo $key; ?>')"
+                                                        style="width: 2.2em; height: 1.1em;">
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-link text-gold p-0"
+                                                    id="btn_edit_<?php echo $key; ?>"
+                                                    onclick="openEditModal('<?php echo $key; ?>', '<?php echo $info['label']; ?>')"
+                                                    <?php echo !$is_enabled ? 'disabled' : ''; ?>><i
+                                                        class="bi bi-pencil-square fs-6"></i></button>
+                                            </div>
                                         </div>
-                                        <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>" class="form-select glass-select-sm">
+
+                                        <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>"
+                                            class="form-select glass-select-sm"
+                                            <?php echo !$is_enabled ? 'disabled' : ''; ?>>
                                             <?php if ($key === 'scope'): ?>
-                                                <option value="Trading License Processing" <?php echo ($current_val == 'Trading License Processing') ? 'selected' : ''; ?>>Trading License Processing</option>
-                                                <option value="Service License Processing" <?php echo ($current_val == 'Service License Processing') ? 'selected' : ''; ?>>Service License Processing</option>
-                                                <option value="Service License Upgrade to Trading License" <?php echo ($current_val == 'Service License Upgrade to Trading License') ? 'selected' : ''; ?>>Service License Upgrade</option>
+                                            <option value="Trading License Processing"
+                                                <?php echo ($current_val == 'Trading License Processing') ? 'selected' : ''; ?>>
+                                                Trading License Processing</option>
+                                            <option value="Service License Processing"
+                                                <?php echo ($current_val == 'Service License Processing') ? 'selected' : ''; ?>>
+                                                Service License Processing</option>
+                                            <option value="Service License Upgrade to Trading License"
+                                                <?php echo ($current_val == 'Service License Upgrade to Trading License') ? 'selected' : ''; ?>>
+                                                Service License Upgrade</option>
                                             <?php else: ?>
-                                                <option value="In Progress" <?php echo ($current_val == 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
-                                                <option value="Applied" <?php echo ($current_val == 'Applied') ? 'selected' : ''; ?>>Applied</option>
-                                                <option value="Pending Application" <?php echo ($current_val == 'Pending Application') ? 'selected' : ''; ?>>Pending Application</option>
-                                                <option value="Approved" <?php echo ($current_val == 'Approved') ? 'selected' : ''; ?>>Approved</option>
+                                            <option value="In Progress"
+                                                <?php echo ($current_val == 'In Progress') ? 'selected' : ''; ?>>In
+                                                Progress</option>
+                                            <option value="Applied"
+                                                <?php echo ($current_val == 'Applied') ? 'selected' : ''; ?>>Applied
+                                            </option>
+                                            <option value="Pending Application"
+                                                <?php echo ($current_val == 'Pending Application') ? 'selected' : ''; ?>>
+                                                Pending Application</option>
+                                            <option value="Approved"
+                                                <?php echo ($current_val == 'Approved') ? 'selected' : ''; ?>>Approved
+                                            </option>
                                             <?php endif; ?>
                                         </select>
-                                        <div id="note_indicator_<?php echo $key; ?>" class="mt-2 text-gold small fst-italic <?php echo empty($current_note) ? 'd-none' : ''; ?>"><i class="bi bi-sticky-fill me-1"></i> Note added</div>
-                                        <input type="hidden" name="note_<?php echo $key; ?>" id="input_note_<?php echo $key; ?>" value="<?php echo htmlspecialchars($current_note); ?>">
+
+                                        <div id="note_indicator_<?php echo $key; ?>"
+                                            class="mt-2 text-gold small fst-italic <?php echo empty($current_note) ? 'd-none' : ''; ?>">
+                                            <i class="bi bi-sticky-fill me-1"></i> Note added</div>
+                                        <input type="hidden" name="note_<?php echo $key; ?>"
+                                            id="input_note_<?php echo $key; ?>"
+                                            value="<?php echo htmlspecialchars($current_note); ?>">
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
 
-                            <div class="col-12 mt-5"><button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold">Save Changes</button></div>
+                            <div class="col-12 mt-5"><button type="submit"
+                                    class="btn btn-rooq-primary w-100 py-3 fw-bold">Save Changes</button></div>
                         </form>
                     </div>
                 </div>
@@ -237,15 +314,21 @@ $workflow_steps = [
 <div class="modal fade" id="workflowModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content glass-modal">
-            <div class="modal-header border-bottom border-white border-opacity-10"><h5 class="modal-title text-white fw-bold" id="modalTitle">Update Status</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header border-bottom border-white border-opacity-10">
+                <h5 class="modal-title text-white fw-bold" id="modalTitle">Update Status</h5><button type="button"
+                    class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
             <div class="modal-body">
                 <input type="hidden" id="current_field_key">
-                <div class="mb-3"><label class="form-label text-gold small fw-bold">Status</label><select id="modal_status_select" class="form-select glass-input"></select></div>
-                <div class="mb-3"><label class="form-label text-gold small fw-bold">Note / Remark</label><textarea id="modal_note_text" class="form-control glass-input" rows="3"></textarea></div>
+                <div class="mb-3"><label class="form-label text-gold small fw-bold">Status</label><select
+                        id="modal_status_select" class="form-select glass-input"></select></div>
+                <div class="mb-3"><label class="form-label text-gold small fw-bold">Note / Remark</label><textarea
+                        id="modal_note_text" class="form-control glass-input" rows="3"></textarea></div>
             </div>
             <div class="modal-footer border-top border-white border-opacity-10">
                 <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-rooq-primary btn-sm px-4" onclick="saveModalChanges()">Save Changes</button>
+                <button type="button" class="btn btn-rooq-primary btn-sm px-4" onclick="saveModalChanges()">Save
+                    Changes</button>
             </div>
         </div>
     </div>

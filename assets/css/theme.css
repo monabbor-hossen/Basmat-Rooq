@@ -329,6 +329,11 @@ select.glass-input option {
 .card-status-process::before { background: #3498db; }
 .card-status-default::before { background: #555; }
 
+.form-check-input-gold:checked {
+    background-color: var(--rooq-gold);
+    border-color: var(--rooq-gold);
+}
+
 .wf-title {
     font-size: 0.85rem;
     font-weight: bold;
