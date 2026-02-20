@@ -386,42 +386,26 @@ function toggleWorkflowCard(key) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const statusToggles = document.querySelectorAll('.status-toggle');
 
-    statusToggles.forEach(toggle => {
-        toggle.addEventListener('change', function() {
-            const id = this.getAttribute('data-id');
-            const type = this.getAttribute('data-type'); // 'user' or 'client'
-            const isActive = this.checked ? 1 : 0;
-            const label = this.nextElementSibling;
-
-            // Update label optimistically
-            label.innerText = isActive ? 'Active' : 'Inactive';
-
-            // Send AJAX request
-            fetch('update_status_api.php', { // Path to the API endpoint we'll create next
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `id=${id}&type=${type}&status=${isActive}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    // Revert the toggle if it failed
-                    this.checked = !isActive;
-                    label.innerText = !isActive ? 'Active' : 'Inactive';
-                    alert('Failed to update status: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Revert the toggle
-                this.checked = !isActive;
-                label.innerText = !isActive ? 'Active' : 'Inactive';
-            });
-        });
+/* --- Toggle Login Status API --- */
+function toggleLoginStatus(type, id, checkbox) {
+    const isChecked = checkbox.checked;
+    
+    fetch('toggle_status_api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: type, id: id, status: isChecked })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert("Error: " + data.message);
+            checkbox.checked = !isChecked; // Revert switch if backend failed
+        }
+    })
+    .catch(err => {
+        console.error("Fetch Error:", err);
+        alert("Failed to update status. Check connection.");
+        checkbox.checked = !isChecked; // Revert switch
     });
-});
+}

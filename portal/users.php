@@ -10,7 +10,7 @@ $db = (new Database())->getConnection();
 
 // 3. Fetch ONLY Admin (2) and Staff (1) - Exclude Clients
 // Assuming 'role' ENUM: '1' = Staff, '2' = Admin, '3' = Client (if exists)
-$query = "SELECT id, username, role,status, created_at FROM users 
+$query = "SELECT id, username, role, is_active, created_at FROM users 
           WHERE role IN ('1', '2') 
           ORDER BY role DESC, created_at DESC";
 
@@ -45,8 +45,7 @@ function getRoleName($roleId) {
                         <th class="py-3 ps-4 text-gold text-uppercase small">ID</th>
                         <th class="py-3 text-gold text-uppercase small">User Identity</th>
                         <th class="py-3 text-gold text-uppercase small">Access Level</th>
-                        <th class="py-3 text-gold text-uppercase small">Status</th>
-
+                        <th class="py-3 text-center text-gold text-uppercase small">Login Status</th>
                         <th class="py-3 text-gold text-uppercase small">Joined Date</th>
                         <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
                     </tr>
@@ -68,15 +67,12 @@ function getRoleName($roleId) {
                         </td>
 
                         <td><?php echo getRoleName($user['role']); ?></td>
-                        <td>
-    <div class="form-check form-switch">
-        <input class="form-check-input status-toggle" type="checkbox" 
-               id="statusSwitch_<?php echo $user['id']; ?>" 
-               data-id="<?php echo $user['id']; ?>" 
-               data-type="user" <?php echo ($user['is_active'] == 1) ? 'checked' : ''; ?>>
-        <label class="form-check-label" for="statusSwitch_<?php echo $user['id']; ?>">
-            <?php echo ($user['is_active'] == 1) ? 'Active' : 'Inactive'; ?>
-        </label>
+                        <td class="text-center">
+    <div class="form-check form-switch m-0 d-flex justify-content-center" title="Toggle Login Access">
+        <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
+               onchange="toggleLoginStatus('user', <?php echo $user['id']; ?>, this)" 
+               <?php echo (isset($user['is_active']) && $user['is_active'] == 1) ? 'checked' : ''; ?>
+               <?php echo ($_SESSION['user_id'] == $user['id']) ? 'disabled' : ''; ?>>
     </div>
 </td>
                         <td class="text-white-50">

@@ -16,11 +16,11 @@ $db = (new Database())->getConnection();
 // $query = "SELECT c.*, w.license_scope_status, ...";
 
 // To this (Select ALL from workflow):
-$query = "SELECT c.*, w.*, 
+$query = "SELECT c.*, w.*, a.is_active as account_status, a.account_id,
           COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
           FROM clients c 
-          LEFT JOIN workflow_tracking w ON c.client_id = w.client_id";
-
+          LEFT JOIN workflow_tracking w ON c.client_id = w.client_id
+          LEFT JOIN client_accounts a ON c.client_id = a.client_id";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -105,7 +105,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                         <th class="py-3 ps-2 text-end"><?php echo sortLink('id', 'SL', $sort, $next_dir); ?></th>
                         <th class="py-3"><?php echo sortLink('company', 'Company Info', $sort, $next_dir); ?></th>
                         <th class="py-3"><?php echo sortLink('progress', 'Progress', $sort, $next_dir); ?></th>
-                        <th class="py-3">Status</th>
+                        <th class="py-3 text-center text-gold text-uppercase small">Login Status</th>
                         <th class="py-3 text-gold text-uppercase small">Contact Details</th>
                         <th class="py-3"><?php echo sortLink('payment', 'Payment', $sort, $next_dir); ?></th>
                         <th class="py-3 text-center pe-4 text-gold text-uppercase small">Actions</th>
@@ -153,17 +153,17 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 Approved
                             </div>
                         </td>
-                        <td>
-    <div class="form-check form-switch">
-        <input class="form-check-input status-toggle" type="checkbox" 
-               id="statusSwitch_<?php echo $client['id']; ?>" 
-               data-id="<?php echo $client['id']; ?>" 
-               data-type="user" <?php echo ($client['is_active'] == 1) ? 'checked' : ''; ?>>
-        <label class="form-check-label" for="statusSwitch_<?php echo $client['id']; ?>">
-            <?php echo ($client['is_active'] == 1) ? 'Active' : 'Inactive'; ?>
-        </label>
-    </div>
-</td>
+                        <td class="text-center">
+                            <?php if (!empty($client['account_id'])): ?>
+                                <div class="form-check form-switch m-0 d-flex justify-content-center" title="Toggle Login Access">
+                                    <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
+                                        onchange="toggleLoginStatus('client', <?php echo $client['account_id']; ?>, this)" 
+                                        <?php echo (isset($client['account_status']) && $client['account_status'] == 1) ? 'checked' : ''; ?>>
+                                </div>
+                            <?php else: ?>
+                                <span class="badge bg-secondary small" style="font-size: 0.7rem;">No Account</span>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <div class="d-flex flex-column gap-1">
                                 <div class="d-flex align-items-center text-nowrap"><i
