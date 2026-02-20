@@ -153,18 +153,16 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 Approved
                             </div>
                         </td>
-                        <td class="align-middle text-center">
-    <?php if(!empty($client['account_id'])): ?>
-        <div class="form-check form-switch d-flex justify-content-center m-0">
-            <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
-                   id="status_c_<?php echo $client['account_id']; ?>" 
-                   <?php echo ($client['account_status'] == 1) ? 'checked' : ''; ?>
-                   onchange="toggleAccountStatus(this, <?php echo $client['account_id']; ?>, 'client')"
-                   style="width: 2.5em; height: 1.25em;">
-        </div>
-    <?php else: ?>
-        <span class="badge bg-secondary">No Account</span>
-    <?php endif; ?>
+                        <td>
+    <div class="form-check form-switch">
+        <input class="form-check-input status-toggle" type="checkbox" 
+               id="statusSwitch_<?php echo $client['id']; ?>" 
+               data-id="<?php echo $client['id']; ?>" 
+               data-type="user" <?php echo ($client['is_active'] == 1) ? 'checked' : ''; ?>>
+        <label class="form-check-label" for="statusSwitch_<?php echo $client['id']; ?>">
+            <?php echo ($client['is_active'] == 1) ? 'Active' : 'Inactive'; ?>
+        </label>
+    </div>
 </td>
                         <td>
                             <div class="d-flex flex-column gap-1">

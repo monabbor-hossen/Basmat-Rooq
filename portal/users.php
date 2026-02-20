@@ -68,15 +68,17 @@ function getRoleName($roleId) {
                         </td>
 
                         <td><?php echo getRoleName($user['role']); ?></td>
-                        <td class="align-middle text-center">
-                            <div class="form-check form-switch d-flex justify-content-center m-0">
-                                <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox"
-                                    id="status_u_<?php echo $user['id']; ?>"
-                                    <?php echo ($user['status'] == 1) ? 'checked' : ''; ?>
-                                    onchange="toggleAccountStatus(this, <?php echo $user['id']; ?>, 'user')"
-                                    style="width: 2.5em; height: 1.25em;">
-                            </div>
-                        </td>
+                        <td>
+    <div class="form-check form-switch">
+        <input class="form-check-input status-toggle" type="checkbox" 
+               id="statusSwitch_<?php echo $user['id']; ?>" 
+               data-id="<?php echo $user['id']; ?>" 
+               data-type="user" <?php echo ($user['is_active'] == 1) ? 'checked' : ''; ?>>
+        <label class="form-check-label" for="statusSwitch_<?php echo $user['id']; ?>">
+            <?php echo ($user['is_active'] == 1) ? 'Active' : 'Inactive'; ?>
+        </label>
+    </div>
+</td>
                         <td class="text-white-50">
                             <i class="bi bi-calendar-event me-2 small"></i>
                             <?php echo date('M d, Y', strtotime($user['created_at'])); ?>

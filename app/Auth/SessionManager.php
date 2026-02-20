@@ -39,8 +39,8 @@ class SessionManager {
 
         try {
             // --- CHECK ADMIN ---
-            // Added 'status' to SELECT
-            $query = "SELECT id, username, password, role, status FROM users WHERE username = :user LIMIT 1";
+            // Include is_active in the SELECT statement
+            $query = "SELECT id, username, password, role, is_active FROM users WHERE username = :user LIMIT 1";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user', $clean_user);
             $stmt->execute();
@@ -48,7 +48,7 @@ class SessionManager {
 
             if ($user && password_verify($password, $user['password'])) {
                 // Check if account is active
-                if ($user['status'] == 0) {
+                if ($user['is_active'] == 0) {
                     throw new Exception("Your account has been deactivated. Please contact an administrator.");
                 }
                 $this->createSession($user, 'internal');
@@ -57,8 +57,8 @@ class SessionManager {
             }
 
             // --- CHECK CLIENT ---
-            // Added 'status' to SELECT
-            $query2 = "SELECT account_id, client_id, username, password_hash, status FROM client_accounts WHERE username = :user LIMIT 1";
+            // Include is_active in the SELECT statement
+            $query2 = "SELECT account_id, client_id, username, password_hash, is_active FROM client_accounts WHERE username = :user LIMIT 1";
             $stmt2 = $this->db->prepare($query2);
             $stmt2->bindParam(':user', $clean_user);
             $stmt2->execute();
@@ -66,14 +66,15 @@ class SessionManager {
 
             if ($client && password_verify($password, $client['password_hash'])) {
                  // Check if account is active
-                 if ($client['status'] == 0) {
-                    throw new Exception("Your account has been deactivated. Please contact support.");
+                if ($client['is_active'] == 0) {
+                     throw new Exception("Your account has been deactivated. Please contact an administrator.");
                 }
                 $this->createSession($client, 'client');
                 $this->limiter->reset($ip);
                 return true;
             }
 
+            // ... rest of the login function ...
             // 3. Login Failed -> Increment Counter
             $error_msg = $this->limiter->increment($ip);
             throw new Exception($error_msg);
