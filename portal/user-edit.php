@@ -111,20 +111,7 @@ if (!$user) {
     </main>
 
 <style>
-    .glass-input::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-    }
-    .glass-input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-    .glass-input:focus {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-color: #D4AF37;
-    }
-    select.glass-input option { color: black; }
+
 </style>
 
 <?php

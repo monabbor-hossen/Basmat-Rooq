@@ -721,18 +721,21 @@ select.glass-input option {
     box-shadow: 0 20px 50px var(--black-80);
 }
 
-.error-code {
-    font-size: 8rem;
-    font-weight: var(--fw-extra);
-    line-height: 1;
-    text-shadow: 0 10px 30px var(--gold-20);
-    background: linear-gradient(135deg, var(--rooq-gold) 0%, var(--dark-gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
-    transition: transform 0.1s ease-out; /* For JS parallax */
+/* Replace the old .error-code block with this */
+
+.error-svg {
+    max-height: 250px; /* Prevent it from being too massive on huge screens */
+    width: auto;
+    transition: transform 0.1s ease-out; /* Required for the JS Parallax effect */
+    animation: floatSVG 4s ease-in-out infinite;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); /* Adds deep shadow */
 }
 
+@keyframes floatSVG {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
 /* Animated background glow behind the panel */
 .error-bg-glow {
     position: absolute;
@@ -748,7 +751,3 @@ select.glass-input option {
     animation: pulseGlow 4s infinite alternate ease-in-out;
 }
 
-@keyframes pulseGlow {
-    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-}
