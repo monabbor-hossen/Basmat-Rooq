@@ -126,5 +126,25 @@
     .table-responsive .table td .small.text-white-50 {
         font-size: 0.75rem;
     }
+/* =========================================
+   404 ERROR PAGE (MOBILE)
+   ========================================= */
 
+    .error-container {
+        padding: 40px 20px;
+        margin: 0 15px;
+    }
+    
+    .error-code {
+        font-size: 5.5rem;
+    }
+    
+    .error-container h2 {
+        font-size: 1.5rem;
+    }
+    
+    .error-bg-glow {
+        width: 250px;
+        height: 250px;
+    }
 }

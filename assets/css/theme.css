@@ -702,3 +702,53 @@ select.glass-input option {
     color: var(--badge-text-default);
     border: 1px solid var(--glass-10);
 }
+
+
+
+/* =========================================
+   404 ERROR PAGE
+   ========================================= */
+.error-page-body {
+    overflow: hidden;
+    position: relative;
+    background: radial-gradient(circle at center, var(--bg-radial-start), var(--bg-radial-end));
+}
+
+.error-container {
+    max-width: 550px;
+    padding: 60px 40px;
+    border-color: var(--gold-30);
+    box-shadow: 0 20px 50px var(--black-80);
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: var(--fw-extra);
+    line-height: 1;
+    text-shadow: 0 10px 30px var(--gold-20);
+    background: linear-gradient(135deg, var(--rooq-gold) 0%, var(--dark-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    transition: transform 0.1s ease-out; /* For JS parallax */
+}
+
+/* Animated background glow behind the panel */
+.error-bg-glow {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: var(--gold-15);
+    border-radius: 50%;
+    filter: blur(100px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: pulseGlow 4s infinite alternate ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}

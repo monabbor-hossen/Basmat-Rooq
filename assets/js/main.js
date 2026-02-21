@@ -443,3 +443,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+/* =========================================
+   404 PAGE PARALLAX EFFECT
+   ========================================= */
+document.addEventListener("DOMContentLoaded", function() {
+    const errorCode = document.querySelector('.error-code');
+    
+    if (errorCode) {
+        document.addEventListener('mousemove', function(e) {
+            // Calculate mouse position relative to center of screen
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            
+            // Apply subtle movement
+            errorCode.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
+        });
+    }
+});
