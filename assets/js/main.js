@@ -410,15 +410,16 @@ function toggleLoginStatus(type, id, checkbox) {
     });
 }
 
-
 /* =========================================
    GLOBAL PAGE LOADER LOGIC
    ========================================= */
-// 1. Hide loader when page finishes loading
-window.addEventListener('load', function() {
+
+// 1. Hide loader when page loads OR when returning via "Back" button (pageshow)
+window.addEventListener('pageshow', function(event) {
     const loader = document.getElementById('global-loader');
     if (loader) {
-        // Slight delay makes the transition feel smoother
+        // event.persisted is true if the page is loaded from the bfcache (Back button)
+        // We hide the loader whether it's a fresh load or a back button load
         setTimeout(() => {
             loader.classList.add('hidden');
         }, 300); 
