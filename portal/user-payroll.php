@@ -327,6 +327,16 @@ if ($is_pre_join) {
 </div>
 
 <script>
-
+function validatePaymentDate() {
+    var paymentDate = document.getElementById('modalPaymentDate').value;
+    var joinDate = '<?php echo $exact_join_date; ?>';
+    
+    if (new Date(paymentDate) < new Date(joinDate)) {
+        alert("Payment Date cannot be before the user's Joining Date (" + joinDate + ").");
+        return false; // Stops form from submitting
+    }
+    return true; // Allows form submission
+}
+</script>
 
 <?php require_once 'includes/footer.php'; ?>
