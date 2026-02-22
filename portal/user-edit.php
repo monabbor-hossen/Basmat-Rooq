@@ -6,7 +6,6 @@ require_once __DIR__ . '/../app/Config/Database.php';
 $message = "";
 $user_id = $_GET['id'] ?? null;
 
-// Redirect if no ID provided
 if (!$user_id) {
     header("Location: users.php");
     exit();
@@ -14,31 +13,32 @@ if (!$user_id) {
 
 $db = (new Database())->getConnection();
 
-// Handle Form Submission (Update)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Security::checkCSRF($_POST['csrf_token']);
 
     $username  = Security::clean($_POST['username']);
     $role      = Security::clean($_POST['role']);
-    $password  = $_POST['password']; // Raw password
+    $password  = $_POST['password']; 
     
-    // New Fields
     $full_name = Security::clean($_POST['full_name']);
     $email     = Security::clean($_POST['email']);
     $phone     = Security::clean($_POST['phone']);
     $job_title = Security::clean($_POST['job_title']);
+    $basic_salary = floatval($_POST['basic_salary']);
+    
+    // NEW Date fields
+    $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : null;
+    $resigning_date = !empty($_POST['resigning_date']) ? Security::clean($_POST['resigning_date']) : null;
 
     try {
-        // Add variable:
-        $basic_salary = floatval($_POST['basic_salary']);
-
-        // Update the base SQL:
         $sql = "UPDATE users SET 
                 username = :user, role = :role, 
                 full_name = :full_name, email = :email, 
-                phone = :phone, job_title = :job_title, basic_salary = :basic_salary";
+                phone = :phone, job_title = :job_title, 
+                basic_salary = :basic_salary, 
+                joining_date = :joining_date, 
+                resigning_date = :resigning_date";
         
-        // Update the params array:
         $params = [
             ':user'      => $username,
             ':role'      => $role,
@@ -47,10 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':phone'     => $phone,
             ':job_title' => $job_title,
             ':basic_salary' => $basic_salary,
+            ':joining_date' => $joining_date,
+            ':resigning_date' => $resigning_date,
             ':id'        => $user_id
         ];
 
-        // If password is provided, append to SQL
         if (!empty($password)) {
             if (strlen($password) < 6) {
                 $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch Current User Data
-$stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title FROM users WHERE id = :id LIMIT 1");
+$stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title, basic_salary, joining_date, resigning_date FROM users WHERE id = :id LIMIT 1");
 $stmt->execute([':id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -130,12 +131,22 @@ if (!$user) {
                             <label class="form-label text-white-50 small fw-bold">Phone Number</label>
                             <input type="tel" name="phone" class="form-control glass-input" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
                         </div>
-                        <div class="col-md-12 mt-3 pt-3 border-top border-secondary border-opacity-25">
+                        
+                        <div class="col-md-12 border-top border-secondary border-opacity-25 pt-3 mt-3">
                             <label class="form-label text-gold small fw-bold"><i class="bi bi-cash-stack me-2"></i>Basic Salary (Monthly)</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50">SAR</span>
                                 <input type="number" step="0.01" name="basic_salary" class="form-control glass-input border-start-0 ps-2" value="<?php echo htmlspecialchars($user['basic_salary'] ?? '0.00'); ?>" required>
                             </div>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-check me-2"></i>Joining Date</label>
+                            <input type="text" name="joining_date" class="form-control glass-input rooq-date" data-hide-buttons="true" value="<?php echo htmlspecialchars($user['joining_date'] ?? date('Y-m-d')); ?>" required>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label text-danger small fw-bold"><i class="bi bi-calendar-x me-2"></i>Resigning Date (If left)</label>
+                            <input type="text" name="resigning_date" class="form-control glass-input rooq-date border-danger text-danger" data-hide-buttons="true" placeholder="Leave blank if active" value="<?php echo htmlspecialchars($user['resigning_date'] ?? ''); ?>">
                         </div>
                     </div>
 
@@ -145,10 +156,9 @@ if (!$user) {
                             <label class="form-label text-white-50 small fw-bold">System Username</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-person"></i></span>
-                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-1" required value="<?php echo htmlspecialchars($user['username']); ?>">
+                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-2" required value="<?php echo htmlspecialchars($user['username']); ?>">
                             </div>
                         </div>
-
                         <div class="col-md-6">
                             <label class="form-label text-white-50 small fw-bold">Access Level</label>
                             <select name="role" class="form-select glass-input">
@@ -156,19 +166,16 @@ if (!$user) {
                                 <option value="2" <?php echo ($user['role'] == '2') ? 'selected' : ''; ?>>Admin (Full Access)</option>
                             </select>
                         </div>
-
                         <div class="col-12">
                             <label class="form-label text-white-50 small fw-bold">Reset Password (Optional)</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-key"></i></span>
-                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-1" placeholder="Leave blank to keep current password">
+                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-2" placeholder="Leave blank to keep current password">
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold mt-2">
-                        Update User Profile
-                    </button>
+                    <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold mt-2">Update User Profile</button>
                 </form>
             </div>
         </div>
