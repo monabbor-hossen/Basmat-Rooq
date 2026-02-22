@@ -755,6 +755,9 @@ select.glass-input option {
 /* =========================================
    GLASSMORPHISM CALENDAR POPUP
    ========================================= */
+   .rooq-date::placeholder{
+    color: var(--badge-text-default);
+   }
 .glass-calendar-popup {
     position: absolute;
     display: none; /* Hidden by default */

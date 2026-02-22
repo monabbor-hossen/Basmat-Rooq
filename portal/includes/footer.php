@@ -119,8 +119,7 @@
     
     <div class="calendar-grid" id="dpCalendarDays">
         </div>
-
-    <div class="mt-3 pt-3 border-top border-secondary border-opacity-25 d-flex gap-2 justify-content-between">
+    <div class="mt-3 pt-3 border-top border-secondary border-opacity-25 d-flex gap-2 justify-content-between" id="dpActionButtons">
         <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 fw-bold" id="dpBtnToday" style="font-size: 0.75rem;">Today</button>
         <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 fw-bold" id="dpBtnMonth" style="font-size: 0.75rem;">This Month</button>
         <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 fw-bold" id="dpBtnYear" style="font-size: 0.75rem;">This Year</button>

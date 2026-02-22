@@ -164,7 +164,8 @@ if ($is_pre_join) {
             <h3 class="text-white fw-bold mb-0">Payroll: <?php echo htmlspecialchars($display_name); ?></h3>
             <p class="text-gold small mb-0"><?php echo htmlspecialchars($user['job_title'] ?? 'Staff'); ?></p>
         </div>
-        <button class="btn btn-rooq-primary rounded-pill px-4 shadow-lg" data-bs-toggle="modal" data-bs-target="#payModal">
+        <button class="btn btn-rooq-primary rounded-pill px-4 shadow-lg" data-bs-toggle="modal"
+            data-bs-target="#payModal">
             <i class="bi bi-wallet2 me-2"></i> Record Payment
         </button>
     </div>
@@ -172,53 +173,71 @@ if ($is_pre_join) {
     <?php echo $message; ?>
 
     <?php if ($is_pre_join): ?>
-        <div class="alert alert-warning bg-warning bg-opacity-10 border-warning text-warning d-flex align-items-center mb-4">
-            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
-            <div>
-                <strong>Notice:</strong> This user joined the company on <strong><?php echo date('F d, Y', $joined_timestamp); ?></strong>. The selected filter is before their joining date.
-            </div>
+    <div
+        class="alert alert-warning bg-warning bg-opacity-10 border-warning text-warning d-flex align-items-center mb-4">
+        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+        <div>
+            <strong>Notice:</strong> This user joined the company on
+            <strong><?php echo date('F d, Y', $joined_timestamp); ?></strong>. The selected filter is before their
+            joining date.
         </div>
+    </div>
     <?php endif; ?>
 
     <div class="row g-3 mb-4" id="summary-cards-container" style="transition: opacity 0.3s ease;">
         <div class="col-md-4">
             <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid #3498db;">
                 <h6 class="text-white-50 small text-uppercase fw-bold mb-2">Basic Salary (Monthly)</h6>
-                <h3 class="text-white mb-0 fw-bold"><?php echo number_format($base_salary, 2); ?> <small class="fs-6 text-white-50">SAR</small></h3>
+                <h3 class="text-white mb-0 fw-bold"><?php echo number_format($base_salary, 2); ?> <small
+                        class="fs-6 text-white-50">SAR</small></h3>
             </div>
         </div>
         <div class="col-md-4">
             <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid #2ecc71;">
                 <h6 class="text-white-50 small text-uppercase fw-bold mb-2">Total Paid (Filtered)</h6>
-                <h3 class="text-success mb-0 fw-bold"><?php echo number_format($total_paid_filtered, 2); ?> <small class="fs-6 text-white-50">SAR</small></h3>
+                <h3 class="text-success mb-0 fw-bold"><?php echo number_format($total_paid_filtered, 2); ?> <small
+                        class="fs-6 text-white-50">SAR</small></h3>
             </div>
         </div>
         <div class="col-md-4">
             <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid <?php echo $due_border; ?>;">
                 <h6 class="text-white-50 small text-uppercase fw-bold mb-2"><?php echo $due_label; ?></h6>
                 <?php if ($due_amount !== null): ?>
-                    <h3 class="mb-0 fw-bold <?php echo $due_color; ?>">
-                        <?php echo $due_amount; ?>
-                    </h3>
+                <h3 class="mb-0 fw-bold <?php echo $due_color; ?>">
+                    <?php echo $due_amount; ?>
+                </h3>
                 <?php else: ?>
-                    <h5 class="text-white-50 mt-2 fst-italic">- N/A -</h5>
+                <h5 class="text-white-50 mt-2 fst-italic">- N/A -</h5>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <div class="card-box p-3 mb-4">
-        <form method="GET" class="row g-3 align-items-end" id="payrollFilterForm">
-            <input type="hidden" name="id" value="<?php echo $user_id; ?>">
-            
-            <div class="col-md-9">
-                <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-event me-1"></i>Select Period (Exact Date / Whole Month / Whole Year)</label>
-                <input type="text" name="f_period" id="f_period" class="form-control glass-input rooq-date" 
-                       value="<?php echo htmlspecialchars($f_period); ?>" placeholder="Click to open calendar filter...">
-            </div>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 mt-4">
+        <h6 class="text-gold m-0 text-uppercase fw-bold mb-3 mb-md-0" style="font-size: 0.85rem; letter-spacing: 1px;">
+            <i class="bi bi-clock-history me-2"></i>Payment History
+        </h6>
 
-            <div class="col-md-3">
-                <button type="button" onclick="clearPayrollFilters(this.form)" class="btn btn-outline-danger w-100" title="Clear Filters"><i class="bi bi-x-lg me-2"></i>Reset Filter</button>
+        <form method="GET" id="payrollFilterForm" style="width: 100%; max-width: 380px;">
+            <input type="hidden" name="id" value="<?php echo $user_id; ?>">
+
+            <div class="input-group align-items-center"
+                style="background: var(--glass-10); border: 1px solid var(--glass-20); border-radius: 50px; overflow: hidden; transition: all 0.3s ease;">
+                <span class="input-group-text bg-transparent border-0 text-gold ps-3 pe-2">
+                    <i class="bi bi-calendar2-range"></i>
+                </span>
+
+                <input type="text" name="f_period" id="f_period"
+                    class="form-control bg-transparent border-0 text-white shadow-none rooq-date py-2 px-1"
+                    value="<?php echo htmlspecialchars($f_period); ?>" placeholder="Filter by date, month, or year..."
+                    style="font-size: 0.85rem;">
+
+                <button type="button" onclick="clearPayrollFilters(this.form)"
+                    class="btn bg-transparent border-0 text-white-50 pe-3 shadow-none"
+                    onmouseover="this.classList.replace('text-white-50', 'text-danger')"
+                    onmouseout="this.classList.replace('text-danger', 'text-white-50')" title="Clear Filter">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
             </div>
         </form>
     </div>
@@ -237,17 +256,25 @@ if ($is_pre_join) {
                 </thead>
                 <tbody>
                     <?php if (count($payments) > 0): ?>
-                        <?php foreach ($payments as $pay): ?>
-                        <tr>
-                            <td class="ps-4 fw-bold text-white"><?php echo htmlspecialchars($pay['pay_month']) . ' ' . $pay['pay_year']; ?></td>
-                            <td class="text-white-50"><i class="bi bi-calendar me-2"></i><?php echo date('d M, Y', strtotime($pay['payment_date'])); ?></td>
-                            <td><span class="badge bg-secondary opacity-75"><?php echo htmlspecialchars($pay['payment_method']); ?></span></td>
-                            <td class="text-success fw-bold">+<?php echo number_format($pay['amount'], 2); ?> SAR</td>
-                            <td class="text-white-50 small fst-italic"><?php echo htmlspecialchars($pay['notes']); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
+                    <?php foreach ($payments as $pay): ?>
+                    <tr>
+                        <td class="ps-4 fw-bold text-white">
+                            <?php echo htmlspecialchars($pay['pay_month']) . ' ' . $pay['pay_year']; ?></td>
+                        <td class="text-white-50"><i
+                                class="bi bi-calendar me-2"></i><?php echo date('d M, Y', strtotime($pay['payment_date'])); ?>
+                        </td>
+                        <td><span
+                                class="badge bg-secondary opacity-75"><?php echo htmlspecialchars($pay['payment_method']); ?></span>
+                        </td>
+                        <td class="text-success fw-bold">+<?php echo number_format($pay['amount'], 2); ?> SAR</td>
+                        <td class="text-white-50 small fst-italic"><?php echo htmlspecialchars($pay['notes']); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="5" class="text-center py-5 text-white-50">No salary payments match your filter.</td></tr>
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-white-50">No salary payments match your filter.
+                        </td>
+                    </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -260,14 +287,15 @@ if ($is_pre_join) {
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content glass-modal">
             <div class="modal-header border-bottom border-secondary border-opacity-25">
-                <h5 class="modal-title text-white fw-bold"><i class="bi bi-wallet2 me-2 text-gold"></i>Record Salary Payment</h5>
+                <h5 class="modal-title text-white fw-bold"><i class="bi bi-wallet2 me-2 text-gold"></i>Record Salary
+                    Payment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST">
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
                     <input type="hidden" name="add_payment" value="1">
-                    
+
                     <div class="row g-3">
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Salary Month</label>
@@ -283,16 +311,20 @@ if ($is_pre_join) {
                         </div>
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Year</label>
-                            <input type="number" name="pay_year" class="form-control glass-input" value="<?php echo htmlspecialchars($f_year ?: date('Y')); ?>" required>
+                            <input type="number" name="pay_year" class="form-control glass-input"
+                                value="<?php echo htmlspecialchars($f_year ?: date('Y')); ?>" required>
                         </div>
                         <div class="col-12">
                             <label class="form-label text-gold small fw-bold">Amount to Pay (SAR)</label>
-                            <input type="number" step="0.01" name="amount" class="form-control glass-input fw-bold text-success" 
-                                   value="<?php echo $modal_default_amount; ?>" required>
+                            <input type="number" step="0.01" name="amount"
+                                class="form-control glass-input fw-bold text-success"
+                                value="<?php echo $modal_default_amount; ?>" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Payment Date</label>
-                            <input type="date" name="payment_date" class="form-control glass-input" value="<?php echo date('Y-m-d'); ?>" required>
+                            <input type="text" name="payment_date" class="form-control glass-input rooq-date"
+                                value="<?php echo date('Y-m-d'); ?>" data-hide-buttons="true" required
+                                placeholder="Select Date...">
                         </div>
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Transfer Method</label>
@@ -304,7 +336,8 @@ if ($is_pre_join) {
                         </div>
                         <div class="col-12">
                             <label class="form-label text-white-50 small">Notes / Deductions</label>
-                            <textarea name="notes" class="form-control glass-input" rows="2" placeholder="Any deductions or bonuses?"></textarea>
+                            <textarea name="notes" class="form-control glass-input" rows="2"
+                                placeholder="Any deductions or bonuses?"></textarea>
                         </div>
                     </div>
                 </div>

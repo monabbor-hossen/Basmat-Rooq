@@ -217,10 +217,10 @@ function openViewModal(button) {
         ];
         steps.forEach(step => {
             var status = step.status || 'Pending';
-            
+
             // Skip disabled steps
-            if (status === 'Not Required') return; 
-            
+            if (status === 'Not Required') return;
+
             // 1. Determine Main Card Class
             var colorClass = 'card-status-default';
             if (status === 'Approved' || status.includes('Done')) {
@@ -240,7 +240,7 @@ function openViewModal(button) {
             // 3. Create Bootstrap Column Wrapper
             var colWrapper = document.createElement('div');
             // Mobile: full width, Tablet: half width, Large Desktop: 1/3 width
-            colWrapper.className = 'col-12 col-md-6 col-xl-4'; 
+            colWrapper.className = 'col-12 col-md-6 col-xl-4';
 
             // 4. Create Card (Added h-100 for equal height rows)
             var card = document.createElement('div');
@@ -250,7 +250,7 @@ function openViewModal(button) {
                 <div class="wf-status">${status}</div>
                 ${noteHtml}
             `;
-            
+
             colWrapper.appendChild(card);
             grid.appendChild(colWrapper);
         });
@@ -390,24 +390,30 @@ function toggleWorkflowCard(key) {
 /* --- Toggle Login Status API --- */
 function toggleLoginStatus(type, id, checkbox) {
     const isChecked = checkbox.checked;
-    
+
     fetch('toggle_status_api.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: type, id: id, status: isChecked })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            alert("Error: " + data.message);
-            checkbox.checked = !isChecked; // Revert switch if backend failed
-        }
-    })
-    .catch(err => {
-        console.error("Fetch Error:", err);
-        alert("Failed to update status. Check connection.");
-        checkbox.checked = !isChecked; // Revert switch
-    });
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: type,
+                id: id,
+                status: isChecked
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Error: " + data.message);
+                checkbox.checked = !isChecked; // Revert switch if backend failed
+            }
+        })
+        .catch(err => {
+            console.error("Fetch Error:", err);
+            alert("Failed to update status. Check connection.");
+            checkbox.checked = !isChecked; // Revert switch
+        });
 }
 
 /* =========================================
@@ -415,24 +421,24 @@ function toggleLoginStatus(type, id, checkbox) {
    ========================================= */
 
 // 1. Hide loader when page loads OR when returning via "Back" button (pageshow)
-window.addEventListener('pageshow', function(event) {
+window.addEventListener('pageshow', function (event) {
     const loader = document.getElementById('global-loader');
     if (loader) {
         // event.persisted is true if the page is loaded from the bfcache (Back button)
         // We hide the loader whether it's a fresh load or a back button load
         setTimeout(() => {
             loader.classList.add('hidden');
-        }, 300); 
+        }, 300);
     }
 });
 
 // 2. Show loader when clicking links to navigate away
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Select all links that do NOT open in a new tab, and are NOT anchor/JS links
     const links = document.querySelectorAll('a:not([target="_blank"]):not([href^="#"]):not([href^="javascript"]):not([href=""])');
-    
+
     links.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             // Ignore if user is holding CTRL/CMD to open in new tab
             if (e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) return;
 
@@ -448,15 +454,15 @@ document.addEventListener('DOMContentLoaded', function() {
 /* =========================================
    404 PAGE PARALLAX EFFECT
    ========================================= */
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const errorImage = document.querySelector('.error-svg');
-    
+
     if (errorImage) {
-        document.addEventListener('mousemove', function(e) {
+        document.addEventListener('mousemove', function (e) {
             // Calculate mouse position relative to center of screen
             let xAxis = (window.innerWidth / 2 - e.pageX) / 30;
             let yAxis = (window.innerHeight / 2 - e.pageY) / 30;
-            
+
             // Combine the mouse parallax with the CSS floating animation
             errorImage.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
         });
@@ -469,7 +475,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function submitPayrollFilter(form) {
     const tableContainer = document.getElementById('payroll-table-container');
     const summaryContainer = document.getElementById('summary-cards-container');
-    
+
     // Dim the containers to show loading state
     if (tableContainer) tableContainer.style.opacity = '0.3';
     if (summaryContainer) summaryContainer.style.opacity = '0.3';
@@ -486,13 +492,13 @@ function submitPayrollFilter(form) {
             // Parse the returned HTML
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            
+
             // Replace Summary Cards
             if (summaryContainer && doc.getElementById('summary-cards-container')) {
                 summaryContainer.innerHTML = doc.getElementById('summary-cards-container').innerHTML;
                 summaryContainer.style.opacity = '1';
             }
-            
+
             // Replace Table
             if (tableContainer && doc.getElementById('payroll-table-container')) {
                 tableContainer.innerHTML = doc.getElementById('payroll-table-container').innerHTML;
@@ -524,13 +530,13 @@ function clearPayrollFilters(form) {
 /* =========================================
    GLOBAL ROOQ DATE PICKER
    ========================================= */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const datePicker = document.getElementById('rooqDatePicker');
     const monthYear = document.getElementById('dpMonthYear');
     const calendarDays = document.getElementById('dpCalendarDays');
     const prevBtn = document.getElementById('dpPrevMonth');
     const nextBtn = document.getElementById('dpNextMonth');
-    
+
     // New Action Buttons
     const btnToday = document.getElementById('dpBtnToday');
     const btnMonth = document.getElementById('dpBtnMonth');
@@ -553,16 +559,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderCalendar(dateToView) {
-        calendarDays.innerHTML = ''; 
+        calendarDays.innerHTML = '';
         const year = dateToView.getFullYear();
         const month = dateToView.getMonth();
-        
+
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         monthYear.innerText = `${monthNames[month]} ${year}`;
 
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
+
         const today = new Date();
         const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
 
@@ -578,13 +584,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'calendar-date';
             dayDiv.innerText = i;
-            
+
             if (isCurrentMonth && i === today.getDate()) {
                 dayDiv.classList.add('today');
             }
 
             // Click Event to select Exact Date
-            dayDiv.addEventListener('click', function(e) {
+            dayDiv.addEventListener('click', function (e) {
                 e.stopPropagation();
                 if (activeInput) {
                     activeInput.value = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
@@ -613,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnToday) {
         btnToday.addEventListener('click', (e) => {
             e.stopPropagation();
-            if(activeInput) {
+            if (activeInput) {
                 const today = new Date();
                 activeInput.value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
                 closeAndSubmit();
@@ -624,7 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnMonth) {
         btnMonth.addEventListener('click', (e) => {
             e.stopPropagation();
-            if(activeInput) {
+            if (activeInput) {
                 activeInput.value = `${viewingDate.getFullYear()}-${String(viewingDate.getMonth()+1).padStart(2, '0')}`;
                 closeAndSubmit();
             }
@@ -634,7 +640,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnYear) {
         btnYear.addEventListener('click', (e) => {
             e.stopPropagation();
-            if(activeInput) {
+            if (activeInput) {
                 activeInput.value = `${viewingDate.getFullYear()}`;
                 closeAndSubmit();
             }
@@ -643,15 +649,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Attach to all inputs with class 'rooq-date'
     const dateInputs = document.querySelectorAll('.rooq-date');
-    
+    const actionButtonsContainer = document.getElementById('dpActionButtons'); // NEW
+
     dateInputs.forEach(input => {
         input.setAttribute('readonly', true);
         input.style.cursor = 'pointer';
 
-        input.addEventListener('click', function(e) {
+        input.addEventListener('click', function (e) {
             e.stopPropagation();
             activeInput = this;
-            
+
+            // NEW: Hide or Show the bottom action buttons based on the input's attribute
+            if (actionButtonsContainer) {
+                if (this.getAttribute('data-hide-buttons') === 'true') {
+                    actionButtonsContainer.classList.remove('d-flex');
+                    actionButtonsContainer.style.display = 'none';
+                } else {
+                    actionButtonsContainer.classList.add('d-flex');
+                    actionButtonsContainer.style.display = '';
+                }
+            }
+
             if (this.value && this.value.length >= 4) {
                 // Try to open calendar to the currently inputted year/month
                 const parts = this.value.split('-');
@@ -661,19 +679,19 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 viewingDate = new Date();
             }
-            
+
             renderCalendar(viewingDate);
 
             // Position popup
             const rect = this.getBoundingClientRect();
             datePicker.style.top = (rect.bottom + window.scrollY) + 'px';
             datePicker.style.left = rect.left + 'px';
-            
+
             datePicker.classList.add('show');
         });
     });
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!datePicker.contains(e.target) && !e.target.classList.contains('rooq-date')) {
             datePicker.classList.remove('show');
         }
