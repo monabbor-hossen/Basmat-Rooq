@@ -464,137 +464,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 /* =========================================
-   GLOBAL ROOQ DATE PICKER
-   ========================================= */
-document.addEventListener('DOMContentLoaded', function() {
-    const datePicker = document.getElementById('rooqDatePicker');
-    const monthYear = document.getElementById('dpMonthYear');
-    const calendarDays = document.getElementById('dpCalendarDays');
-    const prevBtn = document.getElementById('dpPrevMonth');
-    const nextBtn = document.getElementById('dpNextMonth');
-
-    if (!datePicker) return;
-
-    let activeInput = null;
-    let viewingDate = new Date(); // The month currently being viewed
-
-    function renderCalendar(dateToView) {
-        calendarDays.innerHTML = ''; 
-        const year = dateToView.getFullYear();
-        const month = dateToView.getMonth();
-        
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        monthYear.innerText = `${monthNames[month]} ${year}`;
-
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
-        const today = new Date();
-        const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
-
-        // Empty slots
-        for (let i = 0; i < firstDay; i++) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'calendar-date empty';
-            calendarDays.appendChild(emptyDiv);
-        }
-
-        // Real Days
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'calendar-date';
-            dayDiv.innerText = i;
-            
-            if (isCurrentMonth && i === today.getDate()) {
-                dayDiv.classList.add('today');
-            }
-
-            // Click Event to select Date
-            dayDiv.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (activeInput) {
-                    // Format YYYY-MM-DD
-                    const selectedDate = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                    activeInput.value = selectedDate;
-                    datePicker.classList.remove('show'); // Hide popup
-
-                    // SMART FIX: If filtering by exact date, clear the month/year dropdowns automatically
-                    if (activeInput.name === 'f_date') {
-                        const monthSelect = document.querySelector('select[name="f_month"]');
-                        const yearInput = document.querySelector('input[name="f_year"]');
-                        if (monthSelect) monthSelect.value = '';
-                        if (yearInput) yearInput.value = '';
-                        
-                        // NEW: Auto-submit the form after a date is selected!
-                        // AUTO-SUBMIT VIA AJAX
-                        if (activeInput.form) {
-                            if (typeof submitPayrollFilter === 'function') {
-                                submitPayrollFilter(activeInput.form);
-                            } else {
-                                activeInput.form.submit();
-                            }
-                        }
-                    }
-                }
-            });
-
-            calendarDays.appendChild(dayDiv);
-        }
-    }
-
-    // Previous/Next Month Logic
-    prevBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        viewingDate.setMonth(viewingDate.getMonth() - 1);
-        renderCalendar(viewingDate);
-    });
-
-    nextBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        viewingDate.setMonth(viewingDate.getMonth() + 1);
-        renderCalendar(viewingDate);
-    });
-
-    // Attach to all inputs with class 'rooq-date'
-    const dateInputs = document.querySelectorAll('.rooq-date');
-    
-    dateInputs.forEach(input => {
-        // Prevent typing, force using calendar
-        input.setAttribute('readonly', true);
-        input.style.cursor = 'pointer';
-
-        input.addEventListener('click', function(e) {
-            e.stopPropagation();
-            activeInput = this;
-            
-            // If input has a value, open calendar to that month
-            if (this.value) {
-                viewingDate = new Date(this.value);
-            } else {
-                viewingDate = new Date();
-            }
-            
-            renderCalendar(viewingDate);
-
-            // Position the popup exactly under the input field
-            const rect = this.getBoundingClientRect();
-            datePicker.style.top = (rect.bottom + window.scrollY) + 'px';
-            datePicker.style.left = rect.left + 'px';
-            
-            datePicker.classList.add('show');
-        });
-    });
-
-    // Close when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!datePicker.contains(e.target) && !e.target.classList.contains('rooq-date')) {
-            datePicker.classList.remove('show');
-        }
-    });
-});
-
-
-/* =========================================
    AJAX PAYROLL FILTERING (NO RELOAD)
    ========================================= */
 function submitPayrollFilter(form) {
@@ -652,3 +521,161 @@ function clearPayrollFilters(form) {
     // Trigger the AJAX filter
     submitPayrollFilter(form);
 }
+/* =========================================
+   GLOBAL ROOQ DATE PICKER
+   ========================================= */
+document.addEventListener('DOMContentLoaded', function() {
+    const datePicker = document.getElementById('rooqDatePicker');
+    const monthYear = document.getElementById('dpMonthYear');
+    const calendarDays = document.getElementById('dpCalendarDays');
+    const prevBtn = document.getElementById('dpPrevMonth');
+    const nextBtn = document.getElementById('dpNextMonth');
+    
+    // New Action Buttons
+    const btnToday = document.getElementById('dpBtnToday');
+    const btnMonth = document.getElementById('dpBtnMonth');
+    const btnYear = document.getElementById('dpBtnYear');
+
+    if (!datePicker) return;
+
+    let activeInput = null;
+    let viewingDate = new Date(); // The month currently being viewed
+
+    function closeAndSubmit() {
+        datePicker.classList.remove('show');
+        if (activeInput && activeInput.form) {
+            if (typeof submitPayrollFilter === 'function') {
+                submitPayrollFilter(activeInput.form);
+            } else {
+                activeInput.form.submit();
+            }
+        }
+    }
+
+    function renderCalendar(dateToView) {
+        calendarDays.innerHTML = ''; 
+        const year = dateToView.getFullYear();
+        const month = dateToView.getMonth();
+        
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        monthYear.innerText = `${monthNames[month]} ${year}`;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const today = new Date();
+        const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+
+        // Empty slots
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'calendar-date empty';
+            calendarDays.appendChild(emptyDiv);
+        }
+
+        // Real Days
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-date';
+            dayDiv.innerText = i;
+            
+            if (isCurrentMonth && i === today.getDate()) {
+                dayDiv.classList.add('today');
+            }
+
+            // Click Event to select Exact Date
+            dayDiv.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (activeInput) {
+                    activeInput.value = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    closeAndSubmit();
+                }
+            });
+
+            calendarDays.appendChild(dayDiv);
+        }
+    }
+
+    // Previous/Next Month Logic
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewingDate.setMonth(viewingDate.getMonth() - 1);
+        renderCalendar(viewingDate);
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewingDate.setMonth(viewingDate.getMonth() + 1);
+        renderCalendar(viewingDate);
+    });
+
+    // --- Action Button Logic ---
+    if (btnToday) {
+        btnToday.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(activeInput) {
+                const today = new Date();
+                activeInput.value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                closeAndSubmit();
+            }
+        });
+    }
+
+    if (btnMonth) {
+        btnMonth.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(activeInput) {
+                activeInput.value = `${viewingDate.getFullYear()}-${String(viewingDate.getMonth()+1).padStart(2, '0')}`;
+                closeAndSubmit();
+            }
+        });
+    }
+
+    if (btnYear) {
+        btnYear.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(activeInput) {
+                activeInput.value = `${viewingDate.getFullYear()}`;
+                closeAndSubmit();
+            }
+        });
+    }
+
+    // Attach to all inputs with class 'rooq-date'
+    const dateInputs = document.querySelectorAll('.rooq-date');
+    
+    dateInputs.forEach(input => {
+        input.setAttribute('readonly', true);
+        input.style.cursor = 'pointer';
+
+        input.addEventListener('click', function(e) {
+            e.stopPropagation();
+            activeInput = this;
+            
+            if (this.value && this.value.length >= 4) {
+                // Try to open calendar to the currently inputted year/month
+                const parts = this.value.split('-');
+                let y = parseInt(parts[0]);
+                let m = parts.length > 1 ? parseInt(parts[1]) - 1 : 0;
+                viewingDate = new Date(y, m, 1);
+            } else {
+                viewingDate = new Date();
+            }
+            
+            renderCalendar(viewingDate);
+
+            // Position popup
+            const rect = this.getBoundingClientRect();
+            datePicker.style.top = (rect.bottom + window.scrollY) + 'px';
+            datePicker.style.left = rect.left + 'px';
+            
+            datePicker.classList.add('show');
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!datePicker.contains(e.target) && !e.target.classList.contains('rooq-date')) {
+            datePicker.classList.remove('show');
+        }
+    });
+});

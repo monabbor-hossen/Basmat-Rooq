@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
 }
 
 // --- FETCH USER INFO ---
-// Added `created_at` to know when they joined
 $stmt = $db->prepare("SELECT full_name, username, job_title, basic_salary, created_at FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -51,32 +50,46 @@ if (!$user) {
 
 $display_name = !empty($user['full_name']) ? $user['full_name'] : $user['username'];
 $base_salary = floatval($user['basic_salary']);
-// --- FILTER LOGIC ---
-$f_month = $_GET['f_month'] ?? date('F');
-$f_year  = $_GET['f_year'] ?? date('Y');
-$f_date  = $_GET['f_date'] ?? '';
+
+// --- SMART PERIOD FILTER LOGIC ---
+$f_period = $_GET['f_period'] ?? '';
+$f_month = '';
+$f_year = '';
 
 $where_clauses = ["user_id = ?"];
 $params = [$user_id];
 
-// SMART FILTER: If exact date is chosen, prioritize it and ignore the dropdowns
-if (!empty($f_date)) {
-    $where_clauses[] = "payment_date = ?";
-    $params[] = $f_date;
-    
-    // Clear month and year variables so the UI dropdowns reset to "-- All Months --"
-    $f_month = '';
-    $f_year = '';
-} else {
-    // Otherwise, filter by the Dropdowns
-    if (!empty($f_month)) {
+if (!empty($f_period)) {
+    if (strlen($f_period) == 10) {
+        // EXACT DATE (YYYY-MM-DD)
+        $where_clauses[] = "payment_date = ?";
+        $params[] = $f_period;
+        $f_month = date('F', strtotime($f_period));
+        $f_year = date('Y', strtotime($f_period));
+    } elseif (strlen($f_period) == 7) {
+        // WHOLE MONTH (YYYY-MM)
+        $f_year = substr($f_period, 0, 4);
+        $month_num = substr($f_period, 5, 2);
+        $f_month = date('F', mktime(0, 0, 0, $month_num, 10)); // Convert "03" to "March"
+        
+        $where_clauses[] = "pay_year = ?";
+        $params[] = $f_year;
         $where_clauses[] = "pay_month = ?";
         $params[] = $f_month;
-    }
-    if (!empty($f_year)) {
+    } elseif (strlen($f_period) == 4) {
+        // WHOLE YEAR (YYYY)
+        $f_year = $f_period;
         $where_clauses[] = "pay_year = ?";
         $params[] = $f_year;
     }
+} else {
+    // DEFAULT: Current Month & Year
+    $f_month = date('F');
+    $f_year = date('Y');
+    $where_clauses[] = "pay_year = ?";
+    $params[] = $f_year;
+    $where_clauses[] = "pay_month = ?";
+    $params[] = $f_month;
 }
 
 $where_sql = implode(" AND ", $where_clauses);
@@ -99,8 +112,6 @@ $joined_year = (int)date('Y', $joined_timestamp);
 $is_pre_join = false;
 if (!empty($f_month) && !empty($f_year)) {
     $filtered_month_num = date('n', strtotime($f_month));
-    
-    // If filtered year is less than joined year OR (same year but earlier month)
     if ($f_year < $joined_year || ($f_year == $joined_year && $filtered_month_num < $joined_month_num)) {
         $is_pre_join = true;
     }
@@ -111,8 +122,6 @@ $due_amount = null;
 $due_label = "Select Month & Year to see Due";
 $due_color = "text-white";
 $due_border = "#f1c40f";
-
-// Default amount to suggest in the payment modal
 $modal_default_amount = $base_salary;
 
 if ($is_pre_join) {
@@ -129,19 +138,19 @@ if ($is_pre_join) {
         $due_amount = number_format($balance, 2) . " SAR";
         $due_color = "text-danger";
         $due_border = "#e74c3c";
-        $modal_default_amount = $balance; // Suggest paying the remaining balance
+        $modal_default_amount = $balance;
     } elseif ($balance < 0) {
         $due_label = "Extra Paid ($f_month)";
         $due_amount = "+ " . number_format(abs($balance), 2) . " SAR";
         $due_color = "text-info";
         $due_border = "#3498db";
-        $modal_default_amount = 0; // Already overpaid
+        $modal_default_amount = 0;
     } else {
         $due_label = "Status ($f_month)";
         $due_amount = "Fully Paid";
         $due_color = "text-success";
         $due_border = "#2ecc71";
-        $modal_default_amount = 0; // Fully paid
+        $modal_default_amount = 0;
     }
 }
 ?>
@@ -202,32 +211,14 @@ if ($is_pre_join) {
         <form method="GET" class="row g-3 align-items-end" id="payrollFilterForm">
             <input type="hidden" name="id" value="<?php echo $user_id; ?>">
             
-            <div class="col-md-4">
-                <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-month me-1"></i>Pay Month</label>
-                <select name="f_month" class="form-select glass-input" onchange="document.getElementById('f_date').value=''; submitPayrollFilter(this.form);">
-                    <option value="">-- All Months --</option>
-                    <?php 
-                    $months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-                    foreach($months as $m) {
-                        $sel = ($m == $f_month) ? 'selected' : '';
-                        echo "<option value='$m' $sel>$m</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            
-            <div class="col-md-3">
-                <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-event me-1"></i>Pay Year</label>
-                <input type="number" name="f_year" class="form-control glass-input" placeholder="e.g. 2024" value="<?php echo htmlspecialchars($f_year); ?>" onchange="document.getElementById('f_date').value=''; submitPayrollFilter(this.form);">
+            <div class="col-md-9">
+                <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-event me-1"></i>Select Period (Exact Date / Whole Month / Whole Year)</label>
+                <input type="text" name="f_period" id="f_period" class="form-control glass-input rooq-date" 
+                       value="<?php echo htmlspecialchars($f_period); ?>" placeholder="Click to open calendar filter...">
             </div>
 
             <div class="col-md-3">
-                <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-date me-1"></i>Exact Payment Date</label>
-                <input type="text" name="f_date" id="f_date" class="form-control glass-input rooq-date" value="<?php echo htmlspecialchars($f_date); ?>" placeholder="Select Date...">
-            </div>
-
-            <div class="col-md-2">
-                <button type="button" onclick="clearPayrollFilters(this.form)" class="btn btn-outline-danger w-100" title="Clear Filters"><i class="bi bi-x-lg me-2"></i>Clear</button>
+                <button type="button" onclick="clearPayrollFilters(this.form)" class="btn btn-outline-danger w-100" title="Clear Filters"><i class="bi bi-x-lg me-2"></i>Reset Filter</button>
             </div>
         </form>
     </div>
@@ -282,6 +273,7 @@ if ($is_pre_join) {
                             <label class="form-label text-white-50 small">Salary Month</label>
                             <select name="pay_month" class="form-select glass-input" required>
                                 <?php 
+                                $months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
                                 foreach($months as $m) {
                                     $sel = ($m == ($f_month ?: date('F'))) ? 'selected' : '';
                                     echo "<option value='$m' $sel>$m</option>";
@@ -300,7 +292,7 @@ if ($is_pre_join) {
                         </div>
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Payment Date</label>
-                            <input type="date" name="payment_date" class="form-control glass-input" value="<?php echo htmlspecialchars($f_date ?: date('Y-m-d')); ?>" required>
+                            <input type="date" name="payment_date" class="form-control glass-input" value="<?php echo date('Y-m-d'); ?>" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Transfer Method</label>
