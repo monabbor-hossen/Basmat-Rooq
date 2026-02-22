@@ -45,6 +45,7 @@ function getRoleName($roleId) {
                         <th class="py-3 ps-4 text-gold text-uppercase small">ID</th>
                         <th class="py-3 text-gold text-uppercase small">User Identity</th>
                         <th class="py-3 text-gold text-uppercase small">Access Level</th>
+                        <th class="py-3 text-gold text-uppercase small">Salary</th>
                         <th class="py-3 text-center text-gold text-uppercase small">Login Status</th>
                         <th class="py-3 text-gold text-uppercase small">Joined Date</th>
                         <th class="py-3 text-end pe-4 text-gold text-uppercase small">Actions</th>
@@ -67,14 +68,21 @@ function getRoleName($roleId) {
                         </td>
 
                         <td><?php echo getRoleName($user['role']); ?></td>
+                        <td>
+                            <a href="user-payroll.php?id=<?php echo $user['id']; ?>" 
+                            class="btn btn-sm btn-outline-success border-0 opacity-75 hover-opacity-100" 
+                            title="Manage Payroll">
+                                <i class="bi bi-wallet2"></i>
+                            </a>
+                        </td>
                         <td class="text-center">
-    <div class="form-check form-switch m-0 d-flex justify-content-center" title="Toggle Login Access">
-        <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
-               onchange="toggleLoginStatus('user', <?php echo $user['id']; ?>, this)" 
-               <?php echo (isset($user['is_active']) && $user['is_active'] == 1) ? 'checked' : ''; ?>
-               <?php echo ($_SESSION['user_id'] == $user['id']) ? 'disabled' : ''; ?>>
-    </div>
-</td>
+                            <div class="form-check form-switch m-0 d-flex justify-content-center" title="Toggle Login Access">
+                                <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
+                                    onchange="toggleLoginStatus('user', <?php echo $user['id']; ?>, this)" 
+                                    <?php echo (isset($user['is_active']) && $user['is_active'] == 1) ? 'checked' : ''; ?>
+                                    <?php echo ($_SESSION['user_id'] == $user['id']) ? 'disabled' : ''; ?>>
+                            </div>
+                        </td>
                         <td class="text-white-50">
                             <i class="bi bi-calendar-event me-2 small"></i>
                             <?php echo date('M d, Y', strtotime($user['created_at'])); ?>
