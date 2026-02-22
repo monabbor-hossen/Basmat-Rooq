@@ -7,39 +7,32 @@ $message = "";
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1. Security Check
     Security::checkCSRF($_POST['csrf_token']);
 
-    // 2. Sanitize & Validate
     $username  = Security::clean($_POST['username']);
-    $password  = $_POST['password']; // Hash directly
+    $password  = $_POST['password']; 
     $role      = Security::clean($_POST['role']);
     
-    // New Fields
     $full_name = Security::clean($_POST['full_name']);
     $email     = Security::clean($_POST['email']);
     $phone     = Security::clean($_POST['phone']);
     $job_title = Security::clean($_POST['job_title']);
+    $basic_salary = floatval($_POST['basic_salary']);
+    
+    // NEW: Joining Date
+    $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : date('Y-m-d');
 
     if (strlen($password) < 6) {
         $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
     } else {
-        // 3. Hash Password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         try {
-            $db = (new Database())->getConnection(); 
-           // Look for where you clean the New Fields and add this:
-            $basic_salary = floatval($_POST['basic_salary']);
-            // Update the INSERT query:
-            $sql = "INSERT INTO users (username, password, role, full_name, email, phone, job_title, basic_salary) 
-                    VALUES (:username, :password, :role, :full_name, :email, :phone, :job_title, :basic_salary)";
+            $db = (new Database())->getConnection();
+            $sql = "INSERT INTO users (username, password, role, full_name, email, phone, job_title, basic_salary, joining_date) 
+                    VALUES (:username, :password, :role, :full_name, :email, :phone, :job_title, :basic_salary, :joining_date)";
             
-
-
             $stmt = $db->prepare($sql);
-                
-            // Update the execute array:
             $stmt->execute([
                 ':username'  => $username,
                 ':password'  => $hashed_password,
@@ -48,7 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':email'     => $email,
                 ':phone'     => $phone,
                 ':job_title' => $job_title,
-                ':basic_salary' => $basic_salary
+                ':basic_salary' => $basic_salary,
+                ':joining_date' => $joining_date
             ]);
 
             $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User account created successfully!</div>";
@@ -103,11 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label text-white-50 small fw-bold">Phone Number</label>
                             <input type="tel" name="phone" class="form-control glass-input" placeholder="+966 5X XXX XXXX">
                         </div>
-                        <div class="col-md-12 mt-3 pt-3 border-top border-secondary border-opacity-25">
+                        <div class="col-md-6 border-top border-secondary border-opacity-25 pt-3 mt-3">
                             <label class="form-label text-gold small fw-bold"><i class="bi bi-cash-stack me-2"></i>Basic Salary (Monthly)</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50">SAR</span>
                                 <input type="number" step="0.01" name="basic_salary" class="form-control glass-input border-start-0 ps-2" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 border-top border-secondary border-opacity-25 pt-3 mt-3">
+                            <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-check me-2"></i>Joining Date</label>
+                            <div class="input-group">
+                                <input type="text" name="joining_date" class="form-control glass-input rooq-date" data-hide-buttons="true" value="<?php echo date('Y-m-d'); ?>" required>
                             </div>
                         </div>
                     </div>
@@ -141,9 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold mt-2">
-                        Create User Account
-                    </button>
+                    <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold mt-2">Create User Account</button>
                 </form>
             </div>
         </div>
