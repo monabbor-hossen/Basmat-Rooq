@@ -171,7 +171,7 @@ if ($is_pre_join) {
         </div>
     <?php endif; ?>
 
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-4" id="summary-cards-container" style="transition: opacity 0.3s ease;">
         <div class="col-md-4">
             <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid #3498db;">
                 <h6 class="text-white-50 small text-uppercase fw-bold mb-2">Basic Salary (Monthly)</h6>
@@ -204,7 +204,7 @@ if ($is_pre_join) {
             
             <div class="col-md-4">
                 <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-month me-1"></i>Pay Month</label>
-                <select name="f_month" class="form-select glass-input" onchange="document.getElementById('f_date').value=''; this.form.submit();">
+                <select name="f_month" class="form-select glass-input" onchange="document.getElementById('f_date').value=''; submitPayrollFilter(this.form);">
                     <option value="">-- All Months --</option>
                     <?php 
                     $months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -218,7 +218,7 @@ if ($is_pre_join) {
             
             <div class="col-md-3">
                 <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-event me-1"></i>Pay Year</label>
-                <input type="number" name="f_year" class="form-control glass-input" placeholder="e.g. 2024" value="<?php echo htmlspecialchars($f_year); ?>" onchange="document.getElementById('f_date').value=''; this.form.submit();">
+                <input type="number" name="f_year" class="form-control glass-input" placeholder="e.g. 2024" value="<?php echo htmlspecialchars($f_year); ?>" onchange="document.getElementById('f_date').value=''; submitPayrollFilter(this.form);">
             </div>
 
             <div class="col-md-3">
@@ -227,12 +227,12 @@ if ($is_pre_join) {
             </div>
 
             <div class="col-md-2">
-                <a href="user-payroll.php?id=<?php echo $user_id; ?>" class="btn btn-outline-danger w-100" title="Clear Filters"><i class="bi bi-x-lg me-2"></i>Clear</a>
+                <button type="button" onclick="clearPayrollFilters(this.form)" class="btn btn-outline-danger w-100" title="Clear Filters"><i class="bi bi-x-lg me-2"></i>Clear</button>
             </div>
         </form>
     </div>
 
-    <div class="card-box p-0 overflow-hidden">
+    <div class="card-box p-0 overflow-hidden" id="payroll-table-container" style="transition: opacity 0.3s ease;">
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0 align-middle" style="background: transparent;">
                 <thead>

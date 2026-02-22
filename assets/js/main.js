@@ -526,8 +526,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (yearInput) yearInput.value = '';
                         
                         // NEW: Auto-submit the form after a date is selected!
+                        // AUTO-SUBMIT VIA AJAX
                         if (activeInput.form) {
-                            activeInput.form.submit();
+                            if (typeof submitPayrollFilter === 'function') {
+                                submitPayrollFilter(activeInput.form);
+                            } else {
+                                activeInput.form.submit();
+                            }
                         }
                     }
                 }
@@ -587,3 +592,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+/* =========================================
+   AJAX PAYROLL FILTERING (NO RELOAD)
+   ========================================= */
+function submitPayrollFilter(form) {
+    const tableContainer = document.getElementById('payroll-table-container');
+    const summaryContainer = document.getElementById('summary-cards-container');
+    
+    // Dim the containers to show loading state
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (summaryContainer) summaryContainer.style.opacity = '0.3';
+
+    // Build the query URL
+    const url = new URL(window.location.href.split('?')[0]);
+    const formData = new FormData(form);
+    url.search = new URLSearchParams(formData).toString();
+
+    // Fetch the updated page silently
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            // Parse the returned HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Replace Summary Cards
+            if (summaryContainer && doc.getElementById('summary-cards-container')) {
+                summaryContainer.innerHTML = doc.getElementById('summary-cards-container').innerHTML;
+                summaryContainer.style.opacity = '1';
+            }
+            
+            // Replace Table
+            if (tableContainer && doc.getElementById('payroll-table-container')) {
+                tableContainer.innerHTML = doc.getElementById('payroll-table-container').innerHTML;
+                tableContainer.style.opacity = '1';
+            }
+
+            // Update the browser URL without reloading (so sharing links works)
+            window.history.pushState({}, '', url);
+        })
+        .catch(err => {
+            console.error("Filter error:", err);
+            // Revert opacity if it fails
+            if (tableContainer) tableContainer.style.opacity = '1';
+            if (summaryContainer) summaryContainer.style.opacity = '1';
+        });
+}
+
+// Function for the Clear button
+function clearPayrollFilters(form) {
+    // Clear all inputs except the hidden user ID
+    Array.from(form.elements).forEach(element => {
+        if (element.name !== 'id' && element.name !== 'csrf_token') {
+            element.value = '';
+        }
+    });
+    // Trigger the AJAX filter
+    submitPayrollFilter(form);
+}
