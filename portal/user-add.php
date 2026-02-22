@@ -28,11 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         try {
-            $db = (new Database())->getConnection();
-            $sql = "INSERT INTO users (username, password, role, full_name, email, phone, job_title) 
-                    VALUES (:username, :password, :role, :full_name, :email, :phone, :job_title)";
+            $db = (new Database())->getConnection(); 
+           // Look for where you clean the New Fields and add this:
+            $basic_salary = floatval($_POST['basic_salary']);
+            // Update the INSERT query:
+            $sql = "INSERT INTO users (username, password, role, full_name, email, phone, job_title, basic_salary) 
+                    VALUES (:username, :password, :role, :full_name, :email, :phone, :job_title, :basic_salary)";
             
+
+
             $stmt = $db->prepare($sql);
+                
+            // Update the execute array:
             $stmt->execute([
                 ':username'  => $username,
                 ':password'  => $hashed_password,
@@ -40,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':full_name' => $full_name,
                 ':email'     => $email,
                 ':phone'     => $phone,
-                ':job_title' => $job_title
+                ':job_title' => $job_title,
+                ':basic_salary' => $basic_salary
             ]);
 
             $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User account created successfully!</div>";
@@ -95,6 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label text-white-50 small fw-bold">Phone Number</label>
                             <input type="tel" name="phone" class="form-control glass-input" placeholder="+966 5X XXX XXXX">
                         </div>
+                        <div class="col-md-12 mt-3 pt-3 border-top border-secondary border-opacity-25">
+                            <label class="form-label text-gold small fw-bold"><i class="bi bi-cash-stack me-2"></i>Basic Salary (Monthly)</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-input border-end-0 text-white-50">SAR</span>
+                                <input type="number" step="0.01" name="basic_salary" class="form-control glass-input border-start-0 ps-2" placeholder="0.00" required>
+                            </div>
+                        </div>
                     </div>
 
                     <h6 class="text-gold mb-3 text-uppercase fw-bold mt-4" style="font-size: 0.8rem;"><i class="bi bi-shield-lock me-2"></i>Account Security</h6>
@@ -103,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label text-white-50 small fw-bold">System Username</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-person"></i></span>
-                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-0" required placeholder="johndoe">
+                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-2" required placeholder="Username">
                             </div>
                         </div>
 
@@ -120,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label text-white-50 small fw-bold">Initial Password</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-key"></i></span>
-                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-0" required placeholder="••••••••">
+                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-2" required placeholder="••••••••">
                             </div>
                             <div class="form-text text-white-50 small mt-1">Minimum 6 characters required.</div>
                         </div>
