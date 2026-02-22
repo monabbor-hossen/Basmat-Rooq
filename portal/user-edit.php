@@ -18,48 +18,63 @@ $db = (new Database())->getConnection();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Security::checkCSRF($_POST['csrf_token']);
 
-    $username = Security::clean($_POST['username']);
-    $role     = Security::clean($_POST['role']);
-    $password = $_POST['password']; // Raw password
+    $username  = Security::clean($_POST['username']);
+    $role      = Security::clean($_POST['role']);
+    $password  = $_POST['password']; // Raw password
+    
+    // New Fields
+    $full_name = Security::clean($_POST['full_name']);
+    $email     = Security::clean($_POST['email']);
+    $phone     = Security::clean($_POST['phone']);
+    $job_title = Security::clean($_POST['job_title']);
 
     try {
-        // Dynamic Query: Update password only if provided
+        // Base SQL
+        $sql = "UPDATE users SET 
+                username = :user, role = :role, 
+                full_name = :full_name, email = :email, 
+                phone = :phone, job_title = :job_title";
+        
+        $params = [
+            ':user'      => $username,
+            ':role'      => $role,
+            ':full_name' => $full_name,
+            ':email'     => $email,
+            ':phone'     => $phone,
+            ':job_title' => $job_title,
+            ':id'        => $user_id
+        ];
+
+        // If password is provided, append to SQL
         if (!empty($password)) {
             if (strlen($password) < 6) {
-                $message = "<div class='alert alert-danger'>Password must be at least 6 characters.</div>";
+                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
             } else {
-                $hashed = password_hash($password, PASSWORD_DEFAULT);
-                $query = "UPDATE users SET username = :user, role = :role, password = :pass WHERE id = :id";
-                $stmt = $db->prepare($query);
-                $stmt->bindParam(':pass', $hashed);
+                $sql .= ", password = :pass";
+                $params[':pass'] = password_hash($password, PASSWORD_DEFAULT);
             }
-        } else {
-            $query = "UPDATE users SET username = :user, role = :role WHERE id = :id";
-            $stmt = $db->prepare($query);
         }
+        
+        $sql .= " WHERE id = :id";
 
         if (empty($message)) {
-            $stmt->bindParam(':user', $username);
-            $stmt->bindParam(':role', $role);
-            $stmt->bindParam(':id', $user_id);
-            
-            if ($stmt->execute()) {
-                $message = "<div class='alert alert-success'>User updated successfully!</div>";
+            $stmt = $db->prepare($sql);
+            if ($stmt->execute($params)) {
+                $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
             }
         }
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
-            $message = "<div class='alert alert-danger'>Username already exists.</div>";
+            $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Username already exists.</div>";
         } else {
-            $message = "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
+            $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Error: " . $e->getMessage() . "</div>";
         }
     }
 }
 
 // Fetch Current User Data
-$stmt = $db->prepare("SELECT id, username, role FROM users WHERE id = :id LIMIT 1");
-$stmt->bindParam(':id', $user_id);
-$stmt->execute();
+$stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title FROM users WHERE id = :id LIMIT 1");
+$stmt->execute([':id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
@@ -69,52 +84,83 @@ if (!$user) {
 }
 ?>
 
+<div class="container-fluid">
+    <a href="users.php" class="text-white-50 text-decoration-none mb-3 d-inline-block hover-white">
+        <i class="bi bi-arrow-left me-2"></i> Back to Users
+    </a>
 
-        <div class="container-fluid">
-            <a href="users.php" class="text-white-50 text-decoration-none mb-3 d-inline-block">
-                <i class="bi bi-arrow-left me-2"></i> Back to Users
-            </a>
-
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="card-box">
-                        <h4 class="text-white fw-bold mb-4">Edit User: <?php echo htmlspecialchars($user['username']); ?></h4>
-                        <?php echo $message; ?>
-
-                        <form method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
-
-                            <div class="mb-3">
-                                <label class="text-gold small fw-bold">Username</label>
-                                <input type="text" name="username" class="form-control glass-input" value="<?php echo htmlspecialchars($user['username']); ?>" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="text-gold small fw-bold">Role</label>
-                                <select name="role" class="form-select glass-input">
-                                    <option value="1" <?php echo ($user['role'] == '1') ? 'selected' : ''; ?>>Staff</option>
-                                    <option value="2" <?php echo ($user['role'] == '2') ? 'selected' : ''; ?>>Admin</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="text-gold small fw-bold">New Password (Optional)</label>
-                                <input type="password" name="password" class="form-control glass-input" placeholder="Leave blank to keep current password">
-                            </div>
-
-                            <button type="submit" class="btn btn-rooq-primary w-100 fw-bold">Update User</button>
-                        </form>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card-box">
+                <div class="d-flex align-items-center mb-4 border-bottom border-light border-opacity-10 pb-3">
+                    <div class="avatar-icon me-3" style="width: 50px; height: 50px; font-size: 1.5rem;">
+                        <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                    </div>
+                    <div>
+                        <h4 class="text-white fw-bold mb-0">Edit User Profile</h4>
+                        <p class="text-white-50 small mb-0">ID: #<?php echo htmlspecialchars($user['id']); ?></p>
                     </div>
                 </div>
+
+                <?php echo $message; ?>
+
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
+
+                    <h6 class="text-gold mb-3 text-uppercase fw-bold" style="font-size: 0.8rem;"><i class="bi bi-person-lines-fill me-2"></i>Personal Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Full Name</label>
+                            <input type="text" name="full_name" class="form-control glass-input" required value="<?php echo htmlspecialchars($user['full_name'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Job Title / Designation</label>
+                            <input type="text" name="job_title" class="form-control glass-input" value="<?php echo htmlspecialchars($user['job_title'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Email Address</label>
+                            <input type="email" name="email" class="form-control glass-input" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control glass-input" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
+                        </div>
+                    </div>
+
+                    <h6 class="text-gold mb-3 text-uppercase fw-bold mt-4" style="font-size: 0.8rem;"><i class="bi bi-shield-lock me-2"></i>Account Security</h6>
+                    <div class="row g-3 mb-4 p-3 rounded" style="background: rgba(0,0,0,0.2);">
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">System Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-person"></i></span>
+                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-1" required value="<?php echo htmlspecialchars($user['username']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50 small fw-bold">Access Level</label>
+                            <select name="role" class="form-select glass-input">
+                                <option value="1" <?php echo ($user['role'] == '1') ? 'selected' : ''; ?>>Staff (Standard Access)</option>
+                                <option value="2" <?php echo ($user['role'] == '2') ? 'selected' : ''; ?>>Admin (Full Access)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-white-50 small fw-bold">Reset Password (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-key"></i></span>
+                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-1" placeholder="Leave blank to keep current password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold mt-2">
+                        Update User Profile
+                    </button>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+</div>
 
-<style>
-
-</style>
-
-<?php
-
-require_once 'includes/footer.php'
-?>
+<?php require_once 'includes/footer.php'; ?>
