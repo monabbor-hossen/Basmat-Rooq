@@ -39,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
 }
 
 // --- FETCH USER INFO ---
-$stmt = $db->prepare("SELECT full_name, username, job_title, basic_salary FROM users WHERE id = ?");
+// Added `created_at` to know when they joined
+$stmt = $db->prepare("SELECT full_name, username, job_title, basic_salary, created_at FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -52,7 +53,6 @@ $display_name = !empty($user['full_name']) ? $user['full_name'] : $user['usernam
 $base_salary = floatval($user['basic_salary']);
 
 // --- FILTER LOGIC ---
-// Default to current month and year if no filter is applied
 $f_month = $_GET['f_month'] ?? date('F');
 $f_year  = $_GET['f_year'] ?? date('Y');
 $f_date  = $_GET['f_date'] ?? '';
@@ -80,21 +80,63 @@ $stmt = $db->prepare("SELECT * FROM payroll WHERE $where_sql ORDER BY pay_year D
 $stmt->execute($params);
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// --- CALCULATE DUE ---
 $total_paid_filtered = 0;
 foreach ($payments as $pay) {
     $total_paid_filtered += floatval($pay['amount']);
 }
 
-// Due calculation (Only accurate if viewing a specific month/year)
-$due_amount = 0;
-$due_label = "Remaining Due";
+// --- CHECK IF FILTER IS BEFORE JOIN DATE ---
+$joined_timestamp = strtotime($user['created_at']);
+$joined_month_num = (int)date('n', $joined_timestamp);
+$joined_year = (int)date('Y', $joined_timestamp);
+
+$is_pre_join = false;
 if (!empty($f_month) && !empty($f_year)) {
-    $due_amount = max(0, $base_salary - $total_paid_filtered);
-    $due_label = "Due for $f_month $f_year";
-} else {
-    $due_label = "Select Month & Year to see Due";
-    $due_amount = null; // Hide due if viewing 'All' months
+    $filtered_month_num = date('n', strtotime($f_month));
+    
+    // If filtered year is less than joined year OR (same year but earlier month)
+    if ($f_year < $joined_year || ($f_year == $joined_year && $filtered_month_num < $joined_month_num)) {
+        $is_pre_join = true;
+    }
+}
+
+// --- ADVANCED DUE CALCULATION ---
+$due_amount = null;
+$due_label = "Select Month & Year to see Due";
+$due_color = "text-white";
+$due_border = "#f1c40f";
+
+// Default amount to suggest in the payment modal
+$modal_default_amount = $base_salary;
+
+if ($is_pre_join) {
+    $due_label = "Status ($f_month $f_year)";
+    $due_amount = "Not Joined Yet";
+    $due_color = "text-white-50";
+    $due_border = "#95a5a6";
+    $modal_default_amount = 0;
+} elseif (!empty($f_month) && !empty($f_year)) {
+    $balance = $base_salary - $total_paid_filtered;
+    
+    if ($balance > 0) {
+        $due_label = "Remaining Due ($f_month)";
+        $due_amount = number_format($balance, 2) . " SAR";
+        $due_color = "text-danger";
+        $due_border = "#e74c3c";
+        $modal_default_amount = $balance; // Suggest paying the remaining balance
+    } elseif ($balance < 0) {
+        $due_label = "Extra Paid ($f_month)";
+        $due_amount = "+ " . number_format(abs($balance), 2) . " SAR";
+        $due_color = "text-info";
+        $due_border = "#3498db";
+        $modal_default_amount = 0; // Already overpaid
+    } else {
+        $due_label = "Status ($f_month)";
+        $due_amount = "Fully Paid";
+        $due_color = "text-success";
+        $due_border = "#2ecc71";
+        $modal_default_amount = 0; // Fully paid
+    }
 }
 ?>
 
@@ -114,6 +156,15 @@ if (!empty($f_month) && !empty($f_year)) {
 
     <?php echo $message; ?>
 
+    <?php if ($is_pre_join): ?>
+        <div class="alert alert-warning bg-warning bg-opacity-10 border-warning text-warning d-flex align-items-center mb-4">
+            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+            <div>
+                <strong>Notice:</strong> This user joined the company on <strong><?php echo date('F d, Y', $joined_timestamp); ?></strong>. The selected filter is before their joining date.
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid #3498db;">
@@ -128,11 +179,11 @@ if (!empty($f_month) && !empty($f_year)) {
             </div>
         </div>
         <div class="col-md-4">
-            <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid <?php echo ($due_amount > 0) ? '#e74c3c' : '#f1c40f'; ?>;">
+            <div class="glass-panel p-3 text-center h-100" style="border-bottom: 3px solid <?php echo $due_border; ?>;">
                 <h6 class="text-white-50 small text-uppercase fw-bold mb-2"><?php echo $due_label; ?></h6>
                 <?php if ($due_amount !== null): ?>
-                    <h3 class="text-white mb-0 fw-bold <?php echo ($due_amount > 0) ? 'text-danger' : 'text-warning'; ?>">
-                        <?php echo number_format($due_amount, 2); ?> <small class="fs-6 text-white-50">SAR</small>
+                    <h3 class="mb-0 fw-bold <?php echo $due_color; ?>">
+                        <?php echo $due_amount; ?>
                     </h3>
                 <?php else: ?>
                     <h5 class="text-white-50 mt-2 fst-italic">- N/A -</h5>
@@ -229,7 +280,6 @@ if (!empty($f_month) && !empty($f_year)) {
                             <select name="pay_month" class="form-select glass-input" required>
                                 <?php 
                                 foreach($months as $m) {
-                                    // Pre-select the month they are currently filtering by
                                     $sel = ($m == ($f_month ?: date('F'))) ? 'selected' : '';
                                     echo "<option value='$m' $sel>$m</option>";
                                 }
@@ -243,7 +293,7 @@ if (!empty($f_month) && !empty($f_year)) {
                         <div class="col-12">
                             <label class="form-label text-gold small fw-bold">Amount to Pay (SAR)</label>
                             <input type="number" step="0.01" name="amount" class="form-control glass-input fw-bold text-success" 
-                                   value="<?php echo ($due_amount !== null && $due_amount > 0) ? $due_amount : $base_salary; ?>" required>
+                                   value="<?php echo $modal_default_amount; ?>" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label text-white-50 small">Payment Date</label>
