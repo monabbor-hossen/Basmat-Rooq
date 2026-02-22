@@ -51,7 +51,6 @@ if (!$user) {
 
 $display_name = !empty($user['full_name']) ? $user['full_name'] : $user['username'];
 $base_salary = floatval($user['basic_salary']);
-
 // --- FILTER LOGIC ---
 $f_month = $_GET['f_month'] ?? date('F');
 $f_year  = $_GET['f_year'] ?? date('Y');
@@ -60,17 +59,24 @@ $f_date  = $_GET['f_date'] ?? '';
 $where_clauses = ["user_id = ?"];
 $params = [$user_id];
 
-if (!empty($f_month)) {
-    $where_clauses[] = "pay_month = ?";
-    $params[] = $f_month;
-}
-if (!empty($f_year)) {
-    $where_clauses[] = "pay_year = ?";
-    $params[] = $f_year;
-}
+// SMART FILTER: If exact date is chosen, prioritize it and ignore the dropdowns
 if (!empty($f_date)) {
     $where_clauses[] = "payment_date = ?";
     $params[] = $f_date;
+    
+    // Clear month and year variables so the UI dropdowns reset to "-- All Months --"
+    $f_month = '';
+    $f_year = '';
+} else {
+    // Otherwise, filter by the Dropdowns
+    if (!empty($f_month)) {
+        $where_clauses[] = "pay_month = ?";
+        $params[] = $f_month;
+    }
+    if (!empty($f_year)) {
+        $where_clauses[] = "pay_year = ?";
+        $params[] = $f_year;
+    }
 }
 
 $where_sql = implode(" AND ", $where_clauses);
@@ -193,12 +199,12 @@ if ($is_pre_join) {
     </div>
 
     <div class="card-box p-3 mb-4">
-        <form method="GET" class="row g-2 align-items-end">
+        <form method="GET" class="row g-3 align-items-end" id="payrollFilterForm">
             <input type="hidden" name="id" value="<?php echo $user_id; ?>">
             
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-month me-1"></i>Pay Month</label>
-                <select name="f_month" class="form-select glass-input">
+                <select name="f_month" class="form-select glass-input" onchange="document.getElementById('f_date').value=''; this.form.submit();">
                     <option value="">-- All Months --</option>
                     <?php 
                     $months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -210,21 +216,18 @@ if ($is_pre_join) {
                 </select>
             </div>
             
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-event me-1"></i>Pay Year</label>
-                <input type="number" name="f_year" class="form-control glass-input" placeholder="e.g. 2024" value="<?php echo htmlspecialchars($f_year); ?>">
+                <input type="number" name="f_year" class="form-control glass-input" placeholder="e.g. 2024" value="<?php echo htmlspecialchars($f_year); ?>" onchange="document.getElementById('f_date').value=''; this.form.submit();">
             </div>
 
             <div class="col-md-3">
                 <label class="form-label text-gold small fw-bold"><i class="bi bi-calendar-date me-1"></i>Exact Payment Date</label>
-                <input type="text" name="payment_date" class="form-control glass-input rooq-date">
+                <input type="text" name="f_date" id="f_date" class="form-control glass-input rooq-date" value="<?php echo htmlspecialchars($f_date); ?>" placeholder="Select Date...">
             </div>
 
-            <div class="col-md-4">
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-outline-light w-100"><i class="bi bi-funnel me-2"></i>Filter</button>
-                    <a href="user-payroll.php?id=<?php echo $user_id; ?>" class="btn btn-outline-danger" title="Clear Filters"><i class="bi bi-x-lg"></i></a>
-                </div>
+            <div class="col-md-2">
+                <a href="user-payroll.php?id=<?php echo $user_id; ?>" class="btn btn-outline-danger w-100" title="Clear Filters"><i class="bi bi-x-lg me-2"></i>Clear</a>
             </div>
         </form>
     </div>

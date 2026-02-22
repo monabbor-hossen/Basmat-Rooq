@@ -517,6 +517,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     const selectedDate = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                     activeInput.value = selectedDate;
                     datePicker.classList.remove('show'); // Hide popup
+
+                    // SMART FIX: If filtering by exact date, clear the month/year dropdowns automatically
+                    if (activeInput.name === 'f_date') {
+                        const monthSelect = document.querySelector('select[name="f_month"]');
+                        const yearInput = document.querySelector('input[name="f_year"]');
+                        if (monthSelect) monthSelect.value = '';
+                        if (yearInput) yearInput.value = '';
+                        
+                        // NEW: Auto-submit the form after a date is selected!
+                        if (activeInput.form) {
+                            activeInput.form.submit();
+                        }
+                    }
                 }
             });
 
