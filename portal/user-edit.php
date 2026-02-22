@@ -7,86 +7,87 @@ $message = "";
 $user_id = $_GET['id'] ?? null;
 
 if (!$user_id) {
-    header("Location: users.php");
+    echo "<script>window.location.href='users.php';</script>";
     exit();
 }
 
 $db = (new Database())->getConnection();
 
+// --- HANDLE UPDATE ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1. More graceful CSRF check
-    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Security Error: Invalid or expired session. Please refresh the page and try again.</div>";
-    } else {
-        $username  = Security::clean($_POST['username']);
-        $role      = Security::clean($_POST['role']);
-        $password  = $_POST['password']; 
+    Security::checkCSRF($_POST['csrf_token']);
+
+    $username  = Security::clean($_POST['username']);
+    $role      = Security::clean($_POST['role']);
+    $password  = $_POST['password']; 
+    
+    $full_name = Security::clean($_POST['full_name']);
+    $email     = Security::clean($_POST['email']);
+    $phone     = Security::clean($_POST['phone']);
+    $job_title = Security::clean($_POST['job_title']);
+    $basic_salary = floatval($_POST['basic_salary']);
+    
+    $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : null;
+    $resigning_date = !empty($_POST['resigning_date']) ? Security::clean($_POST['resigning_date']) : null;
+
+    try {
+        $sql = "UPDATE users SET 
+                username = :user, role = :role, 
+                full_name = :full_name, email = :email, 
+                phone = :phone, job_title = :job_title, 
+                basic_salary = :basic_salary, 
+                joining_date = :joining_date, 
+                resigning_date = :resigning_date";
         
-        $full_name = Security::clean($_POST['full_name']);
-        $email     = Security::clean($_POST['email']);
-        $phone     = Security::clean($_POST['phone']);
-        $job_title = Security::clean($_POST['job_title']);
-        $basic_salary = floatval($_POST['basic_salary']);
-        
-        $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : null;
-        $resigning_date = !empty($_POST['resigning_date']) ? Security::clean($_POST['resigning_date']) : null;
+        $params = [
+            ':user'      => $username,
+            ':role'      => $role,
+            ':full_name' => $full_name,
+            ':email'     => $email,
+            ':phone'     => $phone,
+            ':job_title' => $job_title,
+            ':basic_salary' => $basic_salary,
+            ':joining_date' => $joining_date,
+            ':resigning_date' => $resigning_date,
+            ':id'        => $user_id
+        ];
 
-        try {
-            $sql = "UPDATE users SET 
-                    username = :user, role = :role, 
-                    full_name = :full_name, email = :email, 
-                    phone = :phone, job_title = :job_title, 
-                    basic_salary = :basic_salary, 
-                    joining_date = :joining_date, 
-                    resigning_date = :resigning_date";
-            
-            $params = [
-                ':user'      => $username,
-                ':role'      => $role,
-                ':full_name' => $full_name,
-                ':email'     => $email,
-                ':phone'     => $phone,
-                ':job_title' => $job_title,
-                ':basic_salary' => $basic_salary,
-                ':joining_date' => $joining_date,
-                ':resigning_date' => $resigning_date,
-                ':id'        => $user_id
-            ];
-
-            if (!empty($password)) {
-                if (strlen($password) < 6) {
-                    $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
-                } else {
-                    $sql .= ", password = :pass";
-                    $params[':pass'] = password_hash($password, PASSWORD_DEFAULT);
-                }
-            }
-            
-            $sql .= " WHERE id = :id";
-
-            if (empty($message)) {
-                $stmt = $db->prepare($sql);
-                if ($stmt->execute($params)) {
-                    $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
-                }
-            }
-        } catch (PDOException $e) {
-            if ($e->getCode() == 23000) {
-                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Username already exists.</div>";
+        if (!empty($password)) {
+            if (strlen($password) < 6) {
+                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
             } else {
-                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Error: " . $e->getMessage() . "</div>";
+                $sql .= ", password = :pass";
+                $params[':pass'] = password_hash($password, PASSWORD_DEFAULT);
             }
         }
+        
+        $sql .= " WHERE id = :id";
+
+        if (empty($message)) {
+            $stmt = $db->prepare($sql);
+            if ($stmt->execute($params)) {
+                $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
+            }
+        }
+    } catch (PDOException $e) {
+        $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Database Error: " . $e->getMessage() . "</div>";
     }
 }
 
-// Fetch Current User Data
-$stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title, basic_salary, joining_date, resigning_date FROM users WHERE id = :id LIMIT 1");
-$stmt->execute([':id' => $user_id]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+// --- FETCH CURRENT USER DATA SECURELY ---
+try {
+    $stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title, basic_salary, joining_date, resigning_date FROM users WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$user) {
-    echo "<div class='alert alert-danger m-4'>User not found.</div>";
+    if (!$user) {
+        echo "<div class='alert alert-warning m-4'>User not found.</div>";
+        require_once 'includes/footer.php';
+        exit();
+    }
+} catch (PDOException $e) {
+    // If columns are missing, show error instead of crashing the page and freezing the loader
+    echo "<div class='alert alert-danger m-4 fw-bold'>Database Error: Please ensure you ran the SQL commands to add joining_date and resigning_date columns! <br><small>" . $e->getMessage() . "</small></div>";
     require_once 'includes/footer.php';
     exit();
 }
@@ -112,7 +113,7 @@ if (!$user) {
 
                 <?php echo $message; ?>
 
-                <form method="POST" action="">
+                <form method="POST" action="user-edit.php?id=<?php echo $user_id; ?>">
                     <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
                     <h6 class="text-gold mb-3 text-uppercase fw-bold" style="font-size: 0.8rem;"><i class="bi bi-person-lines-fill me-2"></i>Personal Information</h6>

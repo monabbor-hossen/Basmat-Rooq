@@ -527,6 +527,8 @@ function clearPayrollFilters(form) {
     // Trigger the AJAX filter
     submitPayrollFilter(form);
 }
+
+
 /* =========================================
    GLOBAL ROOQ DATE PICKER
    ========================================= */
@@ -549,11 +551,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function closeAndSubmit() {
         datePicker.classList.remove('show');
-        if (activeInput && activeInput.form) {
-            if (typeof submitPayrollFilter === 'function') {
-                submitPayrollFilter(activeInput.form);
-            } else {
-                activeInput.form.submit();
+        
+        // ONLY auto-submit if the input has the 'auto-filter' class
+        if (activeInput && activeInput.classList.contains('auto-filter')) {
+            if (activeInput.form) {
+                if (typeof submitPayrollFilter === 'function' && document.getElementById('payroll-table-container')) {
+                    submitPayrollFilter(activeInput.form);
+                } else {
+                    activeInput.form.submit();
+                }
             }
         }
     }
@@ -697,3 +703,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+function validatePaymentDate() {
+    var paymentDate = document.getElementById('modalPaymentDate').value;
+    var joinDate = '<?php echo $exact_join_date; ?>';
+    
+    if (new Date(paymentDate) < new Date(joinDate)) {
+        alert("Payment Date cannot be before the user's Joining Date (" + joinDate + ").");
+        return false; // Stops form from submitting
+    }
+    return true; // Allows form submission
+}
