@@ -8,8 +8,12 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 $lang = $_SESSION['lang'] ?? 'en';
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
+// Fetch names from session
 $username = $_SESSION['username'] ?? 'User';
+$full_name = $_SESSION['full_name'] ?? $username; // Fallback to username if no full name
 
+// Determine role text
+$role_text = (isset($_SESSION['role']) && $_SESSION['role'] == '2') ? 'Admin' : 'Staff';
 $translator = new Translator();
 $text = $translator->getTranslation($lang);
 ?>
@@ -70,18 +74,18 @@ $text = $translator->getTranslation($lang);
             <div class="dropdown">
                 <div class="profile-trigger-refined d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="text-end d-none d-lg-block">
-                        <div class="user-name-text"><?php echo $username; ?></div>
-                        <div class="user-role-text text-uppercase">Admin</div>
+                        <div class="user-name-text"><?php echo htmlspecialchars($full_name); ?></div>
+                        <div class="user-role-text text-uppercase"><?php echo $role_text; ?></div>
                     </div>
                     <div class="avatar-circle-refined">
-                        <?php echo strtoupper(substr($username, 0, 2)); ?>
+                        <?php echo strtoupper(substr($full_name, 0, 2)); ?>
                     </div>
                     <i class="bi bi-chevron-down dropdown-chevron" style=" margin-left: 5px;"></i>
                 </div>
                 <ul class="dropdown-menu dropdown-menu-end glass-dropdown mt-3 shadow-lg border-0" style="background: rgba(20, 20, 20, 0.95);">
                     <li class="d-lg-none px-3 py-2 text-white fw-bold border-bottom border-secondary border-opacity-25 mb-2">
-                        <?php echo $username; ?> <br>
-                        <small class="text-gold">Admin</small>
+                        <?php echo htmlspecialchars($full_name); ?> <br>
+                        <small class="text-gold"><?php echo $role_text; ?></small>
                     </li>
                     <li><a class="dropdown-item text-white-50 hover-white" href="profile.php"><i class="bi bi-person-gear me-2 text-gold"></i> Settings</a></li>
                     <li><a class="dropdown-item text-white-50 hover-white" href="#"><i class="bi bi-activity me-2 text-gold"></i> Activity</a></li>

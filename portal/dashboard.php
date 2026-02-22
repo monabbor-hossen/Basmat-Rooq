@@ -11,7 +11,7 @@ require_once 'includes/header.php'; //
             <h2 class="text-white mb-4">Dashboard Overview</h2>
             
             <div class="rooq-card p-4 mb-4">
-                <h4 class="text-gold">Welcome back, <?php echo $username; ?></h4>
+                <h4 class="text-gold">Welcome back, <?php echo $full_name; ?></h4>
                 <p class="text-white-50">Track your investment milestones and download official documents.</p>
             </div>
 

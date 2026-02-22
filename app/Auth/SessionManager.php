@@ -24,7 +24,7 @@ class SessionManager {
      * Secure Login with Rate Limiting
      * Returns TRUE on success, or throws Exception with error message on failure.
      */
-    public function login($username, $password, $csrf_token) {
+   public function login($username, $password, $csrf_token) {
         $ip = $_SERVER['REMOTE_ADDR'];
 
         // 1. Check Rate Limit
@@ -38,21 +38,19 @@ class SessionManager {
         $clean_user = Security::clean($username);
 
         try {
-            // --- CHECK ADMIN ---
-            $query = "SELECT id, username, password, role, is_active FROM users WHERE username = :user LIMIT 1";
+            // --- CHECK ADMIN (ADDED full_name and is_active to query) ---
+            $query = "SELECT id, username, password, role, is_active, full_name FROM users WHERE username = :user LIMIT 1";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user', $clean_user);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
-                // NEW: Check if Account is Active
                 if (isset($user['is_active']) && $user['is_active'] == 0) {
                     throw new Exception("Security Alert: Your account has been deactivated. Contact Admin.");
                 }
-                
                 $this->createSession($user, 'internal');
-                $this->limiter->reset($ip); // Login Success -> Reset Fail Counter
+                $this->limiter->reset($ip);
                 return true;
             }
 
@@ -64,13 +62,11 @@ class SessionManager {
             $client = $stmt2->fetch(PDO::FETCH_ASSOC);
 
             if ($client && password_verify($password, $client['password_hash'])) {
-                // NEW: Check if Account is Active
                 if (isset($client['is_active']) && $client['is_active'] == 0) {
                     throw new Exception("Security Alert: Your account has been deactivated. Contact Support.");
                 }
-                
                 $this->createSession($client, 'client');
-                $this->limiter->reset($ip); // Login Success -> Reset Fail Counter
+                $this->limiter->reset($ip);
                 return true;
             }
 
@@ -89,11 +85,15 @@ class SessionManager {
             $_SESSION['user_id'] = $data['id'];
             $_SESSION['role'] = $data['role'];
             $_SESSION['user_type'] = 'internal';
+            // NEW: Save full name (fallback to username if empty)
+            $_SESSION['full_name'] = !empty($data['full_name']) ? $data['full_name'] : $data['username'];
         } else {
             $_SESSION['user_id'] = $data['account_id'];
             $_SESSION['client_id'] = $data['client_id'];
             $_SESSION['role'] = 'client';
             $_SESSION['user_type'] = 'external';
+            // Clients might not have full_name in accounts table, so default to username
+            $_SESSION['full_name'] = $data['username'];
         }
         $_SESSION['username'] = $data['username'];
         $_SESSION['last_regen'] = time();
