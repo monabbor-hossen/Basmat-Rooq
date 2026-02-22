@@ -463,86 +463,114 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-
 /* =========================================
-   DYNAMIC GLASS CALENDAR LOGIC
+   GLOBAL ROOQ DATE PICKER
    ========================================= */
 document.addEventListener('DOMContentLoaded', function() {
-    const monthYear = document.getElementById('monthYear');
-    const calendarDays = document.getElementById('calendarDays');
-    const prevMonthBtn = document.getElementById('prevMonth');
-    const nextMonthBtn = document.getElementById('nextMonth');
+    const datePicker = document.getElementById('rooqDatePicker');
+    const monthYear = document.getElementById('dpMonthYear');
+    const calendarDays = document.getElementById('dpCalendarDays');
+    const prevBtn = document.getElementById('dpPrevMonth');
+    const nextBtn = document.getElementById('dpNextMonth');
 
-    // Only run if calendar exists on the page
-    if (!calendarDays) return;
+    if (!datePicker) return;
 
-    let currentDate = new Date();
-    
-    // Example: Array of dates that have an "event" (like a payment) to show the green dot.
-    // Format: YYYY-MM-DD. You can fetch this from PHP later!
-    const eventDates = ['2024-03-25', '2024-03-28']; 
+    let activeInput = null;
+    let viewingDate = new Date(); // The month currently being viewed
 
-    function renderCalendar(date) {
-        calendarDays.innerHTML = ''; // Clear previous days
+    function renderCalendar(dateToView) {
+        calendarDays.innerHTML = ''; 
+        const year = dateToView.getFullYear();
+        const month = dateToView.getMonth();
         
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        
-        // Month Names
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         monthYear.innerText = `${monthNames[month]} ${year}`;
 
-        // Get first day of the month (0 = Sun, 1 = Mon, etc.)
         const firstDay = new Date(year, month, 1).getDay();
-        
-        // Get number of days in the month
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         
-        // Get exact today
         const today = new Date();
         const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
 
-        // Add empty slots for days before the 1st
+        // Empty slots
         for (let i = 0; i < firstDay; i++) {
             const emptyDiv = document.createElement('div');
             emptyDiv.className = 'calendar-date empty';
             calendarDays.appendChild(emptyDiv);
         }
 
-        // Add the actual days
+        // Real Days
         for (let i = 1; i <= daysInMonth; i++) {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'calendar-date';
             dayDiv.innerText = i;
             
-            // Format current looped date as YYYY-MM-DD to check for events
-            const loopDateStr = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-
-            // Highlight Today
             if (isCurrentMonth && i === today.getDate()) {
                 dayDiv.classList.add('today');
             }
 
-            // Highlight Events
-            if (eventDates.includes(loopDateStr)) {
-                dayDiv.classList.add('has-event');
-            }
+            // Click Event to select Date
+            dayDiv.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (activeInput) {
+                    // Format YYYY-MM-DD
+                    const selectedDate = `${year}-${String(month+1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    activeInput.value = selectedDate;
+                    datePicker.classList.remove('show'); // Hide popup
+                }
+            });
 
             calendarDays.appendChild(dayDiv);
         }
     }
 
-    // Initialize
-    renderCalendar(currentDate);
-
-    // Navigation Buttons
-    prevMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar(currentDate);
+    // Previous/Next Month Logic
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewingDate.setMonth(viewingDate.getMonth() - 1);
+        renderCalendar(viewingDate);
     });
 
-    nextMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar(currentDate);
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewingDate.setMonth(viewingDate.getMonth() + 1);
+        renderCalendar(viewingDate);
+    });
+
+    // Attach to all inputs with class 'rooq-date'
+    const dateInputs = document.querySelectorAll('.rooq-date');
+    
+    dateInputs.forEach(input => {
+        // Prevent typing, force using calendar
+        input.setAttribute('readonly', true);
+        input.style.cursor = 'pointer';
+
+        input.addEventListener('click', function(e) {
+            e.stopPropagation();
+            activeInput = this;
+            
+            // If input has a value, open calendar to that month
+            if (this.value) {
+                viewingDate = new Date(this.value);
+            } else {
+                viewingDate = new Date();
+            }
+            
+            renderCalendar(viewingDate);
+
+            // Position the popup exactly under the input field
+            const rect = this.getBoundingClientRect();
+            datePicker.style.top = (rect.bottom + window.scrollY) + 'px';
+            datePicker.style.left = rect.left + 'px';
+            
+            datePicker.classList.add('show');
+        });
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!datePicker.contains(e.target) && !e.target.classList.contains('rooq-date')) {
+            datePicker.classList.remove('show');
+        }
     });
 });

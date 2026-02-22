@@ -101,6 +101,26 @@
     </div>
 </div>
 
+<div class="glass-calendar-popup" id="rooqDatePicker">
+    <div class="calendar-header">
+        <button type="button" class="calendar-btn" id="dpPrevMonth" title="Previous Month"><i class="bi bi-chevron-left"></i></button>
+        <h5 id="dpMonthYear">Month Year</h5>
+        <button type="button" class="calendar-btn" id="dpNextMonth" title="Next Month"><i class="bi bi-chevron-right"></i></button>
+    </div>
+    
+    <div class="calendar-grid">
+        <div class="calendar-day-name">Su</div>
+        <div class="calendar-day-name">Mo</div>
+        <div class="calendar-day-name">Tu</div>
+        <div class="calendar-day-name">We</div>
+        <div class="calendar-day-name">Th</div>
+        <div class="calendar-day-name">Fr</div>
+        <div class="calendar-day-name">Sa</div>
+    </div>
+    
+    <div class="calendar-grid" id="dpCalendarDays">
+        </div>
+</div>
 
 
 <script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
