@@ -751,3 +751,119 @@ select.glass-input option {
     animation: pulseGlow 4s infinite alternate ease-in-out;
 }
 
+
+
+
+/* =========================================
+   GLASSMORPHISM CALENDAR WIDGET
+   ========================================= */
+.glass-calendar {
+    background: linear-gradient(145deg, var(--glass-05) 0%, var(--black-20) 100%);
+    border: 1px solid var(--glass-10);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px var(--black-50);
+    backdrop-filter: blur(15px);
+    max-width: 400px; /* Adjust or remove based on your layout */
+    margin: 0 auto;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.calendar-header h5 {
+    color: var(--white);
+    font-weight: var(--fw-bold);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: var(--fs-md);
+}
+
+.calendar-btn {
+    background: var(--glass-10);
+    border: 1px solid var(--glass-20);
+    color: var(--rooq-gold);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.calendar-btn:hover {
+    background: var(--rooq-gold);
+    color: var(--rooq-burgundy);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--gold-20);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.calendar-day-name {
+    color: var(--rooq-gold);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-xs);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.calendar-date {
+    color: var(--white);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    padding: 10px 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-date:hover:not(.empty) {
+    background: var(--glass-15);
+    border-color: var(--gold-30);
+    transform: translateY(-2px);
+}
+
+/* Glowing Today Indicator */
+.calendar-date.today {
+    background: var(--rooq-gold);
+    color: var(--rooq-burgundy);
+    font-weight: var(--fw-extra);
+    box-shadow: 0 0 15px var(--gold-30);
+}
+
+/* Event / Payment Indicator Dot */
+.calendar-date.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: var(--status-success); 
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--status-success-glow);
+}
+
+.calendar-date.empty {
+    cursor: default;
+    background: transparent;
+}
