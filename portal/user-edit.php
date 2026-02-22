@@ -14,66 +14,68 @@ if (!$user_id) {
 $db = (new Database())->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    Security::checkCSRF($_POST['csrf_token']);
-
-    $username  = Security::clean($_POST['username']);
-    $role      = Security::clean($_POST['role']);
-    $password  = $_POST['password']; 
-    
-    $full_name = Security::clean($_POST['full_name']);
-    $email     = Security::clean($_POST['email']);
-    $phone     = Security::clean($_POST['phone']);
-    $job_title = Security::clean($_POST['job_title']);
-    $basic_salary = floatval($_POST['basic_salary']);
-    
-    // NEW Date fields
-    $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : null;
-    $resigning_date = !empty($_POST['resigning_date']) ? Security::clean($_POST['resigning_date']) : null;
-
-    try {
-        $sql = "UPDATE users SET 
-                username = :user, role = :role, 
-                full_name = :full_name, email = :email, 
-                phone = :phone, job_title = :job_title, 
-                basic_salary = :basic_salary, 
-                joining_date = :joining_date, 
-                resigning_date = :resigning_date";
+    // 1. More graceful CSRF check
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Security Error: Invalid or expired session. Please refresh the page and try again.</div>";
+    } else {
+        $username  = Security::clean($_POST['username']);
+        $role      = Security::clean($_POST['role']);
+        $password  = $_POST['password']; 
         
-        $params = [
-            ':user'      => $username,
-            ':role'      => $role,
-            ':full_name' => $full_name,
-            ':email'     => $email,
-            ':phone'     => $phone,
-            ':job_title' => $job_title,
-            ':basic_salary' => $basic_salary,
-            ':joining_date' => $joining_date,
-            ':resigning_date' => $resigning_date,
-            ':id'        => $user_id
-        ];
+        $full_name = Security::clean($_POST['full_name']);
+        $email     = Security::clean($_POST['email']);
+        $phone     = Security::clean($_POST['phone']);
+        $job_title = Security::clean($_POST['job_title']);
+        $basic_salary = floatval($_POST['basic_salary']);
+        
+        $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : null;
+        $resigning_date = !empty($_POST['resigning_date']) ? Security::clean($_POST['resigning_date']) : null;
 
-        if (!empty($password)) {
-            if (strlen($password) < 6) {
-                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
+        try {
+            $sql = "UPDATE users SET 
+                    username = :user, role = :role, 
+                    full_name = :full_name, email = :email, 
+                    phone = :phone, job_title = :job_title, 
+                    basic_salary = :basic_salary, 
+                    joining_date = :joining_date, 
+                    resigning_date = :resigning_date";
+            
+            $params = [
+                ':user'      => $username,
+                ':role'      => $role,
+                ':full_name' => $full_name,
+                ':email'     => $email,
+                ':phone'     => $phone,
+                ':job_title' => $job_title,
+                ':basic_salary' => $basic_salary,
+                ':joining_date' => $joining_date,
+                ':resigning_date' => $resigning_date,
+                ':id'        => $user_id
+            ];
+
+            if (!empty($password)) {
+                if (strlen($password) < 6) {
+                    $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Password must be at least 6 characters.</div>";
+                } else {
+                    $sql .= ", password = :pass";
+                    $params[':pass'] = password_hash($password, PASSWORD_DEFAULT);
+                }
+            }
+            
+            $sql .= " WHERE id = :id";
+
+            if (empty($message)) {
+                $stmt = $db->prepare($sql);
+                if ($stmt->execute($params)) {
+                    $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
+                }
+            }
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Username already exists.</div>";
             } else {
-                $sql .= ", password = :pass";
-                $params[':pass'] = password_hash($password, PASSWORD_DEFAULT);
+                $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Error: " . $e->getMessage() . "</div>";
             }
-        }
-        
-        $sql .= " WHERE id = :id";
-
-        if (empty($message)) {
-            $stmt = $db->prepare($sql);
-            if ($stmt->execute($params)) {
-                $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
-            }
-        }
-    } catch (PDOException $e) {
-        if ($e->getCode() == 23000) {
-            $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Username already exists.</div>";
-        } else {
-            $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Error: " . $e->getMessage() . "</div>";
         }
     }
 }
@@ -110,7 +112,7 @@ if (!$user) {
 
                 <?php echo $message; ?>
 
-                <form method="POST">
+                <form method="POST" action="">
                     <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
                     <h6 class="text-gold mb-3 text-uppercase fw-bold" style="font-size: 0.8rem;"><i class="bi bi-person-lines-fill me-2"></i>Personal Information</h6>
@@ -136,7 +138,7 @@ if (!$user) {
                             <label class="form-label text-gold small fw-bold"><i class="bi bi-cash-stack me-2"></i>Basic Salary (Monthly)</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50">SAR</span>
-                                <input type="number" step="0.01" name="basic_salary" class="form-control glass-input border-start-0 ps-2" value="<?php echo htmlspecialchars($user['basic_salary'] ?? '0.00'); ?>" required>
+                                <input type="number" step="0.01" name="basic_salary" class="form-control glass-input border-start-0 ps-0" value="<?php echo htmlspecialchars($user['basic_salary'] ?? '0.00'); ?>" required>
                             </div>
                         </div>
 
@@ -156,7 +158,7 @@ if (!$user) {
                             <label class="form-label text-white-50 small fw-bold">System Username</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-person"></i></span>
-                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-2" required value="<?php echo htmlspecialchars($user['username']); ?>">
+                                <input type="text" name="username" class="form-control glass-input border-start-0 ps-0" required value="<?php echo htmlspecialchars($user['username']); ?>">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -170,7 +172,7 @@ if (!$user) {
                             <label class="form-label text-white-50 small fw-bold">Reset Password (Optional)</label>
                             <div class="input-group">
                                 <span class="input-group-text glass-input border-end-0 text-white-50"><i class="bi bi-key"></i></span>
-                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-2" placeholder="Leave blank to keep current password">
+                                <input type="password" name="password" class="form-control glass-input border-start-0 ps-0" placeholder="Leave blank to keep current password">
                             </div>
                         </div>
                     </div>
