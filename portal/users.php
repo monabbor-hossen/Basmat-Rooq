@@ -10,7 +10,7 @@ $db = (new Database())->getConnection();
 
 // 3. Fetch ONLY Admin (2) and Staff (1) - Exclude Clients
 // Assuming 'role' ENUM: '1' = Staff, '2' = Admin, '3' = Client (if exists)
-$query = "SELECT id, username, role, is_active, created_at FROM users 
+$query = "SELECT id, username, role, full_name, is_active, created_at FROM users 
           WHERE role IN ('1', '2') 
           ORDER BY role DESC, created_at DESC";
 
@@ -59,10 +59,10 @@ function getRoleName($roleId) {
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar-small me-3">
-                                    <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                                    <?php echo strtoupper(substr($user['full_name'], 0, 1)); ?>
                                 </div>
                                 <span
-                                    class="fw-bold text-white"><?php echo htmlspecialchars($user['username']); ?></span>
+                                    class="fw-bold text-white"><?php echo htmlspecialchars($user['full_name']); ?></span>
                             </div>
                         </td>
 
