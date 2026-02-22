@@ -29,12 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $job_title = Security::clean($_POST['job_title']);
 
     try {
-        // Base SQL
+        // Add variable:
+        $basic_salary = floatval($_POST['basic_salary']);
+
+        // Update the base SQL:
         $sql = "UPDATE users SET 
                 username = :user, role = :role, 
                 full_name = :full_name, email = :email, 
-                phone = :phone, job_title = :job_title";
+                phone = :phone, job_title = :job_title, basic_salary = :basic_salary";
         
+        // Update the params array:
         $params = [
             ':user'      => $username,
             ':role'      => $role,
@@ -42,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':email'     => $email,
             ':phone'     => $phone,
             ':job_title' => $job_title,
+            ':basic_salary' => $basic_salary,
             ':id'        => $user_id
         ];
 
@@ -124,6 +129,13 @@ if (!$user) {
                         <div class="col-md-6">
                             <label class="form-label text-white-50 small fw-bold">Phone Number</label>
                             <input type="tel" name="phone" class="form-control glass-input" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-12 mt-3 pt-3 border-top border-secondary border-opacity-25">
+                            <label class="form-label text-gold small fw-bold"><i class="bi bi-cash-stack me-2"></i>Basic Salary (Monthly)</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-input border-end-0 text-white-50">SAR</span>
+                                <input type="number" step="0.01" name="basic_salary" class="form-control glass-input border-start-0 ps-2" value="<?php echo htmlspecialchars($user['basic_salary'] ?? '0.00'); ?>" required>
+                            </div>
                         </div>
                     </div>
 
