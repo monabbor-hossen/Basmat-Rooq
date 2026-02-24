@@ -136,7 +136,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                         <td class="ps-4 text-white-50 fw-bold">#<?php echo $client['client_id']; ?></td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar-icon me-2 flex-shrink-0"><i class="bi bi-building"></i></div>
+                                <div class="avatar-icon me-2 flex-shrink-0" style="width:40px;height: 40px;border-radius:10px;font-size:1.2rem;"><i class="bi bi-building"></i></div>
                                 <div>
                                     <div class="fw-bold text-white"><?php echo htmlspecialchars($client['company_name']); ?></div>
                                     <div class="small text-white-50"><?php echo htmlspecialchars($client['client_name']); ?></div>
@@ -205,5 +205,7 @@ function sortLink($key, $label, $currentSort, $nextDir) {
     </div>
 </div>
 </main>
+
+
 
 <?php require_once "includes/footer.php" ?>
