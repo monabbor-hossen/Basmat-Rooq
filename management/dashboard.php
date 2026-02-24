@@ -12,11 +12,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
 $db = (new Database())->getConnection();
 $account_id = $_SESSION['user_id'];
 $fallback_client_id = $_SESSION['client_id'] ?? 0;
-
-// Fetch ALL Projects/Licenses for this account
+// Fetch ALL ACTIVE Projects/Licenses for this account
 $stmt = $db->prepare("SELECT c.*, w.* FROM clients c 
                       LEFT JOIN workflow_tracking w ON c.client_id = w.client_id 
-                      WHERE c.account_id = ? OR c.client_id = ? 
+                      WHERE (c.account_id = ? OR c.client_id = ?) 
+                      AND c.is_active = 1 
                       ORDER BY c.client_id DESC");
 $stmt->execute([$account_id, $fallback_client_id]);
 $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);

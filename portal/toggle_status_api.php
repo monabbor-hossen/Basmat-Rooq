@@ -13,6 +13,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Decode JSON input
 $data = json_decode(file_get_contents("php://input"), true);
 $type = $data['type'] ?? '';
 $id = $data['id'] ?? 0;
@@ -33,13 +34,22 @@ try {
             exit;
         }
         $sql = "UPDATE users SET is_active = :status WHERE id = :id";
+        
     } elseif ($type === 'client') {
+        // Disables the entire Master Account
         $sql = "UPDATE client_accounts SET is_active = :status WHERE account_id = :id";
+        
+    } elseif ($type === 'license') {
+        // --- STEP 3 ADDED HERE ---
+        // Disables ONLY the specific license/application
+        $sql = "UPDATE clients SET is_active = :status WHERE client_id = :id";
+        
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid type']);
         exit;
     }
-
+    
+    // Execute whichever SQL string was chosen above
     $stmt = $db->prepare($sql);
     $stmt->execute([':status' => $status, ':id' => $id]);
 

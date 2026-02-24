@@ -5,12 +5,12 @@ require_once __DIR__ . '/../app/Config/Database.php';
 
 $db = (new Database())->getConnection();
 // 1. Fetch Clients AND Account Info
-$query = "SELECT c.*, w.*, a.account_id as master_account_id, a.username as master_username, a.is_active as account_status,
+$query = "SELECT c.*, c.is_active as license_status, w.*, a.account_id as master_account_id, a.username as master_username,
           COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
           FROM clients c 
           LEFT JOIN workflow_tracking w ON c.client_id = w.client_id
           LEFT JOIN client_accounts a ON c.account_id = a.account_id
-          ORDER BY c.client_id ASC"; // Ensure chronologically sorted first
+          ORDER BY c.client_id ASC";
 
 $stmt = $db->prepare($query);
 $stmt->execute();
@@ -163,10 +163,10 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                         
                         <td class="text-center">
                             <?php if (!empty($client['master_account_id'])): ?>
-                                <div class="form-check form-switch m-0 d-flex justify-content-center" title="Toggle Login Access">
+                                <div class="form-check form-switch m-0 d-flex justify-content-center" title="Toggle Application Visibility & Access">
                                     <input class="form-check-input form-check-input-gold cursor-pointer" type="checkbox" 
-                                           onchange="toggleLoginStatus('client', <?php echo $client['master_account_id']; ?>, this)" 
-                                           <?php echo (isset($client['account_status']) && $client['account_status'] == 1) ? 'checked' : ''; ?>>
+                                           onchange="toggleLoginStatus('license', <?php echo $client['client_id']; ?>, this)" 
+                                           <?php echo (!isset($client['license_status']) || $client['license_status'] == 1) ? 'checked' : ''; ?>>
                                 </div>
                                 
                                 <?php if ($client['linked_licenses_count'] > 1): ?>

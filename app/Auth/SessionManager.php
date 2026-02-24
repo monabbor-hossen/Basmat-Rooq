@@ -53,8 +53,7 @@ class SessionManager {
                 $this->limiter->reset($ip);
                 return true;
             }
-
-            // --- CHECK CLIENT ---
+// --- CHECK CLIENT ---
             $query2 = "SELECT account_id, client_id, username, password_hash, is_active FROM client_accounts WHERE username = :user LIMIT 1";
             $stmt2 = $this->db->prepare($query2);
             $stmt2->bindParam(':user', $clean_user);
@@ -62,9 +61,16 @@ class SessionManager {
             $client = $stmt2->fetch(PDO::FETCH_ASSOC);
 
             if ($client && password_verify($password, $client['password_hash'])) {
-                if (isset($client['is_active']) && $client['is_active'] == 0) {
-                    throw new Exception("Security Alert: Your account has been deactivated. Contact Support.");
+                
+                // NEW: Check if they have at least one ACTIVE license
+                $check_active = $this->db->prepare("SELECT COUNT(*) FROM clients WHERE account_id = ? AND is_active = 1");
+                $check_active->execute([$client['account_id']]);
+                $active_licenses = $check_active->fetchColumn();
+
+                if ($active_licenses == 0) {
+                    throw new Exception("Security Alert: All your applications have been suspended. Contact Support.");
                 }
+
                 $this->createSession($client, 'client');
                 $this->limiter->reset($ip);
                 return true;
