@@ -4,21 +4,45 @@ require_once 'includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 
 $db = (new Database())->getConnection();
-
-// 1. Fetch Clients AND Account Info with a Link Count
+// 1. Fetch Clients AND Account Info
 $query = "SELECT c.*, w.*, a.account_id as master_account_id, a.username as master_username, a.is_active as account_status,
-          COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid,
-          (SELECT COUNT(*) FROM clients c2 WHERE c2.account_id = a.account_id) as linked_licenses_count
+          COALESCE((SELECT SUM(amount) FROM payments WHERE client_id = c.client_id AND payment_status = 'Completed'), 0) as total_paid
           FROM clients c 
           LEFT JOIN workflow_tracking w ON c.client_id = w.client_id
-          LEFT JOIN client_accounts a ON c.account_id = a.account_id";
+          LEFT JOIN client_accounts a ON c.account_id = a.account_id
+          ORDER BY c.client_id ASC"; // Ensure chronologically sorted first
 
 $stmt = $db->prepare($query);
 $stmt->execute();
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 2. Pre-calculate Data
+// 2. Count total licenses per account to know which ones are shared
+$account_totals = [];
+$account_serials = [];
+foreach ($clients as $client) {
+    $acc_id = $client['master_account_id'];
+    if ($acc_id) {
+        if (!isset($account_totals[$acc_id])) $account_totals[$acc_id] = 0;
+        $account_totals[$acc_id]++;
+    }
+}
+
+// 3. Pre-calculate Data & Assign Serials
 foreach ($clients as &$client) {
+    // Assign Serials
+    $acc_id = $client['master_account_id'];
+    if ($acc_id) {
+        if (!isset($account_serials[$acc_id])) $account_serials[$acc_id] = 0;
+        $account_serials[$acc_id]++;
+        
+        $client['account_serial'] = $account_serials[$acc_id];
+        $client['linked_licenses_count'] = $account_totals[$acc_id];
+    } else {
+        $client['account_serial'] = 0;
+        $client['linked_licenses_count'] = 0;
+    }
+
+    // Progress calculations
     $steps_to_check = [
         $client['hire_foreign_company'] ?? '', $client['misa_application'] ?? '',
         $client['sbc_application'] ?? '',      $client['article_association'] ?? '',
@@ -38,17 +62,14 @@ foreach ($clients as &$client) {
         }
     }
     
-    if ($total_active_steps > 0) {
-        $client['progress_val'] = ($approved_count / $total_active_steps) * 100;
-    } else {
-        $client['progress_val'] = 0;
-    }
-    
+    $client['progress_val'] = ($total_active_steps > 0) ? ($approved_count / $total_active_steps) * 100 : 0;
     $client['approved_count'] = $approved_count;
     $client['total_active_steps'] = $total_active_steps; 
     $client['due_val'] = $client['contract_value'] - $client['total_paid'];
 }
 unset($client);
+
+// ... (Keep the sorting logic $sort, $dir as it is) ...
 
 // 3. Sort Logic
 $sort = $_GET['sort'] ?? 'id';
@@ -149,8 +170,8 @@ function sortLink($key, $label, $currentSort, $nextDir) {
                                 </div>
                                 
                                 <?php if ($client['linked_licenses_count'] > 1): ?>
-                                    <div class="small text-info mt-1 text-nowrap fw-bold" style="font-size: 0.65rem;" title="Shared across <?php echo $client['linked_licenses_count']; ?> licenses">
-                                        <i class="bi bi-link-45deg me-1"></i><?php echo htmlspecialchars($client['master_username']); ?> (<?php echo $client['linked_licenses_count']; ?>)
+                                    <div class="small text-info mt-1 text-nowrap fw-bold" style="font-size: 0.65rem;" title="License <?php echo $client['account_serial']; ?> out of <?php echo $client['linked_licenses_count']; ?> for this account">
+                                        <i class="bi bi-link-45deg me-1"></i><?php echo htmlspecialchars($client['master_username']); ?> (<?php echo $client['account_serial']; ?>)
                                     </div>
                                 <?php endif; ?>
                                 
