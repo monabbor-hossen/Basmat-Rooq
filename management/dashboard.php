@@ -21,7 +21,7 @@ $stmt = $db->prepare("SELECT c.*, w.* FROM clients c
 $stmt->execute([$account_id, $fallback_client_id]);
 $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$company_name = count($projects) > 0 ? $projects[0]['company_name'] : 'Client';
+$company_name = count($projects) > 0 ? $projects[0]['client_name'] : 'Client';
 ?>
 <!DOCTYPE html>
 <html lang="en">

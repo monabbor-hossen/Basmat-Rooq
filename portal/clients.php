@@ -206,19 +206,4 @@ function sortLink($key, $label, $currentSort, $nextDir) {
 </div>
 </main>
 
-<style>
-    .avatar-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(212, 175, 55, 0.1);
-        color: #D4AF37;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        border: 1px solid rgba(212, 175, 55, 0.2);
-    }
-</style>
-
 <?php require_once "includes/footer.php" ?>
