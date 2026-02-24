@@ -1,6 +1,8 @@
+
 <?php
 // public/login.php
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) session_start();
 $root = dirname(__DIR__);
 
 // Load configuration and the Translator class
@@ -12,7 +14,19 @@ require_once __DIR__ . '/../app/Helpers/Security.php'; // Load Security Helper
 if (isset($_GET['lang'])) {
     $_SESSION['lang'] = $_GET['lang'];
 }
-
+// --- ALREADY LOGGED IN CHECK ---
+if (isset($_SESSION['user_id'])) {
+    // If Admin or Staff, go to portal
+    if (in_array($_SESSION['role'], ['1', '2'])) {
+        header("Location: ../portal/dashboard.php");
+        exit();
+    } 
+    // If Client, go to client dashboard
+    elseif ($_SESSION['role'] === 'client') {
+        header("Location: ../management/dashboard.php");
+        exit();
+    }
+}
 // Initialize variables to prevent warnings
 $lang = $_SESSION['lang'] ?? 'en'; 
 $translator = new Translator();
