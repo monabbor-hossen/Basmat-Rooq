@@ -7,7 +7,7 @@ $message = "";
 $db = (new Database())->getConnection();
 
 // Fetch existing accounts for the dropdown
-$stmt_accs = $db->query("SELECT a.account_id, a.username, c.company_name FROM client_accounts a LEFT JOIN clients c ON a.client_id = c.client_id GROUP BY a.account_id");
+$stmt_accs = $db->query("SELECT a.account_id, a.username, c.client_name FROM client_accounts a LEFT JOIN clients c ON a.client_id = c.client_id GROUP BY a.account_id");
 $existing_accounts = $stmt_accs->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -191,7 +191,7 @@ $workflow_steps = [
                                     <option value="" disabled selected>-- Choose Account --</option>
                                     <?php foreach($existing_accounts as $acc): ?>
                                         <option value="<?php echo $acc['account_id']; ?>">
-                                            <?php echo htmlspecialchars($acc['username']); ?>
+                                            <?php echo htmlspecialchars($acc['username'] . ' (' . $acc['client_name'] . ')'); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
