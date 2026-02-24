@@ -4,11 +4,16 @@ require_once 'includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 
 $message = "";
+$db = (new Database())->getConnection();
+
+// Fetch existing accounts for the dropdown
+$stmt_accs = $db->query("SELECT a.account_id, a.username, c.company_name FROM client_accounts a LEFT JOIN clients c ON a.client_id = c.client_id GROUP BY a.account_id");
+$existing_accounts = $stmt_accs->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Security::checkCSRF($_POST['csrf_token']);
 
-    // 1. Sanitize Basic Info
+    // 1. Sanitize Basic Info (The License/Project Details)
     $company = Security::clean($_POST['company_name']);
     $client  = Security::clean($_POST['client_name']);
     $phone   = Security::clean($_POST['phone_number']);
@@ -16,31 +21,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $trade   = Security::clean($_POST['trade_name_application']);
     $value   = floatval($_POST['contract_value']);
 
-    // 2. Sanitize Login Info
-    $username = Security::clean($_POST['account_username']);
-    $password = $_POST['account_password'];
-
     try {
-        $db = (new Database())->getConnection();
         $db->beginTransaction();
 
-        // A. Insert Client Profile
+        // A. Insert Client Profile (This acts as the License Application)
         $sql = "INSERT INTO clients (company_name, client_name, phone_number, email, trade_name_application, contract_value) 
                 VALUES (:company, :client, :phone, :email, :trade_app, :val)";
         $stmt = $db->prepare($sql);
         $stmt->execute([':company'=>$company, ':client'=>$client, ':phone'=>$phone, ':email'=>$email, ':trade_app'=>$trade, ':val'=>$value]);
         $new_client_id = $db->lastInsertId();
 
-        // B. Create Client Account (New Table)
-        if (!empty($username) && !empty($password)) {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
-            $sql_acc = "INSERT INTO client_accounts (client_id, username, password_hash) 
-                        VALUES (:cid, :user, :pass)";
-            $stmt_acc = $db->prepare($sql_acc);
-            $stmt_acc->execute([':cid' => $new_client_id, ':user' => $username, ':pass' => $hashed_password]);
+        // B. Handle Master Account (New or Existing)
+        $account_type = $_POST['account_type'] ?? 'new';
+        $account_id = null;
+
+        if ($account_type === 'existing') {
+            $account_id = intval($_POST['existing_account_id']);
+        } else {
+            // Create New Account
+            $username = Security::clean($_POST['account_username']);
+            $password = $_POST['account_password'];
+            if (!empty($username) && !empty($password)) {
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $sql_acc = "INSERT INTO client_accounts (client_id, username, password_hash) VALUES (:cid, :user, :pass)";
+                $stmt_acc = $db->prepare($sql_acc);
+                $stmt_acc->execute([':cid' => $new_client_id, ':user' => $username, ':pass' => $hashed_password]);
+                $account_id = $db->lastInsertId();
+            }
         }
-// C. Insert Workflow
+
+        // C. Link the License to the Account
+        if ($account_id) {
+            $db->prepare("UPDATE clients SET account_id = ? WHERE client_id = ?")->execute([$account_id, $new_client_id]);
+        }
+
+        // D. Insert Workflow
         $statuses = [':cid' => $new_client_id, ':update_at' => date('Y-m-d H:i:s')];
         
         $db_keys = [
@@ -48,11 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'article' => 'art', 'gosi' => 'gosi', 'qiwa' => 'qiwa', 'muqeem' => 'muqeem', 'coc' => 'coc'
         ];
         
-        // DEFINE THE 3 REQUIRED STEPS HERE
         $required_steps = ['scope', 'qiwa', 'muqeem']; 
         
         foreach($db_keys as $post_key => $db_key) {
-            // If it's a required step, OR if the toggle was turned ON
             if (in_array($post_key, $required_steps) || isset($_POST['enable_'.$post_key])) {
                 $statuses[":{$db_key}_st"] = $_POST['status_'.$post_key];
                 $statuses[":{$db_key}_nt"] = $_POST['note_'.$post_key];
@@ -63,22 +76,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $sql_wf = "INSERT INTO workflow_tracking 
-                   (client_id, license_scope_status, license_scope_note, 
-                    hire_foreign_company, hire_foreign_company_note,
-                    misa_application, misa_application_note,
-                    sbc_application, sbc_application_note,
-                    article_association, article_association_note,
-                    gosi, gosi_note, qiwa, qiwa_note, muqeem, muqeem_note, 
-                    chamber_commerce, chamber_commerce_note, update_date_at) 
+                   (client_id, license_scope_status, license_scope_note, hire_foreign_company, hire_foreign_company_note,
+                    misa_application, misa_application_note, sbc_application, sbc_application_note, article_association, article_association_note,
+                    gosi, gosi_note, qiwa, qiwa_note, muqeem, muqeem_note, chamber_commerce, chamber_commerce_note, update_date_at) 
                    VALUES 
-                   (:cid, :scope_st, :scope_nt, :hire_st, :hire_nt, :misa_st, :misa_nt, 
-                    :sbc_st, :sbc_nt, :art_st, :art_nt, :gosi_st, :gosi_nt, 
-                    :qiwa_st, :qiwa_nt, :muqeem_st, :muqeem_nt, :coc_st, :coc_nt, :update_at)";
+                   (:cid, :scope_st, :scope_nt, :hire_st, :hire_nt, :misa_st, :misa_nt, :sbc_st, :sbc_nt, :art_st, :art_nt, 
+                    :gosi_st, :gosi_nt, :qiwa_st, :qiwa_nt, :muqeem_st, :muqeem_nt, :coc_st, :coc_nt, :update_at)";
 
         $stmt_wf = $db->prepare($sql_wf);
         $stmt_wf->execute($statuses);
         $db->commit();
-        $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Client and Account created successfully!</div>";
+        
+        $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Client License created and linked successfully!</div>";
 
     } catch (PDOException $e) {
         $db->rollBack();
@@ -90,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Workflow Steps Array
 $workflow_steps = [
     'scope'   => 'License Processing Scope',
     'hire'    => 'Hire Foreign Company',
@@ -112,14 +120,13 @@ $workflow_steps = [
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card-box">
-                <h4 class="text-white fw-bold mb-4 border-bottom border-light border-opacity-10 pb-3">Add New Client
-                </h4>
+                <h4 class="text-white fw-bold mb-4 border-bottom border-light border-opacity-10 pb-3">Add New License / Client</h4>
                 <?php echo $message; ?>
 
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
 
-                    <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
+                    <h5 class="text-gold mb-3"><i class="bi bi-info-circle me-2"></i>Project / License Information</h5>
                     <div class="row g-3 mb-5">
                         <div class="col-md-6">
                             <label class="form-label text-white-50 small fw-bold">Company Name</label>
@@ -143,28 +150,51 @@ $workflow_steps = [
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-gold small fw-bold">Total Contract Value (SAR)</label>
-                            <input type="number" step="0.01" name="contract_value" class="form-control glass-input"
-                                placeholder="0.00" required>
+                            <input type="number" step="0.01" name="contract_value" class="form-control glass-input" placeholder="0.00" required>
                         </div>
                     </div>
 
                     <h5 class="text-gold mb-3"><i class="bi bi-shield-lock me-2"></i>Client Portal Access</h5>
                     <div class="row g-3 mb-5 p-3 rounded" style="background: rgba(0,0,0,0.2);">
-                        <div class="col-md-6">
-                            <label class="form-label text-white-50 small fw-bold">Username</label>
-                            <input type="text" name="account_username" class="form-control glass-input"
-                                placeholder="Create a username" autocomplete="off">
+                        
+                        <div class="col-12 mb-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input form-check-input-gold" type="radio" name="account_type" id="acc_new" value="new" checked onchange="toggleAccountFields()">
+                                <label class="form-check-label text-white" for="acc_new">Create New Login Account</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input form-check-input-gold" type="radio" name="account_type" id="acc_existing" value="existing" onchange="toggleAccountFields()">
+                                <label class="form-check-label text-white" for="acc_existing">Link to Existing Account</label>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label text-white-50 small fw-bold">Password</label>
-                            <div class="input-group">
-                                <input type="password" name="account_password" id="acc_pass"
-                                    class="form-control glass-input" placeholder="Create a password"
-                                    autocomplete="new-password">
-                                <button class="btn glass-input border-start-0 text-white-50" type="button"
-                                    onclick="togglePassword('acc_pass', 'pass_icon')">
-                                    <i class="bi bi-eye" id="pass_icon"></i>
-                                </button>
+
+                        <div class="row g-3 m-0 p-0" id="new_account_fields">
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small fw-bold">Username</label>
+                                <input type="text" name="account_username" class="form-control glass-input" placeholder="Create a username" autocomplete="off">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small fw-bold">Password</label>
+                                <div class="input-group">
+                                    <input type="password" name="account_password" id="acc_pass" class="form-control glass-input border-end-0" placeholder="Create a password" autocomplete="new-password">
+                                    <button class="btn glass-input border-start-0 text-white-50" type="button" onclick="togglePassword('acc_pass', 'pass_icon')">
+                                        <i class="bi bi-eye" id="pass_icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 m-0 p-0 d-none" id="existing_account_fields">
+                            <div class="col-md-12">
+                                <label class="form-label text-white-50 small fw-bold">Select Existing Master Account</label>
+                                <select name="existing_account_id" class="form-select glass-input">
+                                    <option value="" disabled selected>-- Choose Account --</option>
+                                    <?php foreach($existing_accounts as $acc): ?>
+                                        <option value="<?php echo $acc['account_id']; ?>">
+                                            <?php echo htmlspecialchars($acc['username']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -173,41 +203,30 @@ $workflow_steps = [
                     <h5 class="text-gold mb-3"><i class="bi bi-kanban me-2"></i>Initial Workflow Status</h5>
                     <div class="row g-3">
                         <?php 
-                            // DEFINE REQUIRED STEPS FOR UI
                             $required_steps = ['scope', 'qiwa', 'muqeem']; 
-                            
                             foreach($workflow_steps as $key => $label): 
                                 $is_required = in_array($key, $required_steps);
-                            ?>
+                        ?>
                         <div class="col-md-4 col-sm-6">
-                            <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative"
-                                id="card_<?php echo $key; ?>">
+                            <div class="workflow-card p-3 h-100 d-flex flex-column justify-content-between position-relative" id="card_<?php echo $key; ?>">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <label class="text-white fw-bold small text-uppercase mb-0">
-                                            <?php echo $label; ?>
-                                        </label>
+                                        <label class="text-white fw-bold small text-uppercase mb-0"><?php echo $label; ?></label>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="form-check form-switch m-0 p-0 d-flex align-items-center"
-                                            title="<?php echo $is_required ? 'This step is required' : 'Toggle optional step'; ?>">
+                                        <div class="form-check form-switch m-0 p-0 d-flex align-items-center">
                                             <input class="form-check-input m-0 form-check-input-gold cursor-pointer <?php echo $is_required ? 'd-none' : ''; ?>" type="checkbox"
                                                 name="enable_<?php echo $key; ?>" id="enable_<?php echo $key; ?>"
                                                 value="1" checked onchange="toggleWorkflowCard('<?php echo $key; ?>')"
                                                 style="width: 2.2em; height: 1.1em;"
                                                 <?php echo $is_required ? 'disabled' : ''; ?>>
                                         </div>
-                                    <button type="button" class="btn btn-sm btn-link text-gold p-0"
-                                        id="btn_edit_<?php echo $key; ?>"
-                                        onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i
-                                            class="bi bi-pencil-square fs-6"></i></button>
+                                    <button type="button" class="btn btn-sm btn-link text-gold p-0" onclick="openEditModal('<?php echo $key; ?>', '<?php echo $label; ?>')"><i class="bi bi-pencil-square fs-6"></i></button>
                                     </div>
                                 </div>
-                                <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>"
-                                    class="form-select glass-select-sm">
+                                <select name="status_<?php echo $key; ?>" id="select_<?php echo $key; ?>" class="form-select glass-select-sm">
                                     <?php if ($key === 'scope'): ?>
                                     <option value="Trading License Processing">Trading License Processing</option>
                                     <option value="Service License Processing">Service License Processing</option>
-                                    <option value="Service License Upgrade to Trading License">Service License Upgrade
-                                    </option>
+                                    <option value="Service License Upgrade to Trading License">Service License Upgrade</option>
                                     <?php else: ?>
                                     <option value="Pending Application">Pending Application</option>
                                     <option value="In Progress">In Progress</option>
@@ -215,19 +234,15 @@ $workflow_steps = [
                                     <option value="Approved">Approved</option>
                                     <?php endif; ?>
                                 </select>
-                                <div id="note_indicator_<?php echo $key; ?>"
-                                    class="mt-2 text-gold small fst-italic d-none"><i
-                                        class="bi bi-sticky-fill me-1"></i> Note added</div>
-                                <input type="hidden" name="note_<?php echo $key; ?>" id="input_note_<?php echo $key; ?>"
-                                    value="">
+                                <div id="note_indicator_<?php echo $key; ?>" class="mt-2 text-gold small fst-italic d-none"><i class="bi bi-sticky-fill me-1"></i> Note added</div>
+                                <input type="hidden" name="note_<?php echo $key; ?>" id="input_note_<?php echo $key; ?>" value="">
                             </div>
                         </div>
                         <?php endforeach; ?>
                     </div>
 
                     <div class="col-12 mt-5">
-                        <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold">Create Client
-                            Account</button>
+                        <button type="submit" class="btn btn-rooq-primary w-100 py-3 fw-bold">Create License & Account</button>
                     </div>
                 </form>
             </div>
@@ -236,7 +251,20 @@ $workflow_steps = [
 </div>
 </main>
 
+<script>
+function toggleAccountFields() {
+    if(document.getElementById('acc_new').checked) {
+        document.getElementById('new_account_fields').classList.remove('d-none');
+        document.getElementById('existing_account_fields').classList.add('d-none');
+    } else {
+        document.getElementById('new_account_fields').classList.add('d-none');
+        document.getElementById('existing_account_fields').classList.remove('d-none');
+    }
+}
+</script>
+
 <?php require_once 'includes/footer.php'; ?>
+
 <div class="modal fade" id="workflowModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content glass-modal">
@@ -246,21 +274,13 @@ $workflow_steps = [
             </div>
             <div class="modal-body">
                 <input type="hidden" id="current_field_key">
-                <div class="mb-3"><label class="form-label text-gold small fw-bold">Status</label><select
-                        id="modal_status_select" class="form-select glass-input"></select></div>
-                <div class="mb-3"><label class="form-label text-gold small fw-bold">Note / Remark</label><textarea
-                        id="modal_note_text" class="form-control glass-input" rows="3"></textarea></div>
+                <div class="mb-3"><label class="form-label text-gold small fw-bold">Status</label><select id="modal_status_select" class="form-select glass-input"></select></div>
+                <div class="mb-3"><label class="form-label text-gold small fw-bold">Note / Remark</label><textarea id="modal_note_text" class="form-control glass-input" rows="3"></textarea></div>
             </div>
             <div class="modal-footer border-top border-white border-opacity-10">
                 <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-rooq-primary btn-sm px-4" onclick="saveModalChanges()">Save
-                    Changes</button>
+                <button type="button" class="btn btn-rooq-primary btn-sm px-4" onclick="saveModalChanges()">Save Changes</button>
             </div>
         </div>
     </div>
 </div>
-
-
-<?php
-require_once "includes/footer.php"
-?>
