@@ -1,19 +1,28 @@
 <?php
+// portal/includes/header.php
 require_once __DIR__ . '/../../app/Config/Config.php';
 require_once __DIR__ . '/../../app/Helpers/Security.php';
 require_once __DIR__ . '/../../app/Helpers/Translator.php';
 
-// Security::requireLogin(); // Uncomment if you use this
 if (session_status() === PHP_SESSION_NONE) session_start();
+
+// --- STRICT GLOBAL LOGIN CHECK ---
+// If there is no session, OR if a client tries to access the admin portal, kick them out!
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['1', '2'])) {
+    header("Location: " . BASE_URL . "public/login.php");
+    exit();
+}
 
 $lang = $_SESSION['lang'] ?? 'en';
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
+
 // Fetch names from session
 $username = $_SESSION['username'] ?? 'User';
-$full_name = $_SESSION['full_name'] ?? $username; // Fallback to username if no full name
+$full_name = $_SESSION['full_name'] ?? $username; 
 
 // Determine role text
 $role_text = (isset($_SESSION['role']) && $_SESSION['role'] == '2') ? 'Admin' : 'Staff';
+
 $translator = new Translator();
 $text = $translator->getTranslation($lang);
 ?>
