@@ -24,21 +24,38 @@ class SessionManager {
      * Secure Login with Rate Limiting
      * Returns TRUE on success, or throws Exception with error message on failure.
      */
-   public function login($username, $password, $csrf_token) {
-        $ip = $_SERVER['REMOTE_ADDR'];
+    // --- 1. ADD THIS NEW METHOD ---
+    private function logActivity($username, $ip, $activity) {
+        try {
+            // Insert the activity record into the database
+            $sql = "INSERT INTO login_attempts (ip_address, username, activity) VALUES (:ip, :user, :activity)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':ip' => $ip, 
+                ':user' => $username, 
+                ':activity' => $activity
+            ]);
+        } catch (PDOException $e) {
+            // Silently fail so a logging error doesn't stop the user from logging in
+            error_log("Activity Log Error: " . $e->getMessage());
+        }
+    }
 
-        // 1. Check Rate Limit
+    // --- 2. UPDATE YOUR LOGIN METHOD ---
+    public function login($username, $password, $csrf_token) {
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $clean_user = Security::clean($username);
+
+        // Check Rate Limit
         if ($this->limiter->isLocked($ip)) {
+            $this->logActivity($clean_user, $ip, "Blocked: IP Locked due to too many failed attempts");
             throw new Exception("Security Alert: Too many failed attempts. Your IP is locked for 15 minutes.");
         }
 
-        // 2. Validate CSRF
         Security::checkCSRF($csrf_token);
 
-        $clean_user = Security::clean($username);
-
         try {
-            // --- CHECK ADMIN (ADDED full_name and is_active to query) ---
+            // --- CHECK ADMIN / STAFF ---
             $query = "SELECT id, username, password, role, is_active, full_name FROM users WHERE username = :user LIMIT 1";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user', $clean_user);
@@ -47,13 +64,18 @@ class SessionManager {
 
             if ($user && password_verify($password, $user['password'])) {
                 if (isset($user['is_active']) && $user['is_active'] == 0) {
+                    $this->logActivity($clean_user, $ip, "Failed: Staff Account Deactivated");
                     throw new Exception("Security Alert: Your account has been deactivated. Contact Admin.");
                 }
                 $this->createSession($user, 'internal');
                 $this->limiter->reset($ip);
+                
+                // LOG SUCCESS
+                $this->logActivity($clean_user, $ip, "Success: Staff/Admin Login");
                 return true;
             }
-// --- CHECK CLIENT ---
+
+            // --- CHECK CLIENT ---
             $query2 = "SELECT account_id, client_id, username, password_hash, is_active FROM client_accounts WHERE username = :user LIMIT 1";
             $stmt2 = $this->db->prepare($query2);
             $stmt2->bindParam(':user', $clean_user);
@@ -62,22 +84,29 @@ class SessionManager {
 
             if ($client && password_verify($password, $client['password_hash'])) {
                 
-                // NEW: Check if they have at least one ACTIVE license
+                // Check if they have at least one ACTIVE license
                 $check_active = $this->db->prepare("SELECT COUNT(*) FROM clients WHERE account_id = ? AND is_active = 1");
                 $check_active->execute([$client['account_id']]);
                 $active_licenses = $check_active->fetchColumn();
 
                 if ($active_licenses == 0) {
+                    $this->logActivity($clean_user, $ip, "Failed: Client Licenses Suspended");
                     throw new Exception("Security Alert: All your applications have been suspended. Contact Support.");
                 }
 
                 $this->createSession($client, 'client');
                 $this->limiter->reset($ip);
+                
+                // LOG SUCCESS
+                $this->logActivity($clean_user, $ip, "Success: Client Login");
                 return true;
             }
 
-            // 3. Login Failed -> Increment Counter
+            // --- LOGIN FAILED ---
             $error_msg = $this->limiter->increment($ip);
+            
+            // LOG FAILURE
+            $this->logActivity($clean_user, $ip, "Failed: Invalid Credentials");
             throw new Exception($error_msg);
 
         } catch (PDOException $e) {
@@ -85,7 +114,7 @@ class SessionManager {
             throw new Exception("System error occurred.");
         }
     }
-
+    
     private function createSession($data, $type) {
         if ($type === 'internal') {
             $_SESSION['user_id'] = $data['id'];
@@ -133,5 +162,7 @@ class SessionManager {
     public static function isLoggedIn() {
         return isset($_SESSION['user_id']);
     }
+
+    
 }
 ?>
