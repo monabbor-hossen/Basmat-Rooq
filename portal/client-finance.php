@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
     $stmt = $db->prepare("INSERT INTO payments (client_id, amount, payment_method, payment_status, notes) VALUES (?, ?, ?, ?, ?)");
     if ($stmt->execute([$client_id, $amount, $method, $status, $note])) {
         $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Payment recorded successfully!</div>";
+        // Assuming you have variables like $amount and $company_name already available in this file
+           Security::logActivity("Recorded client payment of " . number_format($amount, 2) . " SAR for: " . $company_name);
     }
 }
 
