@@ -22,19 +22,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'milestones.php') ? 'active-glass' : ''; ?>"
-                    href="milestones.php">
-                    <i class="bi bi-flag-fill me-3"></i> Milestones
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'documents.php') ? 'active-glass' : ''; ?>"
-                    href="documents.php">
-                    <i class="bi bi-file-earmark-text-fill me-3"></i> Documents
-                </a>
-            </li>
         </ul>
 
         <p class="px-4 text-white-50 small text-uppercase fw-bold mb-3 mt-4" style="letter-spacing: 1px;">System</p>
@@ -54,21 +41,22 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span class="fw-bold">Payroll</span>
                 </a>
             </li>
-            <?php if ($_SESSION['role'] == '2'): ?>
-            <li class="nav-item mb-2">
-                <a class="nav-link <?php echo ($current_page == 'activity-logs.php') ? 'active-glass' : ''; ?>"
-                    href="activity-logs.php">
-                    <i class="bi bi-activity me-3"></i> Activity Logs
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'settings.php') ? 'active-glass' : ''; ?>"
+                    href="settings.php">
+                    <i class="bi bi-gear-fill me-3"></i> Settings
                 </a>
             </li>
+            <?php if ($_SESSION['role'] == '2'): ?>
+            
             <li class="nav-item mb-2 mt-4">
                 <div class="text-uppercase text-white-50 small fw-bold px-3 mb-2"
                     style="font-size: 0.7rem; letter-spacing: 1px;">Security</div>
-                <a href="audit.php"
-                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit.php') ? 'active-glass' : ''; ?>"
+                <a href="activity-logs.php"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'activity-logs.php') ? 'active-glass' : ''; ?>"
                     style="transition: all 0.3s ease;">
-                    <i class="bi bi-shield-check me-3"></i>
-                    <span class="fw-bold">Audit System</span>
+                    <i class="bi bi-activity me-3"></i>
+                    <span class="fw-bold">Activity Logs</span>
                 </a>
             </li>
             <li class="nav-item mb-2">
@@ -78,12 +66,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <?php endif; ?>
-            <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'settings.php') ? 'active-glass' : ''; ?>"
-                    href="settings.php">
-                    <i class="bi bi-gear-fill me-3"></i> Settings
-                </a>
-            </li>
+            
         </ul>
     </div>
 </aside>
