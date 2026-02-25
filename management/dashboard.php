@@ -80,7 +80,6 @@ $total_due = $total_contract_value - $total_paid;
 $overall_progress = ($total_active_steps > 0) ? round(($total_approved_steps / $total_active_steps) * 100) : 0;
 ?>
 
-<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="text-white fw-bold mb-0">Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h3>
@@ -225,6 +224,5 @@ $overall_progress = ($total_active_steps > 0) ? round(($total_approved_steps / $
             </div>
         </div>
     </div>
-</div>
 
 <?php require_once '../portal/includes/footer.php';?>

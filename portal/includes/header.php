@@ -63,7 +63,7 @@ $text = $translator->getTranslation($lang);
 <header class="portal-header sticky-top">
     <div class="container-fluid d-flex align-items-center justify-content-between">
         
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
             <button class="btn btn-link text-white d-lg-none p-0" id="sidebarToggle">
                 <i class="bi bi-list fs-2"></i>
             </button>
@@ -84,10 +84,11 @@ $text = $translator->getTranslation($lang);
         <?php endif;?>
         <div class="d-flex align-items-center gap-sm-4 gap-2 ">
             
+        <?php if ($_SESSION['role'] !== 'client'): ?>
             <button class="btn btn-link text-white p-0 d-md-none opacity-75 hover-gold" onclick="toggleMobileSearch()">
                 <i class="bi bi-search fs-5"></i>
             </button>
-
+        <?php endif;?>
             <div class="position-relative d-block" style="cursor: pointer;">
                 <i class="bi bi-bell text-white fs-5 opacity-75 hover-gold"></i>
                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-dark rounded-circle"></span>
@@ -118,7 +119,7 @@ $text = $translator->getTranslation($lang);
         </div>
     </div>
 </header>
-
+<?php if ($_SESSION['role'] !== 'client'): ?>
 <div id="mobileSearchOverlay">
     <div class="glass-search-popup p-4 position-relative">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -135,7 +136,7 @@ $text = $translator->getTranslation($lang);
         <div id="mobileSearchResults" class="search-results-dropdown d-none" style="top: 140px; width: 88%; left: 6%;"></div>
     </div>
 </div>
-
+<?php endif;?>
 <div class="d-flex portal-wrapper">
     <?php require_once 'sidebar.php'; ?>
     <main class="w-100 p-4">
