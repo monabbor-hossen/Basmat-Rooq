@@ -86,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_wf = $db->prepare($sql_wf);
         $stmt_wf->execute($statuses);
         $db->commit();
-        
+        // NEW: Log the exact action
+        Security::logActivity("Created new client license for: " . $company);
         $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Client License created and linked successfully!</div>";
 
     } catch (PDOException $e) {

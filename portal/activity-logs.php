@@ -36,13 +36,25 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php foreach ($logs as $log): 
                             $badge_color = ($log['user_type'] == 'client') ? 'bg-info' : 'bg-gold text-dark';
                             
-                            // Highlight Login actions vs Clicks
+                            // Determine Icon and Color based on action text
+                            $action_class = 'text-white';
+                            $icon = '<i class="bi bi-record-circle me-2 text-white-50"></i>';
+                            
                             if (strpos($log['action'], 'Logged In') !== false) {
                                 $action_class = 'text-success fw-bold';
-                                $icon = '<i class="bi bi-box-arrow-in-right me-2"></i>';
-                            } else {
-                                $action_class = 'text-white-50';
-                                $icon = '<i class="bi bi-cursor me-2 text-gold"></i>';
+                                $icon = '<i class="bi bi-box-arrow-in-right me-2 text-success"></i>';
+                            } elseif (strpos($log['action'], 'Created') !== false || strpos($log['action'], 'Activated') !== false) {
+                                $action_class = 'text-info';
+                                $icon = '<i class="bi bi-plus-circle me-2 text-info"></i>';
+                            } elseif (strpos($log['action'], 'Deleted') !== false || strpos($log['action'], 'Deactivated') !== false) {
+                                $action_class = 'text-danger';
+                                $icon = '<i class="bi bi-trash me-2 text-danger"></i>';
+                            } elseif (strpos($log['action'], 'Updated') !== false) {
+                                $action_class = 'text-warning';
+                                $icon = '<i class="bi bi-pencil-square me-2 text-warning"></i>';
+                            } elseif (strpos($log['action'], 'payment') !== false) {
+                                $action_class = 'text-success';
+                                $icon = '<i class="bi bi-cash-stack me-2 text-success"></i>';
                             }
                         ?>
                         <tr>
@@ -52,8 +64,8 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td class="<?php echo $action_class; ?>"><?php echo $icon . htmlspecialchars($log['action']); ?></td>
                             <td class="text-end pe-4 text-white-50 small font-monospace"><?php echo htmlspecialchars($log['ip_address']); ?></td>
                         </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                        <?php endforeach; ?>        
+                     <?php else: ?>
                         <tr><td colspan="5" class="text-center py-5 text-white-50">No activity recorded yet.</td></tr>
                     <?php endif; ?>
                 </tbody>

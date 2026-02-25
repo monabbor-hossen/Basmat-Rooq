@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db = (new Database())->getConnection();
         $stmt = $db->prepare("DELETE FROM users WHERE id = :id");
         $stmt->bindParam(':id', $delete_id);
-        
+        // Assuming you have fetched the username before deleting it for the log
+        Security::logActivity("Deleted user account: " . $deleted_username);
         if ($stmt->execute()) {
             header("Location: users.php?msg=deleted");
         } else {

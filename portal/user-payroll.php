@@ -55,6 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
                 ':uid' => $user_id, ':month' => $month, ':year' => $year, 
                 ':amount' => $amount, ':method' => $method, ':date' => $date, ':notes' => $notes
             ]);
+            // NEW: Log the exact action
+            Security::logActivity("Recorded salary payment of " . $amount . " SAR for User ID: #" . $user_id);
             $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Salary payment recorded successfully!</div>";
         } catch (PDOException $e) {
             $message = "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
@@ -326,10 +328,10 @@ if ($is_pre_join) {
     </div>
 </div>
 
-<script>
+<!-- <script>
 function validatePaymentDate() {
     var paymentDate = document.getElementById('modalPaymentDate').value;
-    var joinDate = '<?php echo $exact_join_date; ?>';
+    var joinDate = '<php echo $exact_join_date; ?>';
     
     if (new Date(paymentDate) < new Date(joinDate)) {
         alert("Payment Date cannot be before the user's Joining Date (" + joinDate + ").");
@@ -337,6 +339,6 @@ function validatePaymentDate() {
     }
     return true; // Allows form submission
 }
-</script>
+</script> -->
 
 <?php require_once 'includes/footer.php'; ?>

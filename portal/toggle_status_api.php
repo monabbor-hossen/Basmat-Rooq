@@ -52,7 +52,9 @@ try {
     // Execute whichever SQL string was chosen above
     $stmt = $db->prepare($sql);
     $stmt->execute([':status' => $status, ':id' => $id]);
-
+// NEW: Log the status change
+    $action_text = $status ? "Activated" : "Deactivated";
+    Security::logActivity($action_text . " login access for " . $type . " ID: #" . $id);
     echo json_encode(['success' => true]);
 
 } catch (PDOException $e) {

@@ -67,6 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $db->prepare($sql);
             if ($stmt->execute($params)) {
                 $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
+                // NEW: Log the exact action
+                Security::logActivity("Updated user profile: " . $username);    
             }
         }
     } catch (PDOException $e) {

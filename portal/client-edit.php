@@ -125,6 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_wf->execute($wf_data);
 
             $db->commit();
+            // NEW: Log the exact action
+            Security::logActivity("Updated client license ID: #" . $client_id . " (" . $company . ")");
             header("Location: client-edit.php?id=" . $client_id . "&msg=updated");
             exit();
         }
