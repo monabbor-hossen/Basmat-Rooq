@@ -58,9 +58,7 @@ foreach ($logs as $log) {
             <h3 class="text-white fw-bold mb-0"><i class="bi bi-bank text-gold me-2"></i>Financial Audit Trail</h3>
             <p class="text-white-50 small mb-0">Track and investigate all money movement (Client Invoices & Staff Payroll).</p>
         </div>
-        <button class="btn btn-outline-light btn-sm rounded-pill px-4" onclick="window.print()">
-            <i class="bi bi-printer me-2"></i> Print Finance Report
-        </button>
+        
     </div>
 
     <div class="row g-3 mb-4">

@@ -56,9 +56,6 @@ foreach ($logs as $log) {
             <h3 class="text-white fw-bold mb-0"><i class="bi bi-shield-check text-gold me-2"></i>System Activity Logs</h3>
             <p class="text-white-50 small mb-0">Track, filter, and investigate all system activities securely.</p>
         </div>
-        <button class="btn btn-outline-light btn-sm rounded-pill px-4" onclick="window.print()">
-            <i class="bi bi-printer me-2"></i> Print Report
-        </button>
     </div>
 
     <div class="row g-3 mb-4">
