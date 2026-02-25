@@ -64,14 +64,14 @@ class SessionManager {
 
             if ($user && password_verify($password, $user['password'])) {
                 if (isset($user['is_active']) && $user['is_active'] == 0) {
-                    $this->logActivity($clean_user, $ip, "Failed: Staff Account Deactivated");
                     throw new Exception("Security Alert: Your account has been deactivated. Contact Admin.");
                 }
                 $this->createSession($user, 'internal');
                 $this->limiter->reset($ip);
                 
-                // LOG SUCCESS
-                $this->logActivity($clean_user, $ip, "Success: Staff/Admin Login");
+                // NEW: Log the Admin/Staff Login
+                \Security::logActivity("Logged In to Portal");
+                
                 return true;
             }
 
@@ -84,21 +84,20 @@ class SessionManager {
 
             if ($client && password_verify($password, $client['password_hash'])) {
                 
-                // Check if they have at least one ACTIVE license
                 $check_active = $this->db->prepare("SELECT COUNT(*) FROM clients WHERE account_id = ? AND is_active = 1");
                 $check_active->execute([$client['account_id']]);
                 $active_licenses = $check_active->fetchColumn();
 
                 if ($active_licenses == 0) {
-                    $this->logActivity($clean_user, $ip, "Failed: Client Licenses Suspended");
                     throw new Exception("Security Alert: All your applications have been suspended. Contact Support.");
                 }
 
                 $this->createSession($client, 'client');
                 $this->limiter->reset($ip);
                 
-                // LOG SUCCESS
-                $this->logActivity($clean_user, $ip, "Success: Client Login");
+                // NEW: Log the Client Login
+                \Security::logActivity("Logged In to Client Dashboard");
+                
                 return true;
             }
 

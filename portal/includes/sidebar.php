@@ -46,7 +46,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <i class="bi bi-shield-lock-fill me-3"></i> User Access
                 </a>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'activity-logs.php') ? 'active-glass' : ''; ?>" 
+                   href="activity-logs.php">
+                    <i class="bi bi-file-earmark-text-fill me-3"></i> Activity Logs
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link <?php echo ($current_page == 'settings.php') ? 'active-glass' : ''; ?>" 
                    href="settings.php">
