@@ -71,6 +71,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span class="fw-bold">Audit System</span>
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                <a href="audit-finance.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit-finance.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                    <i class="bi bi-bank fs-5 me-3 text-gold"></i>
+                    <span class="fw-bold">Financial Audit</span>
+                </a>
+            </li>
             <?php endif; ?>
             <li class="nav-item">
                 <a class="nav-link <?php echo ($current_page == 'settings.php') ? 'active-glass' : ''; ?>"
