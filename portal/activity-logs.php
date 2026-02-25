@@ -53,7 +53,7 @@ foreach ($logs as $log) {
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="text-white fw-bold mb-0"><i class="bi bi-shield-check text-gold me-2"></i>System Audit Trail</h3>
+            <h3 class="text-white fw-bold mb-0"><i class="bi bi-shield-check text-gold me-2"></i>System Activity Logs</h3>
             <p class="text-white-50 small mb-0">Track, filter, and investigate all system activities securely.</p>
         </div>
         <button class="btn btn-outline-light btn-sm rounded-pill px-4" onclick="window.print()">
