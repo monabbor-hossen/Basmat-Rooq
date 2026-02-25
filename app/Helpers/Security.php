@@ -12,22 +12,21 @@ class Security {
     }
 
     public static function checkCSRF($token) {
-        // Ensure $token is a string and session token is set to avoid TypeErrors
-        if (!is_string($token) || !isset($_SESSION['csrf_token'])) {
-            die("Security Alert: Missing or invalid request token.");
-        }
-        
-        if (!hash_equals($_SESSION['csrf_token'], $token)) {
-            die("Security Alert: Invalid Request Token.");
-        }
-        return true;
+    // Ensure $token is a string and session token is set to avoid TypeErrors
+    if (!is_string($token) || !isset($_SESSION['csrf_token'])) {
+        die("Security Alert: Missing or invalid request token.");
     }
+    
+    if (!hash_equals($_SESSION['csrf_token'], $token)) {
+        die("Security Alert: Invalid Request Token.");
+    }
+    return true;
+}
 
     public static function clean($data) {
         return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
     }
-    
-// --- GLOBAL ACTIVITY LOGGER ---
+    // --- GLOBAL ACTIVITY LOGGER ---
     public static function logActivity($action) {
         if (session_status() === PHP_SESSION_NONE) session_start();
         
@@ -39,20 +38,18 @@ class Security {
         $user_id = $_SESSION['user_id'];
         $username = $_SESSION['username'] ?? 'Unknown';
         $user_type = (isset($_SESSION['role']) && $_SESSION['role'] === 'client') ? 'client' : 'internal';
-        
-        // Get the exact page they are on
-        $url = $_SERVER['REQUEST_URI'];
         $ip = $_SERVER['REMOTE_ADDR'];
 
         try {
             $db = (new \Database())->getConnection();
-            $stmt = $db->prepare("INSERT INTO activity_logs (user_id, user_type, username, action, url, ip_address) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$user_id, $user_type, $username, $action, $url, $ip]);
+            $stmt = $db->prepare("INSERT INTO activity_logs (user_id, user_type, username, action, ip_address) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$user_id, $user_type, $username, $action, $ip]);
         } catch (\PDOException $e) {
-            // Fail silently so the website doesn't break if the log fails
-            error_log("Activity Log Error: " . $e->getMessage());
+            // Silently fail if DB error occurs
+            error_log("Log Error: " . $e->getMessage());
         }
     }
+
     public static function requireLogin() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

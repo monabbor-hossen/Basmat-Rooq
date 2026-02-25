@@ -714,3 +714,34 @@ function validatePaymentDate() {
     }
     return true; // Allows form submission
 }
+
+
+
+/* =========================================
+   GLOBAL BUTTON CLICK TRACKER
+   ========================================= */
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        // Look for the closest element that is a button, a submit input, or has the class 'btn'
+        let target = e.target.closest('button, input[type="submit"], input[type="button"], .btn');
+        
+        if (target) {
+            // Try to get the text of the button, or its value, or its title/ID
+            let buttonText = target.innerText.trim() || target.value || target.title || target.id || 'Icon Button';
+            
+            // Clean up the text (remove extra spaces/newlines if it has icons inside)
+            buttonText = buttonText.replace(/\s+/g, ' ').substring(0, 100); 
+
+            let actionDesc = "Clicked Button: " + buttonText;
+
+            // Send the click data to the PHP API in the background without refreshing the page
+            fetch('log_activity_api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: actionDesc })
+            }).catch(err => console.error("Tracking Error:", err));
+        }
+    });
+});

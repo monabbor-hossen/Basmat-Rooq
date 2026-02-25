@@ -61,17 +61,16 @@ class SessionManager {
             $stmt->bindParam(':user', $clean_user);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
+            // INTERNAL (ADMIN/STAFF) LOGIN CHECK
             if ($user && password_verify($password, $user['password'])) {
                 if (isset($user['is_active']) && $user['is_active'] == 0) {
-                    throw new Exception("Security Alert: Your account has been deactivated. Contact Admin.");
+                    throw new Exception("Security Alert: Account deactivated.");
                 }
                 $this->createSession($user, 'internal');
                 $this->limiter->reset($ip);
                 
-                // NEW: Log the Admin/Staff Login
-                \Security::logActivity("Logged In to Portal");
-                
+                // NEW: Record the Login
+                \Security::logActivity("User Logged In");
                 return true;
             }
 
@@ -83,21 +82,11 @@ class SessionManager {
             $client = $stmt2->fetch(PDO::FETCH_ASSOC);
 
             if ($client && password_verify($password, $client['password_hash'])) {
-                
-                $check_active = $this->db->prepare("SELECT COUNT(*) FROM clients WHERE account_id = ? AND is_active = 1");
-                $check_active->execute([$client['account_id']]);
-                $active_licenses = $check_active->fetchColumn();
-
-                if ($active_licenses == 0) {
-                    throw new Exception("Security Alert: All your applications have been suspended. Contact Support.");
-                }
-
                 $this->createSession($client, 'client');
                 $this->limiter->reset($ip);
                 
-                // NEW: Log the Client Login
-                \Security::logActivity("Logged In to Client Dashboard");
-                
+                // NEW: Record the Login
+                \Security::logActivity("Client Logged In");
                 return true;
             }
 

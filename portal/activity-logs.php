@@ -15,7 +15,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="text-white fw-bold mb-0">System Activity Logs</h3>
-            <p class="text-white-50 small mb-0">Live tracking of all user logins and page clicks.</p>
+            <p class="text-white-50 small mb-0">Live tracking of user logins and button clicks.</p>
         </div>
     </div>
 
@@ -27,8 +27,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th class="py-3 ps-4 text-gold text-uppercase small">Timestamp</th>
                         <th class="py-3 text-gold text-uppercase small">User</th>
                         <th class="py-3 text-gold text-uppercase small">Type</th>
-                        <th class="py-3 text-gold text-uppercase small">Action</th>
-                        <th class="py-3 text-gold text-uppercase small">URL Path</th>
+                        <th class="py-3 text-gold text-uppercase small">Action Taken</th>
                         <th class="py-3 text-end pe-4 text-gold text-uppercase small">IP Address</th>
                     </tr>
                 </thead>
@@ -36,22 +35,26 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php if (count($logs) > 0): ?>
                         <?php foreach ($logs as $log): 
                             $badge_color = ($log['user_type'] == 'client') ? 'bg-info' : 'bg-gold text-dark';
-                            // Highlight Login actions
-                            $action_class = (strpos($log['action'], 'Logged In') !== false) ? 'text-success fw-bold' : 'text-white';
+                            
+                            // Highlight Login actions vs Clicks
+                            if (strpos($log['action'], 'Logged In') !== false) {
+                                $action_class = 'text-success fw-bold';
+                                $icon = '<i class="bi bi-box-arrow-in-right me-2"></i>';
+                            } else {
+                                $action_class = 'text-white-50';
+                                $icon = '<i class="bi bi-cursor me-2 text-gold"></i>';
+                            }
                         ?>
                         <tr>
-                            <td class="ps-4 text-white-50 small"><?php echo date('M d, Y - h:i:s A', strtotime($log['created_at'])); ?></td>
+                            <td class="ps-4 text-white-50 small"><?php echo date('M d, Y - h:i A', strtotime($log['created_at'])); ?></td>
                             <td class="fw-bold text-white"><i class="bi bi-person-circle me-2 text-white-50"></i><?php echo htmlspecialchars($log['username']); ?></td>
                             <td><span class="badge <?php echo $badge_color; ?> opacity-75"><?php echo strtoupper($log['user_type']); ?></span></td>
-                            <td class="<?php echo $action_class; ?>"><?php echo htmlspecialchars($log['action']); ?></td>
-                            <td class="text-white-50 small" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($log['url']); ?>">
-                                <?php echo htmlspecialchars($log['url']); ?>
-                            </td>
+                            <td class="<?php echo $action_class; ?>"><?php echo $icon . htmlspecialchars($log['action']); ?></td>
                             <td class="text-end pe-4 text-white-50 small font-monospace"><?php echo htmlspecialchars($log['ip_address']); ?></td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="6" class="text-center py-5 text-white-50">No activity recorded yet.</td></tr>
+                        <tr><td colspan="5" class="text-center py-5 text-white-50">No activity recorded yet.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
