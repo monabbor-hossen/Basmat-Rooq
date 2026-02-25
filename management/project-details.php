@@ -167,7 +167,7 @@ $progress_color = ($progress_percent == 100) ? 'bg-success' : (($progress_percen
 
         <div class="col-lg-4">
             
-            <div class="card-box mb-4" style="background: linear-gradient(145deg, rgba(30,30,30,0.9) 0%, rgba(10,10,10,0.95) 100%);">
+            <div class="card-box mb-4 p-3 rounded" style="background: linear-gradient(145deg, rgba(30,30,30,0.9) 0%, rgba(10,10,10,0.95) 100%);">
                 <h6 class="text-gold fw-bold mb-4 text-uppercase" style="font-size: 0.8rem;"><i class="bi bi-wallet2 me-2"></i>Financial Overview</h6>
                 
                 <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-light border-opacity-10">
