@@ -65,15 +65,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div class="text-uppercase text-white-50 small fw-bold px-3 mb-2"
                     style="font-size: 0.7rem; letter-spacing: 1px;">Security</div>
                 <a href="audit.php"
-                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit.php') ? 'active-glass' : ''; ?>"
                     style="transition: all 0.3s ease;">
-                    <i class="bi bi-shield-check fs-5 me-3 text-gold"></i>
+                    <i class="bi bi-shield-check me-3"></i>
                     <span class="fw-bold">Audit System</span>
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a href="audit-finance.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit-finance.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
-                    <i class="bi bi-bank fs-5 me-3 text-gold"></i>
+                <a href="audit-finance.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit-finance.php') ? 'active-glass' : ''; ?>" style="transition: all 0.3s ease;">
+                    <i class="bi bi-bank me-3"></i>
                     <span class="fw-bold">Financial Audit</span>
                 </a>
             </li>
