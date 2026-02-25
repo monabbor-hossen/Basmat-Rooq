@@ -2,6 +2,7 @@
 // portal/toggle_status_api.php
 require_once __DIR__ . '/../app/Config/Config.php';
 require_once __DIR__ . '/../app/Config/Database.php';
+require_once __DIR__ . '/../app/Helpers/Security.php'; // <-- THIS WAS MISSING!
 
 header('Content-Type: application/json');
 
@@ -13,7 +14,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Decode JSON input
 $data = json_decode(file_get_contents("php://input"), true);
 $type = $data['type'] ?? '';
 $id = $data['id'] ?? 0;
@@ -40,7 +40,6 @@ try {
         $sql = "UPDATE client_accounts SET is_active = :status WHERE account_id = :id";
         
     } elseif ($type === 'license') {
-        // --- STEP 3 ADDED HERE ---
         // Disables ONLY the specific license/application
         $sql = "UPDATE clients SET is_active = :status WHERE client_id = :id";
         
@@ -49,14 +48,18 @@ try {
         exit;
     }
     
-    // Execute whichever SQL string was chosen above
+    // Execute the database update
     $stmt = $db->prepare($sql);
     $stmt->execute([':status' => $status, ':id' => $id]);
-// NEW: Log the status change
+
+    // NEW: Log the status change securely
     $action_text = $status ? "Activated" : "Deactivated";
     Security::logActivity($action_text . " login access for " . $type . " ID: #" . $id);
+
     echo json_encode(['success' => true]);
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error']);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'System error']);
 }

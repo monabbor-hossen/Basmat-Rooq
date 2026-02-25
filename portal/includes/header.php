@@ -7,17 +7,12 @@ require_once __DIR__ . '/../../app/Helpers/Translator.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 // --- STRICT GLOBAL LOGIN CHECK ---
+// If there is no session, OR if a client tries to access the admin portal, kick them out!
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['1', '2'])) {
     header("Location: " . BASE_URL . "public/login.php");
     exit();
 }
 
-// NEW: Log the page visit!
-$current_page = basename($_SERVER['PHP_SELF']);
-// We ignore AJAX calls or simple reloads to avoid spamming the DB
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['f_period'])) {
-    Security::logActivity("Visited " . $current_page);
-}
 $lang = $_SESSION['lang'] ?? 'en';
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
 
