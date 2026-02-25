@@ -1,173 +1,230 @@
 <?php
 // management/dashboard.php
-require_once __DIR__ . '/../app/Config/Config.php';
+require_once 'includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+// --- SECURITY: ENSURE ONLY CLIENTS ACCESS THIS ---
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
     header("Location: ../public/login.php");
     exit();
 }
 
 $db = (new Database())->getConnection();
-$account_id = $_SESSION['user_id'];
-$fallback_client_id = $_SESSION['client_id'] ?? 0;
-// Fetch ALL ACTIVE Projects/Licenses for this account
+$account_id = $_SESSION['account_id'] ?? $_SESSION['user_id']; 
+
+// --- 1. FETCH ALL ACTIVE APPLICATIONS FOR THIS CLIENT ---
 $stmt = $db->prepare("SELECT c.*, w.* FROM clients c 
                       LEFT JOIN workflow_tracking w ON c.client_id = w.client_id 
-                      WHERE (c.account_id = ? OR c.client_id = ?) 
-                      AND c.is_active = 1 
+                      WHERE c.account_id = ? AND c.is_active = 1 
                       ORDER BY c.client_id DESC");
-$stmt->execute([$account_id, $fallback_client_id]);
-$projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->execute([$account_id]);
+$applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$company_name = count($projects) > 0 ? $projects[0]['client_name'] : 'Client';
+// --- 2. FETCH PAYMENT HISTORY FOR THIS CLIENT ---
+$stmtPay = $db->prepare("SELECT p.*, c.company_name 
+                         FROM payments p 
+                         JOIN clients c ON p.client_id = c.client_id 
+                         WHERE c.account_id = ? 
+                         ORDER BY p.payment_date DESC LIMIT 5");
+$stmtPay->execute([$account_id]);
+$recent_payments = $stmtPay->fetchAll(PDO::FETCH_ASSOC);
+
+// --- 3. CALCULATE DASHBOARD METRICS ---
+$total_apps = count($applications);
+$total_contract_value = 0;
+$total_paid = 0;
+$total_approved_steps = 0;
+$total_active_steps = 0;
+
+foreach ($applications as &$app) {
+    // Financials
+    $contract = floatval($app['contract_value']);
+    $total_contract_value += $contract;
+
+    // Fetch total paid for this specific app
+    $stmtPaid = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE client_id = ? AND payment_status = 'Completed'");
+    $stmtPaid->execute([$app['client_id']]);
+    $app_paid = floatval($stmtPaid->fetchColumn());
+    $total_paid += $app_paid;
+    
+    $app['paid_amount'] = $app_paid;
+    $app['due_amount'] = $contract - $app_paid;
+
+    // Progress Calculation
+    $steps_to_check = [
+        $app['hire_foreign_company'] ?? '', $app['misa_application'] ?? '',
+        $app['sbc_application'] ?? '',      $app['article_association'] ?? '',
+        $app['qiwa'] ?? '',                 $app['muqeem'] ?? '',
+        $app['gosi'] ?? '',                 $app['chamber_commerce'] ?? ''
+    ];
+    
+    $app_approved = 0;
+    $app_active_steps = 0; 
+    
+    foreach($steps_to_check as $status) { 
+        if ($status !== 'Not Required' && !empty($status)) {
+            $app_active_steps++; 
+            $total_active_steps++;
+            if ($status === 'Approved' || $status === 'Completed') {
+                $app_approved++; 
+                $total_approved_steps++;
+            }
+        }
+    }
+    
+    $app['progress_percent'] = ($app_active_steps > 0) ? round(($app_approved / $app_active_steps) * 100) : 0;
+}
+unset($app);
+
+$total_due = $total_contract_value - $total_paid;
+$overall_progress = ($total_active_steps > 0) ? round(($total_approved_steps / $total_active_steps) * 100) : 0;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Client Dashboard | Basmat Rooq</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo BASE_URL;?>assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL;?>assets/css/theme.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-        }
-        .glass-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--rooq-gold);
-        }
-        .step-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .step-item:last-child { border-bottom: none; }
-        
-        .badge-Approved { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
-        .badge-Pending { background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
-        .badge-Applied { background: rgba(52, 152, 219, 0.2); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
-        .badge-In { background: rgba(52, 152, 219, 0.2); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); } 
-    </style>
-</head>
-<body class="portal-body">
 
-<div id="global-loader" class="global-loader">
-    <div class="rooq-spinner"></div>
-</div>
-
-<header class="portal-header sticky-top">
-    <div class="container d-flex align-items-center justify-content-between">
-        <a href="dashboard.php" class="text-decoration-none d-flex align-items-center">
-            <img src="<?php echo BASE_URL; ?>assets/img/logo.png" height="50" alt="Logo">
-        </a>
-        
-        <div class="d-flex align-items-center gap-3">
-            <div class="text-end d-none d-md-block me-2">
-                <div class="text-white fw-bold"><?php echo htmlspecialchars($company_name); ?></div>
-                <div class="text-gold small text-uppercase">Client Portal</div>
-            </div>
-            <a href="<?php echo BASE_URL; ?>public/logout.php" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-                <i class="bi bi-box-arrow-right me-1"></i> Logout
-            </a>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="text-white fw-bold mb-0">Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h3>
+            <p class="text-white-50 small mb-0">Here is the latest overview of your applications and accounts.</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <div class="text-white-50 small">Current Date</div>
+            <div class="text-gold fw-bold"><i class="bi bi-calendar3 me-2"></i><?php echo date('F d, Y'); ?></div>
         </div>
     </div>
-</header>
 
-<div class="container py-5">
-    <div class="mb-5 text-center">
-        <h2 class="text-white fw-bold mb-2">My Licenses & Projects</h2>
-        <p class="text-white-50">Track the real-time progress of all your active applications.</p>
+    <div class="row g-3 mb-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-panel p-4 border-bottom border-3 border-info text-center h-100" style="background: rgba(255,255,255,0.02);">
+                <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-briefcase fs-3"></i>
+                </div>
+                <h6 class="text-white-50 small text-uppercase fw-bold mb-1">Active Applications</h6>
+                <h3 class="text-white mb-0 fw-bold"><?php echo $total_apps; ?></h3>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-panel p-4 border-bottom border-3 border-primary text-center h-100" style="background: rgba(255,255,255,0.02);">
+                <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-bar-chart-steps fs-3"></i>
+                </div>
+                <h6 class="text-white-50 small text-uppercase fw-bold mb-1">Overall Progress</h6>
+                <h3 class="text-white mb-0 fw-bold"><?php echo $overall_progress; ?>%</h3>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-panel p-4 border-bottom border-3 border-success text-center h-100" style="background: rgba(255,255,255,0.02);">
+                <div class="icon-box bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-cash-stack fs-3"></i>
+                </div>
+                <h6 class="text-white-50 small text-uppercase fw-bold mb-1">Total Paid</h6>
+                <h3 class="text-success mb-0 fw-bold"><?php echo number_format($total_paid, 2); ?> <small class="fs-6 text-white-50">SAR</small></h3>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-panel p-4 border-bottom border-3 border-danger text-center h-100" style="background: rgba(255,255,255,0.02);">
+                <div class="icon-box bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-wallet2 fs-3"></i>
+                </div>
+                <h6 class="text-white-50 small text-uppercase fw-bold mb-1">Remaining Balance</h6>
+                <h3 class="text-danger mb-0 fw-bold"><?php echo number_format($total_due, 2); ?> <small class="fs-6 text-white-50">SAR</small></h3>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <?php if (count($projects) > 0): ?>
-            <?php foreach ($projects as $proj): 
-                // Calculate Progress
-                $steps = [
-                    $proj['hire_foreign_company'], $proj['misa_application'], $proj['sbc_application'], 
-                    $proj['article_association'], $proj['qiwa'], $proj['muqeem'], $proj['gosi'], $proj['chamber_commerce']
-                ];
-                $approved = 0; $active = 0;
-                foreach($steps as $s) {
-                    if ($s !== 'Not Required') {
-                        $active++;
-                        if ($s === 'Approved') $approved++;
-                    }
-                }
-                $prog_percent = ($active > 0) ? round(($approved / $active) * 100) : 0;
-            ?>
-                <div class="col-lg-6">
-                    <div class="glass-card overflow-hidden h-100 d-flex flex-column">
-                        <div class="p-4 border-bottom border-light border-opacity-10" style="background: rgba(0,0,0,0.3);">
+        <div class="col-lg-8">
+            <h5 class="text-gold fw-bold mb-3"><i class="bi bi-building me-2"></i>Your Applications</h5>
+            
+            <?php if (count($applications) > 0): ?>
+                <div class="row g-3">
+                    <?php foreach ($applications as $app): 
+                        $progress_color = 'bg-info';
+                        if ($app['progress_percent'] == 100) $progress_color = 'bg-success';
+                        elseif ($app['progress_percent'] < 30) $progress_color = 'bg-warning';
+                    ?>
+                    <div class="col-md-6">
+                        <div class="glass-panel p-4 h-100" style="transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'" onclick="window.location.href='project-details.php?id=<?php echo $app['client_id']; ?>'">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
-                                    <h5 class="text-gold fw-bold mb-1"><i class="bi bi-briefcase me-2"></i><?php echo htmlspecialchars($proj['trade_name_application'] ?: 'New Project License'); ?></h5>
-                                    <p class="text-white-50 small mb-0">ID: #<?php echo $proj['client_id']; ?> | Rep: <?php echo htmlspecialchars($proj['client_name']); ?></p>
+                                    <h5 class="text-white fw-bold mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="<?php echo htmlspecialchars($app['company_name']); ?>">
+                                        <?php echo htmlspecialchars($app['company_name']); ?>
+                                    </h5>
+                                    <span class="badge bg-secondary bg-opacity-50 text-white-50 small">ID: #<?php echo $app['client_id']; ?></span>
                                 </div>
-                                <span class="badge bg-gold text-dark fs-6 rounded-pill px-3"><?php echo $prog_percent; ?>%</span>
+                                <div class="text-end">
+                                    <div class="text-gold fw-bold fs-5"><?php echo $app['progress_percent']; ?>%</div>
+                                </div>
                             </div>
-                            <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
-                                <div class="progress-bar bg-success" style="width: <?php echo $prog_percent; ?>%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-0 flex-grow-1">
-                            <?php
-                            $display_steps = [
-                                'Scope' => $proj['license_scope_status'],
-                                'MISA Application' => $proj['misa_application'],
-                                'Chamber of Commerce' => $proj['chamber_commerce'],
-                                'QIWA' => $proj['qiwa'],
-                                'MUQEEM' => $proj['muqeem']
-                            ];
                             
-                            foreach($display_steps as $label => $status) {
-                                if ($status === 'Not Required') continue;
-                                
-                                // Match badge style based on text
-                                $badge_class = 'badge-Pending';
-                                if (strpos($status, 'Approved') !== false) $badge_class = 'badge-Approved';
-                                if (strpos($status, 'Applied') !== false) $badge_class = 'badge-Applied';
-                                if (strpos($status, 'In Progress') !== false) $badge_class = 'badge-In';
-                                
-                                echo "
-                                <div class='step-item'>
-                                    <span class='text-white small fw-bold'>$label</span>
-                                    <span class='badge $badge_class px-3 py-2 rounded-pill'>$status</span>
-                                </div>";
-                            }
-                            ?>
-                        </div>
-                        
-                        <div class="p-3 text-center border-top border-light border-opacity-10" style="background: rgba(0,0,0,0.2);">
-                            <small class="text-white-50 fst-italic">Last Updated: <?php echo $proj['update_date_at'] ? date('M d, Y', strtotime($proj['update_date_at'])) : 'N/A'; ?></small>
+                            <div class="progress mb-3" style="height: 8px; background: rgba(255,255,255,0.1);">
+                                <div class="progress-bar <?php echo $progress_color; ?> progress-bar-striped progress-bar-animated" role="progressbar" style="width: <?php echo $app['progress_percent']; ?>%;" aria-valuenow="<?php echo $app['progress_percent']; ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+                                <div>
+                                    <div class="text-white-50 small" style="font-size: 0.7rem;">DUE BALANCE</div>
+                                    <div class="<?php echo ($app['due_amount'] > 0) ? 'text-danger' : 'text-success'; ?> fw-bold small">
+                                        <?php echo number_format($app['due_amount'], 2); ?> SAR
+                                    </div>
+                                </div>
+                                <a href="project-details.php?id=<?php echo $app['client_id']; ?>" class="btn btn-sm btn-outline-light rounded-pill px-3" style="font-size: 0.8rem;">View Details <i class="bi bi-arrow-right ms-1"></i></a>
+                            </div>
                         </div>
                     </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-12 text-center py-5">
-                <div class="glass-card p-5 d-inline-block">
-                    <i class="bi bi-folder-x text-white-50 mb-3" style="font-size: 3rem;"></i>
-                    <h4 class="text-white">No active licenses found</h4>
-                    <p class="text-white-50">Please contact our support team if you believe this is a mistake.</p>
+            <?php else: ?>
+                <div class="glass-panel p-5 text-center">
+                    <i class="bi bi-folder-x fs-1 text-white-50 mb-3 d-block"></i>
+                    <h5 class="text-white">No active applications found.</h5>
+                    <p class="text-white-50 small">If you believe this is a mistake, please contact support.</p>
                 </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="col-lg-4">
+            <h5 class="text-gold fw-bold mb-3"><i class="bi bi-receipt me-2"></i>Recent Payments</h5>
+            
+            <div class="card-box p-0 overflow-hidden">
+                <?php if (count($recent_payments) > 0): ?>
+                    <div class="list-group list-group-flush bg-transparent">
+                        <?php foreach ($recent_payments as $pay): ?>
+                            <div class="list-group-item bg-transparent border-bottom border-light border-opacity-10 py-3 px-4">
+                                <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                    <h6 class="mb-0 text-white fw-bold"><?php echo number_format($pay['amount'], 2); ?> <small>SAR</small></h6>
+                                    <small class="text-white-50"><i class="bi bi-calendar-event me-1"></i><?php echo date('M d, Y', strtotime($pay['payment_date'])); ?></small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <small class="text-gold text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($pay['company_name']); ?></small>
+                                    <?php 
+                                        $badge = 'bg-warning';
+                                        if ($pay['payment_status'] == 'Completed') $badge = 'bg-success';
+                                        elseif ($pay['payment_status'] == 'Failed') $badge = 'bg-danger';
+                                    ?>
+                                    <span class="badge <?php echo $badge; ?> rounded-pill" style="font-size: 0.65rem;"><?php echo htmlspecialchars($pay['payment_status']); ?></span>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="p-3 text-center border-top border-light border-opacity-10 bg-dark bg-opacity-25">
+                        <a href="billing.php" class="text-gold text-decoration-none small fw-bold hover-white">View All Invoices <i class="bi bi-arrow-right ms-1"></i></a>
+                    </div>
+                <?php else: ?>
+                    <div class="p-5 text-center">
+                        <i class="bi bi-receipt text-white-50 fs-2 mb-2 d-block"></i>
+                        <span class="text-white-50 small">No payment history yet.</span>
+                    </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+            
+            <div class="glass-panel p-4 mt-4 text-center" style="background: linear-gradient(145deg, rgba(212,175,55,0.1) 0%, rgba(0,0,0,0.4) 100%); border-color: rgba(212,175,55,0.3);">
+                <i class="bi bi-headset fs-1 text-gold mb-2 d-block"></i>
+                <h6 class="text-white fw-bold">Need Assistance?</h6>
+                <p class="text-white-50 small mb-3">Our support team is here to help with your applications.</p>
+                <a href="mailto:support@rooqflow.com" class="btn btn-rooq-primary btn-sm rounded-pill w-100 fw-bold">Contact Support</a>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
-</body>
-</html>
+<?php require_once 'includes/footer.php'; ?>
