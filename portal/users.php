@@ -110,9 +110,12 @@ function getRoleName($roleId) {
                                         <form action="user-delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
                                             <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRF(); ?>">
                                             <input type="hidden" name="delete_id" value="<?php echo $user['id']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger border-0 opacity-50 hover-opacity-100" title="Delete User">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            <?php if ($_SESSION['role'] == '2'): ?>
+
+                                                <button type="submit" class="btn btn-sm btn-outline-danger border-0 opacity-50 hover-opacity-100" title="Delete User">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            <?php endif;?>
                                         </form>
                                     <?php endif; ?>
                                     

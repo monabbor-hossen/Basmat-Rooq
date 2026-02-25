@@ -11,8 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $username  = Security::clean($_POST['username']);
     $password  = $_POST['password']; 
-    $role      = Security::clean($_POST['role']);
     
+    // --- STRICT ROLE SECURITY CHECK ---
+    if ($_SESSION['role'] == '2') {
+        $role = Security::clean($_POST['role']);
+    } else {
+        $role = '1'; // Force new users created by staff to just be staff
+    }
     $full_name = Security::clean($_POST['full_name']);
     $email     = Security::clean($_POST['email']);
     $phone     = Security::clean($_POST['phone']);
@@ -124,11 +129,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="col-md-6">
                             <label class="form-label text-white-50 small fw-bold">Access Level</label>
-                            <select name="role" class="form-select glass-input" required>
-                                <option value="" selected disabled>Select Role...</option>
-                                <option value="1">Staff (Standard Access)</option>
-                                <option value="2">Admin (Full Access)</option>
+                            <select name="role" class="form-select glass-input" <?php echo ($_SESSION['role'] != '2') ? 'disabled' : 'required'; ?>>
+                                <option value="" <?php echo ($_SESSION['role'] == '2') ? 'selected disabled' : ''; ?>>Select Role...</option>
+                                <option value="1" <?php echo ($_SESSION['role'] != '2') ? 'selected' : ''; ?>>Staff (Standard Access)</option>
+                                
+                                <?php if ($_SESSION['role'] == '2'): ?>
+                                    <option value="2">Admin (Full Access)</option>
+                                <?php endif; ?>
                             </select>
+                            
+                            <?php if ($_SESSION['role'] != '2'): ?>
+                                <input type="hidden" name="role" value="1">
+                                <div class="form-text text-warning small mt-1"><i class="bi bi-shield-lock me-1"></i>Only Admins can assign Admin roles.</div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="col-12">

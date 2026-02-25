@@ -13,12 +13,29 @@ if (!$user_id) {
 
 $db = (new Database())->getConnection();
 
-// --- HANDLE UPDATE ---
+// --- 1. FETCH CURRENT USER DATA SECURELY FIRST ---
+// (We do this BEFORE the POST so we know their original role)
+try {
+    $stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title, basic_salary, joining_date, resigning_date FROM users WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        echo "<div class='alert alert-warning m-4'>User not found.</div>";
+        require_once 'includes/footer.php';
+        exit();
+    }
+} catch (PDOException $e) {
+    echo "<div class='alert alert-danger m-4 fw-bold'>Database Error: <br><small>" . $e->getMessage() . "</small></div>";
+    require_once 'includes/footer.php';
+    exit();
+}
+
+// --- 2. HANDLE UPDATE ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Security::checkCSRF($_POST['csrf_token']);
 
     $username  = Security::clean($_POST['username']);
-    $role      = Security::clean($_POST['role']);
     $password  = $_POST['password']; 
     
     $full_name = Security::clean($_POST['full_name']);
@@ -29,6 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $joining_date = !empty($_POST['joining_date']) ? Security::clean($_POST['joining_date']) : null;
     $resigning_date = !empty($_POST['resigning_date']) ? Security::clean($_POST['resigning_date']) : null;
+
+    // --- STRICT ROLE SECURITY CHECK ---
+    // Only logged-in Admins (Role 2) are allowed to change roles.
+    if ($_SESSION['role'] == '2') {
+        $role = Security::clean($_POST['role']);
+    } else {
+        // If they are Staff, forcefully keep the target user's role exactly as it was in the database
+        $role = $user['role']; 
+    }
 
     try {
         $sql = "UPDATE users SET 
@@ -67,31 +93,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $db->prepare($sql);
             if ($stmt->execute($params)) {
                 $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>User profile updated successfully!</div>";
-                // NEW: Log the exact action
-                Security::logActivity("Updated user profile: " . $username);    
+                Security::logActivity("Updated user profile: " . $username);
+                
+                // Update local array so the page instantly reflects changes
+                $user['username'] = $username;
+                $user['full_name'] = $full_name;
+                $user['email'] = $email;
+                $user['phone'] = $phone;
+                $user['job_title'] = $job_title;
+                $user['basic_salary'] = $basic_salary;
+                $user['joining_date'] = $joining_date;
+                $user['resigning_date'] = $resigning_date;
+                $user['role'] = $role;
             }
         }
     } catch (PDOException $e) {
         $message = "<div class='alert alert-danger bg-danger bg-opacity-25 text-white border-danger'>Database Error: " . $e->getMessage() . "</div>";
     }
-}
-
-// --- FETCH CURRENT USER DATA SECURELY ---
-try {
-    $stmt = $db->prepare("SELECT id, username, role, full_name, email, phone, job_title, basic_salary, joining_date, resigning_date FROM users WHERE id = :id LIMIT 1");
-    $stmt->execute([':id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
-        echo "<div class='alert alert-warning m-4'>User not found.</div>";
-        require_once 'includes/footer.php';
-        exit();
-    }
-} catch (PDOException $e) {
-    // If columns are missing, show error instead of crashing the page and freezing the loader
-    echo "<div class='alert alert-danger m-4 fw-bold'>Database Error: Please ensure you ran the SQL commands to add joining_date and resigning_date columns! <br><small>" . $e->getMessage() . "</small></div>";
-    require_once 'includes/footer.php';
-    exit();
 }
 ?>
 
@@ -164,13 +182,20 @@ try {
                                 <input type="text" name="username" class="form-control glass-input border-start-0 ps-0" required value="<?php echo htmlspecialchars($user['username']); ?>">
                             </div>
                         </div>
+                        
                         <div class="col-md-6">
                             <label class="form-label text-white-50 small fw-bold">Access Level</label>
-                            <select name="role" class="form-select glass-input">
+                            <select name="role" class="form-select glass-input" <?php echo ($_SESSION['role'] != '2') ? 'disabled' : ''; ?>>
                                 <option value="1" <?php echo ($user['role'] == '1') ? 'selected' : ''; ?>>Staff (Standard Access)</option>
                                 <option value="2" <?php echo ($user['role'] == '2') ? 'selected' : ''; ?>>Admin (Full Access)</option>
                             </select>
+                            
+                            <?php if ($_SESSION['role'] != '2'): ?>
+                                <input type="hidden" name="role" value="<?php echo htmlspecialchars($user['role']); ?>">
+                                <div class="form-text text-warning small mt-1"><i class="bi bi-shield-lock me-1"></i>Only Admins can change roles.</div>
+                            <?php endif; ?>
                         </div>
+
                         <div class="col-12">
                             <label class="form-label text-white-50 small fw-bold">Reset Password (Optional)</label>
                             <div class="input-group">

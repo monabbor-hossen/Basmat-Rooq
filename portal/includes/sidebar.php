@@ -48,8 +48,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
             <?php if ($_SESSION['role'] == '2'): ?>
             <li class="nav-item mb-2">
-                <a href="activity-logs.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'activity-logs.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
-                    <i class="bi bi-activity fs-5 me-3"></i>
+                <a class="nav-link <?php echo ($current_page == 'activity-logs.php') ? 'active-glass' : ''; ?>" 
+                   href="activity-logs.php">
                     <span class="fw-bold">Activity Logs</span>
                 </a>
             </li>
