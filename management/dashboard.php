@@ -1,6 +1,6 @@
 <?php
 // management/dashboard.php
-require_once 'includes/header.php';
+require_once '../portal/includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 
 // --- SECURITY: ENSURE ONLY CLIENTS ACCESS THIS ---
@@ -227,4 +227,4 @@ $overall_progress = ($total_active_steps > 0) ? round(($total_approved_steps / $
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once '../portal/includes/footer.php';?>

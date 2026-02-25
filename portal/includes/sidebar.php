@@ -6,6 +6,28 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside class="portal-sidebar" id="portalSidebar">
     <div class="sidebar-content h-100 py-4">
         <p class="px-4 text-white-50 small text-uppercase fw-bold mb-3" style="letter-spacing: 1px;">Main Menu</p>
+            <?php if ($_SESSION['role'] === 'client'): ?>
+        <ul class="nav flex-column mb-auto mt-3 w-100">
+
+            <li class="nav-item mb-2">
+                <a href="dashboard.php"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
+                    style="transition: all 0.3s ease;">
+                    <i class="bi bi-grid-1x2 fs-5 me-3 text-gold"></i>
+                    <span class="fw-bold">My Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="billing.php"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'billing.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
+                    style="transition: all 0.3s ease;">
+                    <i class="bi bi-receipt fs-5 me-3 text-gold"></i>
+                    <span class="fw-bold">Billing & Invoices</span>
+                </a>
+            </li>
+
+        </ul>
+            <?php else: ?>
 
         <ul class="nav flex-column gap-1">
             <li class="nav-item">
@@ -48,7 +70,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <?php if ($_SESSION['role'] == '2'): ?>
-            
+
             <li class="nav-item mb-2 mt-4">
                 <div class="text-uppercase text-white-50 small fw-bold px-3 mb-2"
                     style="font-size: 0.7rem; letter-spacing: 1px;">Security</div>
@@ -60,13 +82,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a href="audit-finance.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit-finance.php') ? 'active-glass' : ''; ?>" style="transition: all 0.3s ease;">
+                <a href="audit-finance.php"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'audit-finance.php') ? 'active-glass' : ''; ?>"
+                    style="transition: all 0.3s ease;">
                     <i class="bi bi-bank me-3"></i>
                     <span class="fw-bold">Financial Audit</span>
                 </a>
             </li>
             <?php endif; ?>
-            
+
         </ul>
+        
+            <?php endif; ?>
     </div>
 </aside>

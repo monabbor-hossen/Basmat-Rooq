@@ -5,11 +5,24 @@ require_once __DIR__ . '/../../app/Helpers/Security.php';
 require_once __DIR__ . '/../../app/Helpers/Translator.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
-
-// --- STRICT GLOBAL LOGIN CHECK ---
-// If there is no session, OR if a client tries to access the admin portal, kick them out!
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['1', '2'])) {
+// --- SMART GLOBAL LOGIN CHECK ---
+if (!isset($_SESSION['user_id'])) {
     header("Location: " . BASE_URL . "public/login.php");
+    exit();
+}
+
+// Get the current folder the user is in
+$current_path = $_SERVER['SCRIPT_NAME'];
+
+// 1. If a Client tries to open a '/portal/' page, send them to their dashboard
+if ($_SESSION['role'] === 'client' && strpos($current_path, '/portal/') !== false) {
+    header("Location: ../management/dashboard.php");
+    exit();
+}
+
+// 2. If Staff/Admin tries to open a '/management/' (client) page, send them to portal
+if (in_array($_SESSION['role'], ['1', '2']) && strpos($current_path, '/management/') !== false) {
+    header("Location: ../portal/dashboard.php");
     exit();
 }
 
@@ -58,7 +71,7 @@ $text = $translator->getTranslation($lang);
                 <img src="<?php echo BASE_URL; ?>assets/img/logo.png" height="50" alt="Logo">
             </a>
         </div>
-
+        <?php if ($_SESSION['role'] !== 'client'): ?>
         <div class="search-container d-none d-md-block mx-auto position-relative">
             <form action="clients.php" method="GET" autocomplete="off">
                 <div class="input-group glass-search">
@@ -68,7 +81,7 @@ $text = $translator->getTranslation($lang);
             </form>
             <div id="desktopSearchResults" class="search-results-dropdown d-none"></div>
         </div>
-
+        <?php endif;?>
         <div class="d-flex align-items-center gap-sm-4 gap-2 ">
             
             <button class="btn btn-link text-white p-0 d-md-none opacity-75 hover-gold" onclick="toggleMobileSearch()">
