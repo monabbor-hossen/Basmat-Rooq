@@ -2,7 +2,7 @@
 // portal/toggle_status_api.php
 require_once __DIR__ . '/../app/Config/Config.php';
 require_once __DIR__ . '/../app/Config/Database.php';
-require_once __DIR__ . '/../app/Helpers/Security.php'; // <-- THIS WAS MISSING!
+require_once __DIR__ . '/../app/Helpers/Security.php';
 
 header('Content-Type: application/json');
 
@@ -27,6 +27,8 @@ if (!$type || !$id) {
 try {
     $db = (new Database())->getConnection();
     
+    $target_name = "ID #" . $id; // Default fallback
+    
     if ($type === 'user') {
         // Prevent disabling yourself
         if ($id == $_SESSION['user_id']) {
@@ -35,13 +37,28 @@ try {
         }
         $sql = "UPDATE users SET is_active = :status WHERE id = :id";
         
+        // Fetch User's Name for the log
+        $stmtName = $db->prepare("SELECT username FROM users WHERE id = ?");
+        $stmtName->execute([$id]);
+        $target_name = $stmtName->fetchColumn() ?: $target_name;
+        
     } elseif ($type === 'client') {
         // Disables the entire Master Account
         $sql = "UPDATE client_accounts SET is_active = :status WHERE account_id = :id";
         
+        // Fetch Master Account Username for the log
+        $stmtName = $db->prepare("SELECT username FROM client_accounts WHERE account_id = ?");
+        $stmtName->execute([$id]);
+        $target_name = $stmtName->fetchColumn() ?: $target_name;
+        
     } elseif ($type === 'license') {
         // Disables ONLY the specific license/application
         $sql = "UPDATE clients SET is_active = :status WHERE client_id = :id";
+        
+        // Fetch Company Name for the log
+        $stmtName = $db->prepare("SELECT company_name FROM clients WHERE client_id = ?");
+        $stmtName->execute([$id]);
+        $target_name = $stmtName->fetchColumn() ?: $target_name;
         
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid type']);
@@ -52,9 +69,9 @@ try {
     $stmt = $db->prepare($sql);
     $stmt->execute([':status' => $status, ':id' => $id]);
 
-    // NEW: Log the status change securely
+    // NEW: Log the status change using the actual NAME
     $action_text = $status ? "Activated" : "Deactivated";
-    Security::logActivity($action_text . " login access for " . $type . " ID: #" . $id);
+    Security::logActivity($action_text . " login access for " . $type . ": " . $target_name);
 
     echo json_encode(['success' => true]);
 

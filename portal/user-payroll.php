@@ -55,8 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
                 ':uid' => $user_id, ':month' => $month, ':year' => $year, 
                 ':amount' => $amount, ':method' => $method, ':date' => $date, ':notes' => $notes
             ]);
-            // NEW: Log the exact action
-            Security::logActivity("Recorded salary payment of " . $amount . " SAR for User ID: #" . $user_id);
+            Security::logActivity("Recorded salary payment of " . $amount . " SAR for " . $display_name);
             $message = "<div class='alert alert-success bg-success bg-opacity-25 text-white border-success'>Salary payment recorded successfully!</div>";
         } catch (PDOException $e) {
             $message = "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
