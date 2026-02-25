@@ -61,7 +61,6 @@ $workflow_steps = [
     'misa_application' => 'MISA Application',
     'sbc_application' => 'SBC Application',
     'article_association' => 'Article of Association',
-    'cr' => 'Commercial Registration (CR)',
     'qiwa' => 'Qiwa Registration',
     'muqeem' => 'Muqeem Portal',
     'gosi' => 'GOSI Registration',
