@@ -38,16 +38,23 @@ try {
 
     // 3. Send Email Notification (Silent fail so chat doesn't break if SMTP is slow)
     try {
+        
         $mail = new PHPMailer(true);
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'monabborhossen@gmail.com'; // REPLACE THIS
-        $mail->Password   = 'YOUR_16_DIGIT_APP_PASSWORD'; // REPLACE THIS
+        
+        // --- UPDATE THESE TWO LINES ---
+        $mail->Username   = 'pagolrea@gmail.com'; // Your actual Gmail address
+        $mail->Password   = 'qdvgevktmxduryca';       // The 16-digit App Password (no spaces)
+        // ------------------------------
+        
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-        $mail->setFrom('monabborhossen@gmail.com', 'Basmat Rooq Portal');
-
+        
+        // --- AND UPDATE THIS LINE ---
+        $mail->setFrom('pagolrea@gmail.com', 'Basmat Rooq Portal');
+        
         if ($sender_type === 'client') {
             $mail->addAddress('monabborhossen@gmail.com'); // Put your Admin Email here
             $mail->Subject = 'New Chat Message from ' . $client_info['company_name'];
