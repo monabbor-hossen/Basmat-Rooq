@@ -35,24 +35,28 @@ try {
     foreach ($messages as $msg) {
         $is_me = ($viewer_type === 'client' && $msg['sender_type'] === 'client') || ($viewer_type === 'internal' && in_array($msg['sender_type'], ['admin', 'staff']));
         
-        $align = $is_me ? 'align-self-end text-end' : 'align-self-start';
-        $bg_color = $is_me ? 'background: #800020; color: #fff;' : 'background: rgba(255,255,255,0.05); color: #fff; border-left: 3px solid #D4AF37;';
+        // Use Flexbox justify-content instead of fixed widths!
+        $align_wrapper = $is_me ? 'justify-content-end' : 'justify-content-start';
+        $text_align    = $is_me ? 'text-end' : 'text-start';
+        $bg_color      = $is_me ? 'background: #800020; color: #fff;' : 'background: rgba(255,255,255,0.05); color: #fff; border-left: 3px solid #D4AF37;';
         $border_radius = $is_me ? 'border-radius: 15px 15px 2px 15px;' : 'border-radius: 15px 15px 15px 2px;';
-        $time = date('M d, h:i A', strtotime($msg['created_at']));
+        $time          = date('M d, h:i A', strtotime($msg['created_at']));
         
         $sender_name = '';
         if (!$is_me) {
             $name = ($msg['sender_type'] === 'client') ? $msg['client_name'] : ($msg['internal_name'] ?? 'Basmat Rooq Team');
-            $sender_name = "<div class='small text-gold fw-bold mb-1'>{$name}</div>";
+            $sender_name = "<div class='small text-gold fw-bold mb-1 ms-1'>{$name}</div>";
         }
 
         $html .= "
-            <div class='mb-3 w-75 {$align}'>
-                {$sender_name}
-                <div class='p-3 shadow-sm' style='{$bg_color} {$border_radius} display: inline-block; text-align: left;'>
-                    " . nl2br(htmlspecialchars($msg['message'])) . "
+            <div class='d-flex {$align_wrapper} mb-3 w-100'>
+                <div style='max-width: 85%;'>
+                    {$sender_name}
+                    <div class='p-3 shadow-sm' style='{$bg_color} {$border_radius} display: inline-block; text-align: left; word-wrap: break-word;'>
+                        " . nl2br(htmlspecialchars($msg['message'])) . "
+                    </div>
+                    <div class='small text-white-50 mt-1 {$text_align}' style='font-size: 0.65rem;'>{$time}</div>
                 </div>
-                <div class='small text-white-50 mt-1' style='font-size: 0.7rem;'>{$time}</div>
             </div>";
     }
     echo $html;

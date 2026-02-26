@@ -811,10 +811,12 @@ function sendMessage() {
     if (box.innerHTML.includes("No messages yet")) box.innerHTML = '';
     
     const tempBubble = `
-        <div class='mb-3 w-75 align-self-end text-end temp-msg'>
-            <div class='small text-white-50 fw-bold mb-1 fst-italic'>Sending...</div>
-            <div class='p-3 shadow-sm' style='background: #800020; color: #fff; border-radius: 15px 15px 2px 15px; display: inline-block; text-align: left; opacity: 0.8;'>
-                ${msg.replace(/\n/g, '<br>')}
+        <div class='d-flex justify-content-end mb-3 w-100 temp-msg' style='opacity: 0.8;'>
+            <div style='max-width: 85%;'>
+                <div class='small text-white-50 fw-bold mb-1 fst-italic text-end'>Sending...</div>
+                <div class='p-3 shadow-sm' style='background: #800020; color: #fff; border-radius: 15px 15px 2px 15px; display: inline-block; text-align: left; word-wrap: break-word;'>
+                    ${msg.replace(/\n/g, '<br>')}
+                </div>
             </div>
         </div>`;
     
