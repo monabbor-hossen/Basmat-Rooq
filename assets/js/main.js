@@ -809,12 +809,11 @@ function sendMessage() {
 
     const box = document.getElementById('chatBox');
     if (box.innerHTML.includes("No messages yet")) box.innerHTML = '';
-    
     const tempBubble = `
-        <div class='d-flex justify-content-end mb-3 w-100 temp-msg' style='opacity: 0.8;'>
-            <div style='max-width: 85%;'>
-                <div class='small text-white-50 fw-bold mb-1 fst-italic text-end'>Sending...</div>
-                <div class='p-3 shadow-sm' style='background: #800020; color: #fff; border-radius: 15px 15px 2px 15px; display: inline-block; text-align: left; word-wrap: break-word;'>
+        <div class='d-flex justify-content-end mb-3 w-100 temp-msg'>
+            <div class='d-flex flex-column text-end' style='max-width: 85%;'>
+                <div class='small text-white-50 fw-bold mb-1 pe-1 fst-italic'>Sending...</div>
+                <div class='p-3 shadow-sm' style='background: #800020; color: #fff; border-radius: 15px 15px 2px 15px; display: inline-block; text-align: left; opacity: 0.8; word-break: break-word;'>
                     ${msg.replace(/\n/g, '<br>')}
                 </div>
             </div>
