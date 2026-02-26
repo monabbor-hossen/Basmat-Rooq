@@ -867,3 +867,28 @@ select.glass-input option {
     height: calc(100vh - 200px); 
     min-height: 500px;
 }
+/* Unified Avatar Design */
+.avatar-circle-refined {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: #1a1a1a; /* Dark background */
+    color: #D4AF37;      /* Gold text */
+    border: 2px solid rgba(212, 175, 55, 0.5); /* Soft gold border */
+    border-radius: 50%;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+/* Add a hover glow effect for interactive avatars */
+a:hover .avatar-circle-refined, 
+.dropdown:hover .avatar-circle-refined {
+    border-color: #D4AF37;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+}

@@ -52,10 +52,10 @@ foreach($clients as $c) { if($c['client_id'] == $active_client) $active_name = $
                         $is_active = ($c['client_id'] == $active_client) ? 'bg-rooq-primary text-white' : 'text-white-50 hover-white';
                     ?>
                         <a href="#" onclick="switchChat(event, <?php echo $c['client_id']; ?>, '<?php echo htmlspecialchars(addslashes($c['company_name']), ENT_QUOTES); ?>', this)" class="list-group-item client-chat-link bg-transparent <?php echo $is_active; ?> py-3 border-bottom border-light border-opacity-10 d-flex align-items-center">
-                            <div class="avatar-circle-refined bg-dark text-gold border border-gold me-3" style="width: 40px; height: 40px; font-size: 1rem;">
-                                <?php echo strtoupper(substr($c['company_name'], 0, 1)); ?>
+                            <div class="avatar-circle-refined me-3">
+                                <?php echo strtoupper(substr($c['company_name'], 0, 2)); ?>
                             </div>
-                            <div class="text-truncate">
+                                <div class="text-truncate">
                                 <h6 class="mb-0 fw-bold text-truncate"><?php echo htmlspecialchars($c['company_name']); ?></h6>
                                 <small class="opacity-75">Tap to view messages</small>
                             </div>
