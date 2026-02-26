@@ -95,4 +95,4 @@ if (currentClientId) {
     });
 }
 </script>
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once '../portal/includes/footer.php'; ?>

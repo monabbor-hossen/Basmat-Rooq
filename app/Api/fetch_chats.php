@@ -1,5 +1,7 @@
 <?php
+// app/Api/fetch_chats.php<?php
 // app/Api/fetch_chats.php
+require_once __DIR__ . '/../Config/Config.php'; // ADD THIS LINE!
 require_once __DIR__ . '/../Config/Database.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 
