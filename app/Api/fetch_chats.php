@@ -1,9 +1,10 @@
 <?php
-// app/Api/fetch_chats.php<?php
 // app/Api/fetch_chats.php
-require_once __DIR__ . '/../Config/Config.php'; // ADD THIS LINE!
+require_once __DIR__ . '/../Config/Config.php';
 require_once __DIR__ . '/../Config/Database.php';
+
 if (session_status() === PHP_SESSION_NONE) session_start();
+session_write_close(); // Prevents XAMPP from freezing
 
 $client_id = $_GET['client_id'] ?? 0;
 if (!$client_id || !isset($_SESSION['user_id'])) exit;
@@ -13,7 +14,7 @@ $viewer_type = ($_SESSION['role'] === 'client') ? 'client' : 'internal';
 try {
     $db = (new Database())->getConnection();
     
-    // Fetch chats & mark as read
+    // Mark messages as read
     if ($viewer_type === 'internal') {
         $db->prepare("UPDATE chat_messages SET is_read = 1 WHERE client_id = ? AND sender_type = 'client'")->execute([$client_id]);
     } else {
@@ -55,4 +56,12 @@ try {
             </div>";
     }
     echo $html;
-} catch (PDOException $e) { }
+
+} catch (PDOException $e) { 
+    // THIS WILL PRINT THE EXACT ERROR ON YOUR SCREEN
+    echo "<div class='text-danger text-center mt-5 bg-dark p-4 rounded border border-danger'>
+            <h4>Database Error Occurred</h4>
+            <p>" . $e->getMessage() . "</p>
+          </div>";
+}
+?>

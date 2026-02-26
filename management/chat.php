@@ -1,25 +1,40 @@
 <?php
-// management/chat.php
-require_once '../portal/includes/header.php';
+// chat.php (Universal - works in both portal/ and management/ folders)
+
+// Auto-detect which folder we are in to load the right header
+$is_client_folder = strpos($_SERVER['SCRIPT_NAME'], '/management/') !== false;
+if ($is_client_folder) {
+    require_once '../portal/includes/header.php';
+} else {
+    require_once 'includes/header.php';
+}
 require_once __DIR__ . '/../app/Config/Database.php';
 
 $db = (new Database())->getConnection();
-$account_id = $_SESSION['account_id'] ?? $_SESSION['user_id']; 
 
-// Fetch ONLY this client's active projects
-$stmt = $db->prepare("SELECT client_id, company_name FROM clients WHERE account_id = ? AND is_active = 1 ORDER BY company_name ASC");
-$stmt->execute([$account_id]);
+// 1. SMART FETCHING
+if ($_SESSION['role'] === 'client') {
+    $account_id = $_SESSION['account_id'] ?? $_SESSION['user_id'];
+    $stmt = $db->prepare("SELECT client_id, company_name FROM clients WHERE account_id = ? AND is_active = 1 ORDER BY company_name ASC");
+    $stmt->execute([$account_id]);
+} else {
+    $stmt = $db->prepare("SELECT client_id, company_name FROM clients WHERE is_active = 1 ORDER BY company_name ASC");
+    $stmt->execute();
+}
 $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $active_client = $_GET['client_id'] ?? ($clients[0]['client_id'] ?? 0);
 
-// Security Check: Make sure the selected client_id actually belongs to this account
+// Security Check
 $owns_project = false;
 foreach($clients as $c) { if($c['client_id'] == $active_client) $owns_project = true; }
 if (!$owns_project && count($clients) > 0) $active_client = $clients[0]['client_id'];
-// We need to know if the user specifically clicked a client, or if the page just auto-loaded the first one.
+
 $is_mobile_chat_active = isset($_GET['client_id']) ? true : false;
+$active_name = '';
+foreach($clients as $c) { if($c['client_id'] == $active_client) $active_name = $c['company_name']; }
 ?>
+
 <div class="container-fluid py-4 h-100 chat-wrapper">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="text-white fw-bold mb-0"><i class="bi bi-chat-dots text-gold me-2"></i>Support Messages</h3>
@@ -27,7 +42,7 @@ $is_mobile_chat_active = isset($_GET['client_id']) ? true : false;
     
     <div class="row g-0 rounded overflow-hidden chat-container-box" style="border: 1px solid rgba(255,255,255,0.1);">
         
-        <div class="col-md-4 bg-dark bg-opacity-75 border-end border-light border-opacity-10 overflow-auto h-100 <?php echo $is_mobile_chat_active ? 'd-none d-md-block' : ''; ?>">
+        <div id="chatSidebarList" class="col-md-4 bg-dark bg-opacity-75 border-end border-light border-opacity-10 overflow-auto h-100 <?php echo $is_mobile_chat_active ? 'd-none d-md-block' : 'd-block'; ?>">
             <div class="p-3 border-bottom border-light border-opacity-10 text-gold fw-bold position-sticky top-0 bg-dark z-1">
                 Active Projects
             </div>
@@ -36,7 +51,7 @@ $is_mobile_chat_active = isset($_GET['client_id']) ? true : false;
                     <?php foreach ($clients as $c): 
                         $is_active = ($c['client_id'] == $active_client) ? 'bg-rooq-primary text-white' : 'text-white-50 hover-white';
                     ?>
-                        <a href="chat.php?client_id=<?php echo $c['client_id']; ?>" class="list-group-item bg-transparent <?php echo $is_active; ?> py-3 border-bottom border-light border-opacity-10 d-flex align-items-center">
+                        <a href="#" onclick="switchChat(event, <?php echo $c['client_id']; ?>, '<?php echo htmlspecialchars(addslashes($c['company_name']), ENT_QUOTES); ?>', this)" class="list-group-item client-chat-link bg-transparent <?php echo $is_active; ?> py-3 border-bottom border-light border-opacity-10 d-flex align-items-center">
                             <div class="avatar-circle-refined bg-dark text-gold border border-gold me-3" style="width: 40px; height: 40px; font-size: 1rem;">
                                 <?php echo strtoupper(substr($c['company_name'], 0, 1)); ?>
                             </div>
@@ -52,25 +67,19 @@ $is_mobile_chat_active = isset($_GET['client_id']) ? true : false;
             </div>
         </div>
 
-        <div class="col-md-8 flex-column h-100 <?php echo $is_mobile_chat_active ? 'd-flex' : 'd-none d-md-flex'; ?>" style="background: rgba(0,0,0,0.3);">
+        <div id="chatMainBox" class="col-md-8 flex-column h-100 <?php echo $is_mobile_chat_active ? 'd-flex' : 'd-none d-md-flex'; ?>" style="background: rgba(0,0,0,0.3);">
             <?php if ($active_client): ?>
                 
                 <div class="p-3 border-bottom border-light border-opacity-10 d-flex justify-content-between align-items-center bg-dark z-1" style="background: rgba(128,0,32,0.3) !important;">
                     <div class="d-flex align-items-center">
-                        <a href="chat.php" class="text-white me-3 d-md-none text-decoration-none">
+                        <a href="#" onclick="closeMobileChat(event)" class="text-white me-3 d-md-none text-decoration-none">
                             <i class="bi bi-arrow-left fs-3"></i>
                         </a>
                         <div>
                             <h6 class="text-white fw-bold mb-0">Conversation History</h6>
-                            <?php 
-                                // Find the active company name for the header
-                                $active_name = '';
-                                foreach($clients as $c) { if($c['client_id'] == $active_client) $active_name = $c['company_name']; }
-                            ?>
-                            <small class="text-gold text-truncate d-block" style="max-width: 200px;"><?php echo htmlspecialchars($active_name); ?></small>
+                            <small id="chatHeaderSub" class="text-gold text-truncate d-block" style="max-width: 200px;"><?php echo htmlspecialchars($active_name); ?></small>
                         </div>
                     </div>
-                    <a href="project-details.php?id=<?php echo $active_client; ?>" class="btn btn-sm btn-outline-light rounded-pill d-none d-sm-block">View Project</a>
                 </div>
                 
                 <div id="chatBox" class="flex-grow-1 p-3 p-md-4 overflow-auto d-flex flex-column" style="scroll-behavior: smooth;">
@@ -96,54 +105,82 @@ $is_mobile_chat_active = isset($_GET['client_id']) ? true : false;
         </div>
     </div>
 </div>
+
 <style>
-    /* Responsive Chat Heights */
-.chat-container-box {
-    height: calc(100vh - 200px); /* Desktop default */
-    min-height: 500px;
-}
-    /* Mobile Specific Adjustments */
+.chat-container-box { height: calc(100vh - 200px); min-height: 500px; }
 @media (max-width: 767.98px) {
-    .chat-container-box {
-        height: calc(100vh - 160px); /* Taller on mobile to fit screen */
-        border: none !important; /* Remove borders on mobile for edge-to-edge feel */
-    }
-    .portal-wrapper main {
-        padding: 0 !important; /* Remove main container padding on mobile for full width */
-    }
-    .chat-wrapper {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
+    .chat-container-box { height: calc(100vh - 160px); border: none !important; }
+    .portal-wrapper main { padding: 0 !important; }
+    /*.chat-wrapper { padding-left: 0 !important; padding-right: 0 !important; }*/
 }
 </style>
 <script>
-const currentClientId = <?php echo $active_client; ?>;
-let lastChatHTML = ""; // This prevents the screen from flashing every 3 seconds!
+// 1. Safely handle empty client IDs
+let currentClientId = <?php echo $active_client ? $active_client : 0; ?>;
+let lastChatHTML = "INITIAL_LOAD";
 
+// --- SPA CHAT SWITCHER (NO PAGE RELOAD) ---
+function switchChat(e, id, name, element) {
+    e.preventDefault();
+    if(currentClientId === id) return;
+    
+    currentClientId = id;
+    lastChatHTML = "FORCE_REFRESH";
+    
+    document.querySelectorAll('.client-chat-link').forEach(el => {
+        el.classList.remove('bg-rooq-primary', 'text-white');
+        el.classList.add('text-white-50', 'hover-white');
+    });
+    element.classList.remove('text-white-50', 'hover-white');
+    element.classList.add('bg-rooq-primary', 'text-white');
+    
+    const headerSub = document.getElementById('chatHeaderSub');
+    if(headerSub) headerSub.innerText = name;
+    
+    const box = document.getElementById('chatBox');
+    if(box) box.innerHTML = "<div class='text-center text-white-50 mt-5'><div class='spinner-border spinner-border-sm me-2'></div> Loading messages...</div>";
+    
+    if (window.innerWidth < 768) {
+        document.getElementById('chatSidebarList').classList.remove('d-block');
+        document.getElementById('chatSidebarList').classList.add('d-none');
+        document.getElementById('chatMainBox').classList.remove('d-none');
+        document.getElementById('chatMainBox').classList.add('d-flex');
+    }
+    
+    loadChats();
+}
+
+function closeMobileChat(e) {
+    e.preventDefault();
+    document.getElementById('chatMainBox').classList.remove('d-flex');
+    document.getElementById('chatMainBox').classList.add('d-none');
+    document.getElementById('chatSidebarList').classList.remove('d-none');
+    document.getElementById('chatSidebarList').classList.add('d-block');
+}
+
+// --- STANDARD CHAT FUNCTIONS ---
 function loadChats() {
-    if (!currentClientId) return;
+    if (currentClientId === 0) return;
     
     fetch(`../app/Api/fetch_chats.php?client_id=${currentClientId}`)
     .then(r => r.text())
     .then(html => {
-        // ONLY update the screen if someone actually sent a new message
-        if (html !== lastChatHTML) {
+        let content = html.trim();
+        
+        // If the database returns completely blank, force it to show the empty message
+        if (content === "") {
+            content = "<div class='text-center text-white-50 mt-5'>No messages yet. Start the conversation!</div>";
+        }
+        
+        if (content !== lastChatHTML) {
             const box = document.getElementById('chatBox');
+            if(!box) return;
             
-            // Figure out if the user is currently reading old messages up top
             const isScrolledToBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + 100;
+            box.innerHTML = content;
+            if (isScrolledToBottom) box.scrollTop = box.scrollHeight;
             
-            // Draw the new messages
-            box.innerHTML = html || "<div class='text-center text-white-50 mt-5'>No messages yet. Start the conversation!</div>";
-            
-            // If they were already at the bottom, automatically pull them down to see the new message!
-            if (isScrolledToBottom) {
-                box.scrollTop = box.scrollHeight;
-            }
-            
-            // Save this HTML so we don't redraw it until a new message arrives
-            lastChatHTML = html;
+            lastChatHTML = content;
         }
     });
 }
@@ -151,11 +188,11 @@ function loadChats() {
 function sendMessage() {
     const input = document.getElementById('chatInput');
     const msg = input.value.trim();
-    if (!msg || !currentClientId) return;
+    if (!msg || currentClientId === 0) return;
     
-    input.value = ''; // Clear text box instantly
+    input.value = ''; 
+    input.style.height = '48px'; 
 
-    // OPTIMISTIC UI: Draw it instantly so the user doesn't wait for the server
     const box = document.getElementById('chatBox');
     if (box.innerHTML.includes("No messages yet")) box.innerHTML = '';
     
@@ -168,29 +205,49 @@ function sendMessage() {
         </div>`;
     
     box.insertAdjacentHTML('beforeend', tempBubble);
-    box.scrollTop = box.scrollHeight; // Force scroll to bottom
-    
-    // Temporarily mess up lastChatHTML so the next auto-load is forced to refresh and show the real timestamp
+    box.scrollTop = box.scrollHeight; 
     lastChatHTML = "FORCE_REFRESH"; 
 
-    // Send to backend
     fetch('../app/Api/send_chat.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ client_id: currentClientId, message: msg })
     })
-    .then(() => loadChats()) // Immediately load the real chat once the email sends
-    .catch(err => console.error("Send Error:", err));
+    .then(r => {
+        if (!r.ok) throw new Error("Failed to send message");
+        loadChats();
+    })
+    .catch(err => {
+        console.error("Send Error:", err);
+        alert("Message failed to send. Check your internet or server.");
+    });
 }
 
-// WHEN THE PAGE LOADS:
-if (currentClientId) {
+// Ensure the page actually starts the loader instantly!
+if (currentClientId !== 0) {
+    loadChats(); 
+    setInterval(loadChats, 3000); 
+    
     document.addEventListener("DOMContentLoaded", () => {
-        loadChats(); // Load immediately on open
-        
-        // 🔥 THE MAGIC SAUCE: Auto-check for new messages every 3 seconds! 🔥
-        setInterval(loadChats, 3000); 
+        const chatInputBox = document.getElementById('chatInput');
+        if(chatInputBox) {
+            chatInputBox.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+    });
+} else {
+    // If there is no client selected, instantly hide the loading spinner
+    document.addEventListener("DOMContentLoaded", () => {
+        const box = document.getElementById('chatBox');
+        if(box) box.innerHTML = "<div class='text-center text-white-50 mt-5'>Please select a project from the sidebar to start chatting.</div>";
     });
 }
 </script>
-<?php require_once '../portal/includes/footer.php'; ?>
+<?php 
+if ($is_client_folder) { require_once '../portal/includes/footer.php'; } 
+else { require_once 'includes/footer.php'; }
+?>
