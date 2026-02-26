@@ -154,6 +154,40 @@
         }
     });
 </script>
+<script>
+// --- LIVE NOTIFICATION AUTO-UPDATER ---
+function checkLiveNotifications() {
+    fetch('<?php echo BASE_URL; ?>app/Api/check_notifications.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) return;
+
+        const badge = document.getElementById('liveNotificationBadge');
+        const list = document.getElementById('liveNotificationList');
+
+        // Update the Dropdown HTML
+        if (list && data.html) {
+            list.innerHTML = data.html;
+        }
+
+        // Update the Red Dot
+        if (badge) {
+            if (data.count > 0) {
+                // If there's a new message, pop the badge!
+                badge.innerText = data.count;
+                badge.classList.remove('d-none');
+            } else {
+                // If there are no messages, hide the badge!
+                badge.classList.add('d-none');
+            }
+        }
+    })
+    .catch(err => console.error("Notification check failed:", err));
+}
+
+// Check for new messages every 10 seconds silently in the background
+setInterval(checkLiveNotifications, 10000);
+</script>
 
 </body>
 
