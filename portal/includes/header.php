@@ -5,6 +5,34 @@ require_once __DIR__ . '/../../app/Helpers/Security.php';
 require_once __DIR__ . '/../../app/Helpers/Translator.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
+// --- NOTIFICATION SYSTEM LOGIC ---
+require_once __DIR__ . '/../../app/Config/Database.php';
+$db = (new Database())->getConnection();
+
+$unread_count = 0;
+$notifications = [];
+
+if ($_SESSION['role'] === 'client') {
+    // Client Notifications: Unread messages from Admin/Staff
+    $acc_id = $_SESSION['account_id'] ?? $_SESSION['user_id'];
+    $stmt = $db->prepare("SELECT c.client_id, c.message, c.created_at, 'Basmat Rooq Team' as sender_name 
+                          FROM chat_messages c 
+                          JOIN clients cl ON c.client_id = cl.client_id 
+                          WHERE cl.account_id = ? AND c.sender_type IN ('admin', 'staff') AND c.is_read = 0 
+                          ORDER BY c.created_at DESC LIMIT 5");
+    $stmt->execute([$acc_id]);
+    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    // Admin/Staff Notifications: Unread messages from Clients
+    $stmt = $db->prepare("SELECT c.client_id, c.message, c.created_at, cl.company_name as sender_name 
+                          FROM chat_messages c 
+                          JOIN clients cl ON c.client_id = cl.client_id 
+                          WHERE c.sender_type = 'client' AND c.is_read = 0 
+                          ORDER BY c.created_at DESC LIMIT 5");
+    $stmt->execute();
+    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+$unread_count = count($notifications);
 // --- SMART GLOBAL LOGIN CHECK ---
 if (!isset($_SESSION['user_id'])) {
     header("Location: " . BASE_URL . "public/login.php");

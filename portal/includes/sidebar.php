@@ -26,12 +26,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item mb-2">
-                    <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
-                        <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
-                        <span class="fw-bold">Support Messages</span>
-                    </a>
-                </li>
-
+                <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                    <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
+                    <span class="fw-bold flex-grow-1">Support Messages</span>
+                    <?php if ($unread_count > 0): ?>
+                        <span class="badge bg-danger rounded-pill shadow-sm"><?php echo $unread_count; ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
         </ul>
             <?php else: ?>
 
@@ -50,12 +52,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item mb-2">
-                    <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
-                        <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
-                        <span class="fw-bold">Client Messages</span>
-                    </a>
-                </li>
-
+                <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm active-glass' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                    <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
+                    <span class="fw-bold flex-grow-1">Client Messages</span>
+                    <?php if ($unread_count > 0): ?>
+                        <span class="badge bg-danger rounded-pill shadow-sm"><?php echo $unread_count; ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
         </ul>
 
         <p class="px-4 text-white-50 small text-uppercase fw-bold mb-3 mt-4" style="letter-spacing: 1px;">System</p>

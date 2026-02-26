@@ -80,12 +80,39 @@ function sendMessage() {
     const msg = input.value.trim();
     if (!msg || !currentClientId) return;
     
-    input.value = '';
+    input.value = ''; // Clear the text box instantly
+
+    // --- 1. OPTIMISTIC UI: Show the message instantly ---
+    const box = document.getElementById('chatBox');
+    
+    // Clear "No messages" text if it's the very first message
+    if (box.innerHTML.includes("No messages yet")) {
+        box.innerHTML = '';
+    }
+
+    // Instantly draw the new message bubble (slightly faded to show it's sending)
+    const tempBubble = `
+        <div class='mb-3 w-75 align-self-end text-end temp-msg'>
+            <div class='small text-white-50 fw-bold mb-1 fst-italic'>Sending...</div>
+            <div class='p-3 shadow-sm' style='background: #800020; color: #fff; border-radius: 15px 15px 2px 15px; display: inline-block; text-align: left; opacity: 0.8;'>
+                ${msg.replace(/\n/g, '<br>')}
+            </div>
+        </div>`;
+    
+    box.insertAdjacentHTML('beforeend', tempBubble);
+    box.scrollTop = box.scrollHeight; // Auto-scroll to the bottom instantly
+
+    // --- 2. SEND TO DATABASE AND EMAIL IN THE BACKGROUND ---
     fetch('../app/Api/send_chat.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ client_id: currentClientId, message: msg })
-    }).then(() => loadChats());
+    })
+    .then(() => {
+        // Once the email is finally sent, reload the real chat data from the database
+        loadChats(); 
+    })
+    .catch(error => console.error("Error sending message:", error));
 }
 
 if (currentClientId) {
