@@ -1,12 +1,15 @@
 <?php
 // app/Api/send_chat.php
-require_once __DIR__ . '/../Config/Config.php'; // ADD THIS LINE!
+require_once __DIR__ . '/../Config/Config.php';
 require_once __DIR__ . '/../Config/Database.php';
 
-// Include PHPMailer (Adjust path if needed)
+// Manually load PHPMailer (since we know this works!)
+require __DIR__ . '/../PHPMailer/src/Exception.php';
+require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
+require __DIR__ . '/../PHPMailer/src/SMTP.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-require __DIR__ . '/../../vendor/autoload.php'; 
 
 header('Content-Type: application/json');
 if (session_status() === PHP_SESSION_NONE) session_start();
@@ -20,7 +23,6 @@ if (!$client_id || empty($message_text) || !isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Determine sender type
 $sender_type = ($_SESSION['role'] === 'client') ? 'client' : (($_SESSION['role'] == '1') ? 'staff' : 'admin');
 $sender_id = $_SESSION['user_id'];
 
@@ -36,22 +38,21 @@ try {
     $stmtClient->execute([$client_id]);
     $client_info = $stmtClient->fetch(PDO::FETCH_ASSOC);
 
-    // 3. Send Email Notification (Silent fail so chat doesn't break if SMTP is slow)
+    // 3. Send Email Notification
     try {
-        
         $mail = new PHPMailer(true);
+        // NOTE: We intentionally DO NOT include SMTPDebug here, because it breaks the JSON response!
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         
-        // --- UPDATE THESE TWO LINES ---
-        $mail->Username   = 'pagolrea@gmail.com'; // Your actual Gmail address
-        $mail->Password   = 'qdvgevktmxduryca';       // The 16-digit App Password (no spaces)
-        // ------------------------------
+        $mail->Username   = 'pagolrea@gmail.com'; // Your Gmail
+        $mail->Password   = 'qdvgevktmxduryca'; // Put your 16-digit App Password here!
         
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-        // --- ADD THIS BLOCK FOR XAMPP TESTING ONLY ---
+
+        // XAMPP Bypass
         $mail->SMTPOptions = array(
             'ssl' => array(
                 'verify_peer' => false,
@@ -59,22 +60,24 @@ try {
                 'allow_self_signed' => true
             )
         );
-        // --- AND UPDATE THIS LINE ---
+
         $mail->setFrom('pagolrea@gmail.com', 'Basmat Rooq Portal');
 
         if ($sender_type === 'client') {
-            $mail->addAddress('monabborhossen@gmail.com'); // Put your Admin Email here
+            $mail->addAddress('pagolrea@gmail.com'); // Admin receives it
             $mail->Subject = 'New Chat Message from ' . $client_info['company_name'];
             $mail->Body    = "Hello Team,\n\nNew message regarding {$client_info['company_name']}:\n\n\"" . substr($message_text, 0, 100) . "...\"\n\nLog in to reply.";
         } else {
             if (!empty($client_info['email'])) {
-                $mail->addAddress($client_info['email']); 
+                $mail->addAddress($client_info['email']); // Client receives it
                 $mail->Subject = 'Basmat Rooq: New Message Received';
                 $mail->Body    = "Hello {$client_info['company_name']},\n\nOur team has replied to your message. Please log in to your Basmat Rooq portal to view it.\n\nThank you.";
             }
         }
         if (count($mail->getAllRecipientAddresses()) > 0) $mail->send();
-    } catch (Exception $e) { }
+    } catch (Exception $e) { 
+        // We let this fail silently so the chat still works even if the email doesn't send
+    }
 
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
