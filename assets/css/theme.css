@@ -764,3 +764,6 @@ a:hover .avatar-circle-refined,
     height: calc(100vh - 200px); 
     min-height: 500px;
 }
+#chatMainBox .btn-rooq-primary{
+    padding: 12px 20px;
+}

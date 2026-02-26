@@ -87,9 +87,9 @@ foreach($clients as $c) { if($c['client_id'] == $active_client) $active_name = $
                 </div>
 
                 <div class="p-2 p-md-3 border-top border-light border-opacity-10 bg-dark mt-auto z-1">
-                    <div class="input-group align-items-end glass-search p-1 rounded-pill">
+                    <div class="input-group align-items-end glass-search p-1 rounded">
                         <textarea id="chatInput" class="form-control bg-transparent border-0 text-white shadow-none ps-3 py-2" placeholder="Type your message..." rows="1" style="resize:none; max-height: 100px; overflow-y: auto;" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-                        <button onclick="sendMessage()" class="btn btn-rooq-primary rounded-circle m-1 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; flex-shrink: 0;">
+                        <button onclick="sendMessage()" class="btn btn-rooq-primary rounded-circle m-1 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
                             <i class="bi bi-send-fill fs-5"></i>
                         </button>
                     </div>
