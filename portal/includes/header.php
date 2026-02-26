@@ -1,6 +1,7 @@
 <?php
 // portal/includes/header.php
 require_once __DIR__ . '/../../app/Config/Config.php';
+require_once __DIR__ . '/../../app/Config/Database.php'; // Added Database for notifications
 require_once __DIR__ . '/../../app/Helpers/Security.php';
 require_once __DIR__ . '/../../app/Helpers/Translator.php';
 
@@ -26,6 +27,35 @@ if (in_array($_SESSION['role'], ['1', '2']) && strpos($current_path, '/managemen
     header("Location: ../portal/dashboard.php");
     exit();
 }
+
+// --- NOTIFICATION SYSTEM LOGIC ---
+$unread_count = 0;
+$notifications = [];
+
+try {
+    $db = (new Database())->getConnection();
+
+    if ($_SESSION['role'] === 'client') {
+        $acc_id = $_SESSION['account_id'] ?? $_SESSION['user_id'];
+        $stmt = $db->prepare("SELECT c.client_id, c.message, c.created_at, 'Basmat Rooq Team' as sender_name 
+                              FROM chat_messages c 
+                              JOIN clients cl ON c.client_id = cl.client_id 
+                              WHERE cl.account_id = ? AND c.sender_type IN ('admin', 'staff') AND c.is_read = 0 
+                              ORDER BY c.created_at DESC LIMIT 5");
+        $stmt->execute([$acc_id]);
+        $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $stmt = $db->prepare("SELECT c.client_id, c.message, c.created_at, cl.company_name as sender_name 
+                              FROM chat_messages c 
+                              JOIN clients cl ON c.client_id = cl.client_id 
+                              WHERE c.sender_type = 'client' AND c.is_read = 0 
+                              ORDER BY c.created_at DESC LIMIT 5");
+        $stmt->execute();
+        $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    $unread_count = count($notifications);
+} catch (Exception $e) { }
+// ---------------------------------
 
 $lang = $_SESSION['lang'] ?? 'en';
 $dir = ($lang == 'ar') ? 'rtl' : 'ltr';
@@ -75,6 +105,7 @@ $text = $translator->getTranslation($lang);
                 <img src="<?php echo BASE_URL; ?>assets/img/logo.png" height="50" alt="Logo">
             </a>
         </div>
+
         <?php if ($_SESSION['role'] !== 'client'): ?>
         <div class="search-container d-none d-md-block mx-auto position-relative">
             <form action="clients.php" method="GET" autocomplete="off">
@@ -86,18 +117,50 @@ $text = $translator->getTranslation($lang);
             <div id="desktopSearchResults" class="search-results-dropdown d-none"></div>
         </div>
         <?php endif;?>
+
         <div class="d-flex align-items-center gap-sm-4 gap-2 ">
             
-        <?php if ($_SESSION['role'] !== 'client'): ?>
-            <button class="btn btn-link text-white p-0 d-md-none opacity-75 hover-gold" onclick="toggleMobileSearch()">
-                <i class="bi bi-search fs-5"></i>
-            </button>
-        <?php endif;?>
-            <div class="position-relative d-block" style="cursor: pointer;">
-                <i class="bi bi-bell text-white fs-5 opacity-75 hover-gold"></i>
-                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-dark rounded-circle"></span>
+            <?php if ($_SESSION['role'] !== 'client'): ?>
+                <button class="btn btn-link text-white p-0 d-md-none opacity-75 hover-gold" onclick="toggleMobileSearch()">
+                    <i class="bi bi-search fs-5"></i>
+                </button>
+            <?php endif;?>
+            
+            <div class="dropdown">
+                <div class="position-relative d-block" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell text-white fs-5 opacity-75 hover-gold"></i>
+                    <?php if ($unread_count > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" style="font-size: 0.6rem;">
+                            <?php echo $unread_count; ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+                
+                <ul class="dropdown-menu dropdown-menu-end glass-dropdown mt-3 shadow-lg border-0" style="background: rgba(20, 20, 20, 0.95); width: 320px;">
+                    <li class="px-3 py-2 border-bottom border-secondary border-opacity-25">
+                        <span class="text-gold fw-bold small text-uppercase"><i class="bi bi-chat-dots me-2"></i>Recent Messages</span>
+                    </li>
+                    
+                    <?php if ($unread_count > 0): ?>
+                        <?php foreach ($notifications as $notif): ?>
+                            <li>
+                                <a class="dropdown-item py-3 px-3 border-bottom border-light border-opacity-10 text-white hover-white" href="chat.php?client_id=<?php echo $notif['client_id']; ?>" style="white-space: normal;">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-bold small"><?php echo htmlspecialchars($notif['sender_name']); ?></span>
+                                        <span class="text-gold" style="font-size: 0.65rem;"><?php echo date('h:i A', strtotime($notif['created_at'])); ?></span>
+                                    </div>
+                                    <div class="text-white-50 small text-truncate" style="max-width: 270px;">
+                                        "<?php echo htmlspecialchars($notif['message']); ?>"
+                                    </div>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                        <li><a class="dropdown-item text-center text-gold small py-2 fw-bold" href="chat.php">View All Messages</a></li>
+                    <?php else: ?>
+                        <li><div class="dropdown-item text-white-50 small py-4 text-center">No new messages</div></li>
+                    <?php endif; ?>
+                </ul>
             </div>
-
             <div class="dropdown">
                 <div class="profile-trigger-refined d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="text-end d-none d-lg-block">
@@ -120,9 +183,11 @@ $text = $translator->getTranslation($lang);
                     <li><a class="dropdown-item text-danger fw-bold" href="<?php echo BASE_URL; ?>public/logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                 </ul>
             </div>
+
         </div>
     </div>
 </header>
+
 <?php if ($_SESSION['role'] !== 'client'): ?>
 <div id="mobileSearchOverlay">
     <div class="glass-search-popup p-4 position-relative">
@@ -141,6 +206,7 @@ $text = $translator->getTranslation($lang);
     </div>
 </div>
 <?php endif;?>
+
 <div class="d-flex portal-wrapper">
     <?php require_once 'sidebar.php'; ?>
     <main class="w-100 p-4">

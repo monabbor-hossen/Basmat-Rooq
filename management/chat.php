@@ -59,19 +59,34 @@ if (!$owns_project && count($clients) > 0) $active_client = $clients[0]['client_
         </div>
     </div>
 </div>
-
 <script>
 const currentClientId = <?php echo $active_client; ?>;
+let lastChatHTML = ""; // This prevents the screen from flashing every 3 seconds!
 
 function loadChats() {
     if (!currentClientId) return;
+    
     fetch(`../app/Api/fetch_chats.php?client_id=${currentClientId}`)
     .then(r => r.text())
     .then(html => {
-        const box = document.getElementById('chatBox');
-        const isScrolledToBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + 50;
-        box.innerHTML = html || "<div class='text-center text-white-50 mt-5'>No messages yet. Start the conversation!</div>";
-        if (isScrolledToBottom) box.scrollTop = box.scrollHeight;
+        // ONLY update the screen if someone actually sent a new message
+        if (html !== lastChatHTML) {
+            const box = document.getElementById('chatBox');
+            
+            // Figure out if the user is currently reading old messages up top
+            const isScrolledToBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + 100;
+            
+            // Draw the new messages
+            box.innerHTML = html || "<div class='text-center text-white-50 mt-5'>No messages yet. Start the conversation!</div>";
+            
+            // If they were already at the bottom, automatically pull them down to see the new message!
+            if (isScrolledToBottom) {
+                box.scrollTop = box.scrollHeight;
+            }
+            
+            // Save this HTML so we don't redraw it until a new message arrives
+            lastChatHTML = html;
+        }
     });
 }
 
@@ -80,17 +95,12 @@ function sendMessage() {
     const msg = input.value.trim();
     if (!msg || !currentClientId) return;
     
-    input.value = ''; // Clear the text box instantly
+    input.value = ''; // Clear text box instantly
 
-    // --- 1. OPTIMISTIC UI: Show the message instantly ---
+    // OPTIMISTIC UI: Draw it instantly so the user doesn't wait for the server
     const box = document.getElementById('chatBox');
+    if (box.innerHTML.includes("No messages yet")) box.innerHTML = '';
     
-    // Clear "No messages" text if it's the very first message
-    if (box.innerHTML.includes("No messages yet")) {
-        box.innerHTML = '';
-    }
-
-    // Instantly draw the new message bubble (slightly faded to show it's sending)
     const tempBubble = `
         <div class='mb-3 w-75 align-self-end text-end temp-msg'>
             <div class='small text-white-50 fw-bold mb-1 fst-italic'>Sending...</div>
@@ -100,25 +110,28 @@ function sendMessage() {
         </div>`;
     
     box.insertAdjacentHTML('beforeend', tempBubble);
-    box.scrollTop = box.scrollHeight; // Auto-scroll to the bottom instantly
+    box.scrollTop = box.scrollHeight; // Force scroll to bottom
+    
+    // Temporarily mess up lastChatHTML so the next auto-load is forced to refresh and show the real timestamp
+    lastChatHTML = "FORCE_REFRESH"; 
 
-    // --- 2. SEND TO DATABASE AND EMAIL IN THE BACKGROUND ---
+    // Send to backend
     fetch('../app/Api/send_chat.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ client_id: currentClientId, message: msg })
     })
-    .then(() => {
-        // Once the email is finally sent, reload the real chat data from the database
-        loadChats(); 
-    })
-    .catch(error => console.error("Error sending message:", error));
+    .then(() => loadChats()) // Immediately load the real chat once the email sends
+    .catch(err => console.error("Send Error:", err));
 }
 
+// WHEN THE PAGE LOADS:
 if (currentClientId) {
     document.addEventListener("DOMContentLoaded", () => {
-        loadChats();
-        setInterval(loadChats, 5000); // Auto-refresh every 5 seconds
+        loadChats(); // Load immediately on open
+        
+        // 🔥 THE MAGIC SAUCE: Auto-check for new messages every 3 seconds! 🔥
+        setInterval(loadChats, 3000); 
     });
 }
 </script>
