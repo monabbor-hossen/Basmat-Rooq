@@ -1,5 +1,6 @@
 <?php
 // app/Api/send_chat.php
+require_once __DIR__ . '/../Config/Config.php'; // ADD THIS LINE!
 require_once __DIR__ . '/../Config/Database.php';
 
 // Include PHPMailer (Adjust path if needed)
