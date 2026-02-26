@@ -42,14 +42,14 @@ try {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'YOUR_GMAIL@gmail.com'; // REPLACE THIS
+        $mail->Username   = 'monabborhossen@gmail.com'; // REPLACE THIS
         $mail->Password   = 'YOUR_16_DIGIT_APP_PASSWORD'; // REPLACE THIS
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-        $mail->setFrom('YOUR_GMAIL@gmail.com', 'Basmat Rooq Portal');
+        $mail->setFrom('monabborhossen@gmail.com', 'Basmat Rooq Portal');
 
         if ($sender_type === 'client') {
-            $mail->addAddress('admin@yourdomain.com'); // Put your Admin Email here
+            $mail->addAddress('monabborhossen@gmail.com'); // Put your Admin Email here
             $mail->Subject = 'New Chat Message from ' . $client_info['company_name'];
             $mail->Body    = "Hello Team,\n\nNew message regarding {$client_info['company_name']}:\n\n\"" . substr($message_text, 0, 100) . "...\"\n\nLog in to reply.";
         } else {
