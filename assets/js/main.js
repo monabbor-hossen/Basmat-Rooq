@@ -715,5 +715,140 @@ function validatePaymentDate() {
     return true; // Allows form submission
 }
 
+/* =========================================
+   CHAT APPLICATION LOGIC
+   ========================================= */
+let lastChatHTML = "INITIAL_LOAD"; 
 
+// --- SPA CHAT SWITCHER (NO PAGE RELOAD) ---
+function switchChat(e, id, name, element) {
+    e.preventDefault();
+    
+    // 1. ALWAYS trigger Mobile Slide-Over effect
+    if (window.innerWidth < 768) {
+        document.getElementById('chatSidebarList').classList.remove('d-block');
+        document.getElementById('chatSidebarList').classList.add('d-none');
+        document.getElementById('chatMainBox').classList.remove('d-none');
+        document.getElementById('chatMainBox').classList.add('d-flex');
+        
+        const box = document.getElementById('chatBox');
+        if(box) box.scrollTop = box.scrollHeight;
+    }
+
+    if(window.currentChatClientId === id) return;
+    
+    window.currentChatClientId = id;
+    lastChatHTML = "FORCE_REFRESH";
+    
+    document.querySelectorAll('.client-chat-link').forEach(el => {
+        el.classList.remove('bg-rooq-primary', 'text-white');
+        el.classList.add('text-white-50', 'hover-white');
+    });
+    element.classList.remove('text-white-50', 'hover-white');
+    element.classList.add('bg-rooq-primary', 'text-white');
+    
+    const headerSub = document.getElementById('chatHeaderSub');
+    if(headerSub) headerSub.innerText = name;
+    
+    const box = document.getElementById('chatBox');
+    if(box) box.innerHTML = "<div class='text-center text-white-50 mt-5'><div class='spinner-border spinner-border-sm me-2'></div> Loading messages...</div>";
+    
+    loadChats();
+}
+
+function closeMobileChat(e) {
+    e.preventDefault();
+    document.getElementById('chatMainBox').classList.remove('d-flex');
+    document.getElementById('chatMainBox').classList.add('d-none');
+    document.getElementById('chatSidebarList').classList.remove('d-none');
+    document.getElementById('chatSidebarList').classList.add('d-block');
+}
+
+// --- STANDARD CHAT FUNCTIONS ---
+function loadChats() {
+    if (!window.currentChatClientId || window.currentChatClientId === 0) {
+        const box = document.getElementById('chatBox');
+        if(box && box.innerHTML === "") box.innerHTML = "<div class='text-center text-white-50 mt-5'>No active projects found.</div>";
+        return;
+    }
+    
+    fetch(`../app/Api/fetch_chats.php?client_id=${window.currentChatClientId}`)
+    .then(r => {
+        if (!r.ok) throw new Error("Server returned " + r.status);
+        return r.text();
+    })
+    .then(html => {
+        let content = html.trim();
+        if (content === "") {
+            content = "<div class='text-center text-white-50 mt-5'>No messages yet. Start the conversation!</div>";
+        }
+        
+        if (content !== lastChatHTML) {
+            const box = document.getElementById('chatBox');
+            if(!box) return;
+            const isScrolledToBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + 100;
+            box.innerHTML = content;
+            if (isScrolledToBottom) box.scrollTop = box.scrollHeight;
+            lastChatHTML = content;
+        }
+    }).catch(err => {
+        console.error("Error loading chat:", err);
+        const box = document.getElementById('chatBox');
+        if(box) box.innerHTML = "<div class='text-danger text-center mt-5'><b>Error loading chats.</b></div>";
+    });
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    if (!input) return;
+    const msg = input.value.trim();
+    if (!msg || !window.currentChatClientId || window.currentChatClientId === 0) return;
+    
+    input.value = ''; 
+    input.style.height = '48px'; 
+
+    const box = document.getElementById('chatBox');
+    if (box.innerHTML.includes("No messages yet")) box.innerHTML = '';
+    
+    const tempBubble = `
+        <div class='mb-3 w-75 align-self-end text-end temp-msg'>
+            <div class='small text-white-50 fw-bold mb-1 fst-italic'>Sending...</div>
+            <div class='p-3 shadow-sm' style='background: #800020; color: #fff; border-radius: 15px 15px 2px 15px; display: inline-block; text-align: left; opacity: 0.8;'>
+                ${msg.replace(/\n/g, '<br>')}
+            </div>
+        </div>`;
+    
+    box.insertAdjacentHTML('beforeend', tempBubble);
+    box.scrollTop = box.scrollHeight; 
+    lastChatHTML = "FORCE_REFRESH"; 
+
+    fetch('../app/Api/send_chat.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_id: window.currentChatClientId, message: msg })
+    }).then(r => loadChats());
+}
+
+// Initialize chat ONLY if we are on a chat page!
+document.addEventListener("DOMContentLoaded", () => {
+    const chatBox = document.getElementById('chatBox');
+    if (chatBox) { 
+        if (window.currentChatClientId && window.currentChatClientId !== 0) {
+            loadChats(); 
+            setInterval(loadChats, 3000); 
+            
+            const chatInputBox = document.getElementById('chatInput');
+            if(chatInputBox) {
+                chatInputBox.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
+        } else {
+            chatBox.innerHTML = "<div class='text-center text-white-50 mt-5'>Please select a project from the sidebar to start chatting.</div>";
+        }
+    }
+});
 

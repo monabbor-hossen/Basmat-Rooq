@@ -859,3 +859,11 @@ select.glass-input option {
     cursor: default;
     background: transparent;
 }
+
+/* =========================================
+   CHAT APPLICATION DESKTOP STYLES
+   ========================================= */
+.chat-container-box {
+    height: calc(100vh - 200px); 
+    min-height: 500px;
+}
