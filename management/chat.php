@@ -17,48 +17,106 @@ $active_client = $_GET['client_id'] ?? ($clients[0]['client_id'] ?? 0);
 $owns_project = false;
 foreach($clients as $c) { if($c['client_id'] == $active_client) $owns_project = true; }
 if (!$owns_project && count($clients) > 0) $active_client = $clients[0]['client_id'];
-
+// We need to know if the user specifically clicked a client, or if the page just auto-loaded the first one.
+$is_mobile_chat_active = isset($_GET['client_id']) ? true : false;
 ?>
-<div class="container-fluid py-4 h-100">
-    <h3 class="text-white fw-bold mb-4"><i class="bi bi-chat-dots text-gold me-2"></i>Support Messages</h3>
+<div class="container-fluid py-4 h-100 chat-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white fw-bold mb-0"><i class="bi bi-chat-dots text-gold me-2"></i>Support Messages</h3>
+    </div>
     
-    <div class="row g-0 rounded overflow-hidden" style="height: 70vh; border: 1px solid rgba(255,255,255,0.1);">
-        <div class="col-md-4 bg-dark bg-opacity-75 border-end border-light border-opacity-10 overflow-auto h-100">
-            <div class="p-3 border-bottom border-light border-opacity-10 text-gold fw-bold">Active Projects</div>
-            <div class="list-group list-group-flush bg-transparent">
-                <?php foreach ($clients as $c): 
-                    $is_active = ($c['client_id'] == $active_client) ? 'bg-rooq-primary text-white' : 'text-white-50 hover-white';
-                ?>
-                    <a href="chat.php?client_id=<?php echo $c['client_id']; ?>" class="list-group-item bg-transparent <?php echo $is_active; ?> py-3 border-bottom border-light border-opacity-10">
-                        <i class="bi bi-building me-2"></i><?php echo htmlspecialchars($c['company_name']); ?>
-                    </a>
-                <?php endforeach; ?>
+    <div class="row g-0 rounded overflow-hidden chat-container-box" style="border: 1px solid rgba(255,255,255,0.1);">
+        
+        <div class="col-md-4 bg-dark bg-opacity-75 border-end border-light border-opacity-10 overflow-auto h-100 <?php echo $is_mobile_chat_active ? 'd-none d-md-block' : ''; ?>">
+            <div class="p-3 border-bottom border-light border-opacity-10 text-gold fw-bold position-sticky top-0 bg-dark z-1">
+                Active Projects
+            </div>
+            <div class="list-group list-group-flush bg-transparent pb-5">
+                <?php if (count($clients) > 0): ?>
+                    <?php foreach ($clients as $c): 
+                        $is_active = ($c['client_id'] == $active_client) ? 'bg-rooq-primary text-white' : 'text-white-50 hover-white';
+                    ?>
+                        <a href="chat.php?client_id=<?php echo $c['client_id']; ?>" class="list-group-item bg-transparent <?php echo $is_active; ?> py-3 border-bottom border-light border-opacity-10 d-flex align-items-center">
+                            <div class="avatar-circle-refined bg-dark text-gold border border-gold me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                <?php echo strtoupper(substr($c['company_name'], 0, 1)); ?>
+                            </div>
+                            <div class="text-truncate">
+                                <h6 class="mb-0 fw-bold text-truncate"><?php echo htmlspecialchars($c['company_name']); ?></h6>
+                                <small class="opacity-75">Tap to view messages</small>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="p-4 text-center text-white-50">No active projects found.</div>
+                <?php endif; ?>
             </div>
         </div>
 
-        <div class="col-md-8 d-flex flex-column h-100" style="background: rgba(0,0,0,0.3);">
+        <div class="col-md-8 flex-column h-100 <?php echo $is_mobile_chat_active ? 'd-flex' : 'd-none d-md-flex'; ?>" style="background: rgba(0,0,0,0.3);">
             <?php if ($active_client): ?>
-                <div class="p-3 border-bottom border-light border-opacity-10 d-flex justify-content-between" style="background: rgba(128,0,32,0.3);">
-                    <h5 class="text-white fw-bold mb-0">Conversation History</h5>
-                    <a href="project-details.php?id=<?php echo $active_client; ?>" class="btn btn-sm btn-outline-light rounded-pill">View Project</a>
+                
+                <div class="p-3 border-bottom border-light border-opacity-10 d-flex justify-content-between align-items-center bg-dark z-1" style="background: rgba(128,0,32,0.3) !important;">
+                    <div class="d-flex align-items-center">
+                        <a href="chat.php" class="text-white me-3 d-md-none text-decoration-none">
+                            <i class="bi bi-arrow-left fs-3"></i>
+                        </a>
+                        <div>
+                            <h6 class="text-white fw-bold mb-0">Conversation History</h6>
+                            <?php 
+                                // Find the active company name for the header
+                                $active_name = '';
+                                foreach($clients as $c) { if($c['client_id'] == $active_client) $active_name = $c['company_name']; }
+                            ?>
+                            <small class="text-gold text-truncate d-block" style="max-width: 200px;"><?php echo htmlspecialchars($active_name); ?></small>
+                        </div>
+                    </div>
+                    <a href="project-details.php?id=<?php echo $active_client; ?>" class="btn btn-sm btn-outline-light rounded-pill d-none d-sm-block">View Project</a>
                 </div>
                 
-                <div id="chatBox" class="flex-grow-1 p-4 overflow-auto d-flex flex-column">
-                    <div class="text-center text-white-50"><div class="spinner-border spinner-border-sm me-2"></div> Loading chats...</div>
+                <div id="chatBox" class="flex-grow-1 p-3 p-md-4 overflow-auto d-flex flex-column" style="scroll-behavior: smooth;">
+                    <div class="text-center text-white-50 mt-5"><div class="spinner-border spinner-border-sm me-2"></div> Loading chats...</div>
                 </div>
 
-                <div class="p-3 border-top border-light border-opacity-10 bg-dark">
-                    <div class="input-group">
-                        <textarea id="chatInput" class="form-control glass-input text-white" placeholder="Type your reply here..." rows="2" style="resize:none;"></textarea>
-                        <button onclick="sendMessage()" class="btn btn-rooq-primary px-4 fw-bold"><i class="bi bi-send-fill fs-5"></i></button>
+                <div class="p-2 p-md-3 border-top border-light border-opacity-10 bg-dark mt-auto z-1">
+                    <div class="input-group align-items-end glass-search p-1 rounded-pill">
+                        <textarea id="chatInput" class="form-control bg-transparent border-0 text-white shadow-none ps-3 py-2" placeholder="Type your message..." rows="1" style="resize:none; max-height: 100px; overflow-y: auto;" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                        <button onclick="sendMessage()" class="btn btn-rooq-primary rounded-circle m-1 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; flex-shrink: 0;">
+                            <i class="bi bi-send-fill fs-5"></i>
+                        </button>
                     </div>
                 </div>
+
             <?php else: ?>
-                <div class="d-flex align-items-center justify-content-center h-100 text-white-50">Select a project to start chatting.</div>
+                <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white-50 p-5 text-center">
+                    <i class="bi bi-chat-square-dots text-gold mb-3" style="font-size: 4rem; opacity: 0.5;"></i>
+                    <h5>No Conversation Selected</h5>
+                    <p class="small">Choose a project from the sidebar to view or send messages.</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
 </div>
+<style>
+    /* Responsive Chat Heights */
+.chat-container-box {
+    height: calc(100vh - 200px); /* Desktop default */
+    min-height: 500px;
+}
+    /* Mobile Specific Adjustments */
+@media (max-width: 767.98px) {
+    .chat-container-box {
+        height: calc(100vh - 160px); /* Taller on mobile to fit screen */
+        border: none !important; /* Remove borders on mobile for edge-to-edge feel */
+    }
+    .portal-wrapper main {
+        padding: 0 !important; /* Remove main container padding on mobile for full width */
+    }
+    .chat-wrapper {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+</style>
 <script>
 const currentClientId = <?php echo $active_client; ?>;
 let lastChatHTML = ""; // This prevents the screen from flashing every 3 seconds!
