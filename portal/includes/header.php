@@ -93,12 +93,12 @@ $text = $translator->getTranslation($lang);
                 <i class="bi bi-search fs-5"></i>
             </button>
         <?php endif;?>
-<div class="dropdown">
+            <div class="dropdown">
                 <div class="position-relative d-block" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-bell text-white fs-5 opacity-75 hover-gold"></i>
                     
-                    <span id="liveNotificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark <?php echo ($unread_count > 0) ? '' : 'd-none'; ?>" style="font-size: 0.6rem; transition: 0.3s;">
-                        <?php echo $unread_count; ?>
+                    <span id="liveNotificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark <?php echo (($unread_count ?? 0) > 0) ? '' : 'd-none'; ?>" style="font-size: 0.6rem; transition: 0.3s;">
+                        <?php echo ($unread_count ?? 0); ?>
                     </span>
                 </div>
                 
@@ -108,8 +108,8 @@ $text = $translator->getTranslation($lang);
                     </li>
                     
                     <div id="liveNotificationList">
-                        <?php if ($unread_count > 0): ?>
-                            <?php foreach ($notifications as $notif): ?>
+                        <?php if (($unread_count ?? 0) > 0): ?>
+                            <?php foreach (($notifications ?? []) as $notif): ?>
                                 <li>
                                     <a class="dropdown-item py-3 px-3 border-bottom border-light border-opacity-10 text-white hover-white" href="chat.php?client_id=<?php echo $notif['client_id']; ?>" style="white-space: normal;">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
