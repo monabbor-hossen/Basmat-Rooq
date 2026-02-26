@@ -1,6 +1,6 @@
 <?php
 // management/project-details.php
-require_once 'includes/header.php';
+require_once '../portal/includes/header.php';
 require_once __DIR__ . '/../app/Config/Database.php';
 
 // --- SECURITY: ENSURE ONLY CLIENTS ACCESS THIS ---
@@ -237,4 +237,4 @@ $progress_color = ($progress_percent == 100) ? 'bg-success' : (($progress_percen
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once '../portal/includes/footer.php'; ?>

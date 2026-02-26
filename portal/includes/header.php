@@ -34,8 +34,11 @@ $username = $_SESSION['username'] ?? 'User';
 $full_name = $_SESSION['full_name'] ?? $username; 
 
 // Determine role text
-$role_text = (isset($_SESSION['role']) && $_SESSION['role'] == '2') ? 'Admin' : 'Staff';
-
+$role_text = match ((string) ($_SESSION['role'] ?? '')) {
+    '2' => 'Admin',
+    '1' => 'Staff',
+    default => 'Client',
+};
 $translator = new Translator();
 $text = $translator->getTranslation($lang);
 ?>
