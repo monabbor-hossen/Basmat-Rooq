@@ -121,10 +121,26 @@ let currentClientId = <?php echo $active_client ? $active_client : 0; ?>;
 let lastChatHTML = "INITIAL_LOAD";
 
 // --- SPA CHAT SWITCHER (NO PAGE RELOAD) ---
+// --- SPA CHAT SWITCHER (NO PAGE RELOAD) ---
 function switchChat(e, id, name, element) {
     e.preventDefault();
+    
+    // 1. ALWAYS trigger the Mobile Slide-Over effect, even if they click the active chat!
+    if (window.innerWidth < 768) {
+        document.getElementById('chatSidebarList').classList.remove('d-block');
+        document.getElementById('chatSidebarList').classList.add('d-none');
+        document.getElementById('chatMainBox').classList.remove('d-none');
+        document.getElementById('chatMainBox').classList.add('d-flex');
+        
+        // Auto-scroll to bottom just in case it was already loaded
+        const box = document.getElementById('chatBox');
+        if(box) box.scrollTop = box.scrollHeight;
+    }
+
+    // 2. NOW we check if they are clicking the same chat. If yes, stop fetching from the database!
     if(currentClientId === id) return;
     
+    // 3. If it's a new chat, load the new data
     currentClientId = id;
     lastChatHTML = "FORCE_REFRESH";
     
@@ -140,13 +156,6 @@ function switchChat(e, id, name, element) {
     
     const box = document.getElementById('chatBox');
     if(box) box.innerHTML = "<div class='text-center text-white-50 mt-5'><div class='spinner-border spinner-border-sm me-2'></div> Loading messages...</div>";
-    
-    if (window.innerWidth < 768) {
-        document.getElementById('chatSidebarList').classList.remove('d-block');
-        document.getElementById('chatSidebarList').classList.add('d-none');
-        document.getElementById('chatMainBox').classList.remove('d-none');
-        document.getElementById('chatMainBox').classList.add('d-flex');
-    }
     
     loadChats();
 }
