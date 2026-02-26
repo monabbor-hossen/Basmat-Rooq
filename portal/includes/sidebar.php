@@ -11,7 +11,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <li class="nav-item mb-2">
                 <a href="dashboard.php"
-                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active-glass active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
                     style="transition: all 0.3s ease;">
                     <i class="bi bi-grid-1x2 fs-5 me-3 text-gold"></i>
                     <span class="fw-bold">My Dashboard</span>
@@ -19,14 +19,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
             <li class="nav-item mb-2">
                 <a href="billing.php"
-                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'billing.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
+                    class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'billing.php') ? 'active-glass active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2"
                     style="transition: all 0.3s ease;">
                     <i class="bi bi-receipt fs-5 me-3 text-gold"></i>
                     <span class="fw-bold">Billing & Invoices</span>
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active-glass active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
                     <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
                     <span class="fw-bold flex-grow-1">Support Messages</span>
                     <?php if (($unread_count ?? 0) > 0): ?>
@@ -52,7 +52,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item mb-2">
-                    <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                    <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active-glass active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
                         <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
                         <span class="fw-bold flex-grow-1">Client Messages</span>
                         <?php if (($unread_count ?? 0) > 0): ?>
