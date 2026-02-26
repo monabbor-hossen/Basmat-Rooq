@@ -51,10 +51,17 @@ try {
         
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-        
+        // --- ADD THIS BLOCK FOR XAMPP TESTING ONLY ---
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
         // --- AND UPDATE THIS LINE ---
         $mail->setFrom('pagolrea@gmail.com', 'Basmat Rooq Portal');
-        
+
         if ($sender_type === 'client') {
             $mail->addAddress('monabborhossen@gmail.com'); // Put your Admin Email here
             $mail->Subject = 'New Chat Message from ' . $client_info['company_name'];
