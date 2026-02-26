@@ -25,6 +25,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span class="fw-bold">Billing & Invoices</span>
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                    <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                        <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
+                        <span class="fw-bold">Support Messages</span>
+                    </a>
+                </li>
 
         </ul>
             <?php else: ?>
@@ -43,6 +49,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <i class="bi bi-people-fill me-3"></i> Clients
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                    <a href="chat.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'chat.php') ? 'active bg-rooq-primary text-white shadow-sm' : 'text-white-50 hover-white'; ?> d-flex align-items-center rounded px-3 py-2" style="transition: all 0.3s ease;">
+                        <i class="bi bi-chat-dots fs-5 me-3 text-gold"></i>
+                        <span class="fw-bold">Client Messages</span>
+                    </a>
+                </li>
 
         </ul>
 
