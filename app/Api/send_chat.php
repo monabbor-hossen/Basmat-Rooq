@@ -64,14 +64,14 @@ try {
         $mail = new PHPMailer(true);
         // NOTE: We intentionally DO NOT include SMTPDebug here, because it breaks the JSON response!
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
+        $mail->Host       = 'smtp.hostinger.com'; // or 'smtp.hostinger.ae' if your region is AE
         $mail->SMTPAuth   = true;
         
-        $mail->Username   = 'pagolrea@gmail.com'; // Your Gmail
-        $mail->Password   = 'qdvgevktmxduryca'; // Put your 16-digit App Password here!
+        $mail->Username   = 'info@fayenor.com'; 
+        $mail->Password   = 'YOUR_HOSTINGER_PASSWORD_HERE'; // Replace with your info@fayenor.com password
         
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL for port 465
+        $mail->Port       = 465;
 
         // XAMPP Bypass
         $mail->SMTPOptions = array(
@@ -82,17 +82,17 @@ try {
             )
         );
 
-        $mail->setFrom('pagolrea@gmail.com', 'Basmat Rooq Portal');
+        $mail->setFrom('info@fayenor.com', 'Fayenor');
 
         if ($sender_type === 'client') {
-            $mail->addAddress('pagolrea@gmail.com'); // Admin receives it
+            $mail->addAddress('info@fayenor.com'); // Admin receives it
             $mail->Subject = 'New Chat Message from ' . $client_info['company_name'];
             $mail->Body    = "Hello Team,\n\nNew message regarding {$client_info['company_name']}:\n\n\"" . substr($message_text, 0, 100) . "...\"\n\nLog in to reply.";
         } else {
             if (!empty($client_info['email'])) {
                 $mail->addAddress($client_info['email']); // Client receives it
-                $mail->Subject = 'Basmat Rooq: New Message Received';
-                $mail->Body    = "Hello {$client_info['company_name']},\n\nOur team has replied to your message. Please log in to your Basmat Rooq portal to view it.\n\nThank you.";
+                $mail->Subject = 'Fayenor: New Message Received';
+                $mail->Body    = "Hello {$client_info['company_name']},\n\nOur team has replied to your message. Please log in to your Fayenor portal to view it.\n\nThank you.";
             }
         }
         if (count($mail->getAllRecipientAddresses()) > 0) $mail->send();

@@ -18,7 +18,7 @@ try {
 
     if ($_SESSION['role'] === 'client') {
         $acc_id = $_SESSION['account_id'] ?? $_SESSION['user_id'];
-        $stmt = $db->prepare("SELECT c.client_id, c.message, c.created_at, 'Basmat Rooq Team' as sender_name 
+        $stmt = $db->prepare("SELECT c.client_id, c.message, c.created_at, 'Fayenor Team' as sender_name 
                               FROM chat_messages c 
                               JOIN clients cl ON c.client_id = cl.client_id 
                               WHERE cl.account_id = ? AND c.sender_type IN ('admin', 'staff') AND c.is_read = 0 
