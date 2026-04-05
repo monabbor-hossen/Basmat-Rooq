@@ -1230,3 +1230,201 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+/* =========================================
+   LANDING PAGE (INDEX) ANIMATIONS & TRANSLATION
+   ========================================= */
+
+/**
+ * Toggles site language using Google Translate cookie
+ */
+function toggleLanguage() {
+    const currentTrans = getCookie('googtrans');
+    const isArabic = currentTrans === '/en/ar';
+    const newTrans = isArabic ? '/en/en' : '/en/ar';
+
+    setCookie('googtrans', newTrans, 30);
+    window.location.reload();
+}
+
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+    const cname = name + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1);
+        if (c.indexOf(cname) == 0) return c.substring(cname.length, c.length);
+    }
+    return "";
+}
+
+/**
+ * 3D Geometric Matrix Animation (Hero Section)
+ */
+function initHeroAnimation() {
+    const canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('parallax-scene');
+    if (!container) return;
+
+    let width, height, centerX, centerY, baseRadius;
+    const fov = 900;
+    let nodes = [];
+    let connections = [];
+    let time = 0;
+
+    function resizeCanvas() {
+        width = canvas.width = container.offsetWidth;
+        height = canvas.height = container.offsetHeight;
+        centerX = width / 2;
+
+        if (width < 640) {
+            baseRadius = 140;
+            centerY = 340;
+        } else if (width < 1024) {
+            baseRadius = 240;
+            centerY = 380;
+        } else {
+            baseRadius = 380;
+            centerY = height / 2;
+        }
+        initMatrix();
+    }
+
+    function initMatrix() {
+        nodes = [];
+        connections = [];
+        const layers = 11;
+        const pointsPerLayer = 16;
+        let nodeId = 0;
+        let matrixHeightScale = width < 640 ? 120 : (width < 1024 ? 200 : 300);
+
+        for (let l = 0; l < layers; l++) {
+            let normalizedY = (l / (layers - 1)) * 2 - 1;
+            let yOffset = normalizedY * matrixHeightScale;
+            let rFactor = Math.sqrt(1.1 - Math.pow(normalizedY, 2));
+            let layerRadius = baseRadius * rFactor;
+
+            for (let p = 0; p < pointsPerLayer; p++) {
+                let angle = (p / pointsPerLayer) * Math.PI * 2 + (normalizedY * 0.4);
+                let isOuter = p % 2 === 0;
+                let r = isOuter ? layerRadius : layerRadius * 0.65;
+
+                nodes.push({
+                    id: nodeId++, layer: l, index: p, isOuter: isOuter,
+                    baseX: Math.cos(angle) * r, baseY: yOffset, baseZ: Math.sin(angle) * r,
+                    size: isOuter ? (Math.random() * 1.5 + 1.5) : 1,
+                    pulseOffset: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        nodes.forEach(n1 => {
+            nodes.forEach(n2 => {
+                if (n1.id >= n2.id) return;
+                if (n1.layer === n2.layer && (n1.index === (n2.index + 1) % pointsPerLayer || n1.index === (n2.index - 1 + pointsPerLayer) % pointsPerLayer)) {
+                    connections.push({ a: n1, b: n2, type: 'horizontal' });
+                }
+                if (Math.abs(n1.layer - n2.layer) === 1 && n1.index === n2.index) {
+                    connections.push({ a: n1, b: n2, type: 'vertical' });
+                }
+            });
+        });
+    }
+
+    function rotate3D(x, y, z, rotX, rotY) {
+        let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+        let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+        let y2 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+        let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+        return { x: x1, y: y2, z: z2 };
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        time += 1;
+        let rotY = time * 0.003;
+        let rotX = 0.2 + Math.sin(time * 0.005) * 0.15;
+        ctx.globalCompositeOperation = 'lighter';
+
+        let projectedNodes = [];
+        nodes.forEach(node => {
+            let rotated = rotate3D(node.baseX, node.baseY, node.baseZ, rotX, rotY);
+            let scale = fov / (fov + rotated.z);
+            let alpha = Math.max(0.05, Math.min(1, 1 - ((rotated.z + baseRadius) / (baseRadius * 2.5))));
+            let size = (node.size + Math.sin(time * 0.05 + node.pulseOffset) * 0.5) * scale;
+
+            projectedNodes.push({ id: node.id, sx: centerX + rotated.x * scale, sy: centerY + rotated.y * scale, sz: rotated.z, alpha, size, isOuter: node.isOuter });
+        });
+
+        connections.forEach(conn => {
+            let pA = projectedNodes[conn.a.id];
+            let pB = projectedNodes[conn.b.id];
+            if (!pA || !pB) return;
+            if (pA.sz > baseRadius * 0.5 && pB.sz > baseRadius * 0.5) return;
+            ctx.strokeStyle = `rgba(176, 196, 222, ${(pA.alpha + pB.alpha) / 2 * (conn.type === 'horizontal' ? 0.6 : 0.25)})`;
+            ctx.beginPath(); ctx.moveTo(pA.sx, pA.sy); ctx.lineTo(pB.sx, pB.sy); ctx.stroke();
+        });
+
+        projectedNodes.sort((a, b) => b.sz - a.sz).forEach(p => {
+            if (p.sz > baseRadius * 0.8) return;
+            ctx.beginPath(); ctx.fillStyle = `rgba(216, 228, 240, ${p.alpha})`;
+            ctx.arc(p.sx, p.sy, p.size, 0, Math.PI * 2); ctx.fill();
+            if (p.isOuter && p.sz < -baseRadius * 0.3) {
+                ctx.beginPath(); ctx.fillStyle = `rgba(82, 236, 197, ${p.alpha * 0.4})`;
+                ctx.arc(p.sx, p.sy, p.size * 4, 0, Math.PI * 2); ctx.fill();
+            }
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    if (container) {
+        window.addEventListener('resize', () => { if (canvas.width !== container.offsetWidth) resizeCanvas(); });
+        resizeCanvas();
+        animate();
+    }
+}
+
+/**
+ * Interactive Parallax & Glow Tracking
+ */
+function initInteractiveElements() {
+    const cards = document.querySelectorAll('.interactive-card');
+    cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (window.innerWidth < 1024) return;
+        const mouseX = e.clientX / window.innerWidth - 0.5;
+        const mouseY = e.clientY / window.innerHeight - 0.5;
+        document.querySelectorAll('[data-depth]').forEach(el => {
+            const depth = parseFloat(el.getAttribute('data-depth'));
+            el.style.transform = `translate3d(${mouseX * depth * 100}px, ${mouseY * depth * 100}px, 0) rotateX(${-mouseY * depth * 20}deg) rotateY(${mouseX * depth * 20}deg)`;
+        });
+    });
+}
+
+// Global Initialization for Landing Page
+document.addEventListener('DOMContentLoaded', () => {
+    initHeroAnimation();
+    initInteractiveElements();
+
+    const tBtn = document.getElementById('translate-btn');
+    if (tBtn) tBtn.addEventListener('click', toggleLanguage);
+});
