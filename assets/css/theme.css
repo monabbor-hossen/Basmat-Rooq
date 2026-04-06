@@ -162,6 +162,33 @@
 
     /* --- 3D Orbit Radius --- */
     --orbit-radius: 160px;
+
+    /* --- Extracted Colors --- */
+    --extracted-color-1: #3db89a;
+    --extracted-color-2: rgba(0, 0, 0, 0);
+    --extracted-color-3: rgba(0, 0, 0, 0.02);
+    --extracted-color-4: rgba(0, 0, 0, 0.03);
+    --extracted-color-5: rgba(1, 18, 12, 0.85);
+    --extracted-color-6: rgba(1, 18, 12, 0.95);
+    --extracted-color-7: rgba(1, 24, 16, 0.95);
+    --extracted-color-8: rgba(1, 24, 16, 0.98);
+    --extracted-color-9: rgba(1, 26, 17, 0.97);
+    --extracted-color-10: rgba(2, 48, 32, 0.12);
+    --extracted-color-11: rgba(2, 48, 32, 0.6);
+    --extracted-color-12: rgba(2, 48, 32, 0.8);
+    --extracted-color-13: rgba(2, 48, 32, 0.85);
+    --extracted-color-14: rgba(2, 48, 32, 0.95);
+    --extracted-color-15: rgba(212, 175, 55, 0.4);
+    --extracted-color-16: rgba(220, 53, 69, 0.12);
+    --extracted-color-17: rgba(220, 53, 69, 0.3);
+    --extracted-color-18: rgba(255, 255, 255, 0.07);
+    --extracted-color-19: rgba(3, 74, 44, 0.85);
+    --extracted-color-20: rgba(5, 5, 5, 0.99);
+    --extracted-color-21: rgba(82, 236, 197, 0.1);
+    --extracted-color-22: rgba(82, 236, 197, 0.15);
+    --extracted-color-23: rgba(82, 236, 197, 0.3);
+    --extracted-color-24: rgba(82, 236, 197, 0.4);
+    --extracted-color-25: rgba(82, 236, 197, 0.5);
 }
 
 /* =========================================
@@ -976,14 +1003,14 @@ a:hover .avatar-circle-refined,
 
 /* ---- Sidebar ---- */
 .chat-sidebar {
-    background: linear-gradient(180deg, rgba(2, 48, 32, 0.85) 0%, rgba(1, 24, 16, 0.95) 100%);
+    background: linear-gradient(180deg, var(--extracted-color-13) 0%, var(--extracted-color-7) 100%);
     border-right: 1px solid var(--secondary-10) !important;
 }
 
 .chat-sidebar-header {
     background: var(--bg-header);
     color: var(--rooq-secondary);
-    font-size: 0.7rem;
+    font-size: var(--fs-inv-ref);
     letter-spacing: 1.5px;
     text-transform: uppercase;
     font-weight: var(--fw-bold);
@@ -1011,7 +1038,7 @@ a:hover .avatar-circle-refined,
 }
 
 .client-chat-link.active-chat {
-    background: linear-gradient(90deg, rgba(2, 48, 32, 0.6) 0%, var(--secondary-08) 100%) !important;
+    background: linear-gradient(90deg, var(--extracted-color-11) 0%, var(--secondary-08) 100%) !important;
     border-left: 3px solid var(--rooq-secondary) !important;
 }
 
@@ -1036,7 +1063,7 @@ a:hover .avatar-circle-refined,
 }
 
 .active-chat .chat-avatar {
-    background: rgba(2, 48, 32, 0.8);
+    background: var(--extracted-color-12);
     border-color: var(--rooq-secondary);
     box-shadow: 0 0 12px var(--secondary-30);
 }
@@ -1054,7 +1081,7 @@ a:hover .avatar-circle-refined,
 
 /* ---- Chat Header Bar ---- */
 .chat-header-bar {
-    background: linear-gradient(90deg, rgba(2, 48, 32, 0.95) 0%, rgba(3, 74, 44, 0.85) 100%) !important;
+    background: linear-gradient(90deg, var(--extracted-color-14) 0%, var(--extracted-color-19) 100%) !important;
     border-bottom: 1px solid var(--secondary-15) !important;
     padding: 14px 18px;
     backdrop-filter: blur(8px);
@@ -1089,7 +1116,7 @@ a:hover .avatar-circle-refined,
 
 /* ---- Messages Area ---- */
 #chatBox {
-    background: radial-gradient(ellipse at top right, rgba(2, 48, 32, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+    background: radial-gradient(ellipse at top right, var(--extracted-color-10) 0%, var(--extracted-color-2) 70%);
 }
 
 .chat-sender-name {
@@ -1107,7 +1134,7 @@ a:hover .avatar-circle-refined,
 
 /* ---- Input Area ---- */
 .chat-input-bar {
-    background: linear-gradient(180deg, rgba(1, 24, 16, 0.98) 0%, rgba(2, 48, 32, 0.95) 100%);
+    background: linear-gradient(180deg, var(--extracted-color-8) 0%, var(--extracted-color-14) 100%);
     border-top: 1px solid var(--secondary-10) !important;
     padding: 12px 16px;
 }
@@ -1126,7 +1153,7 @@ a:hover .avatar-circle-refined,
 
 .chat-input-wrap:focus-within {
     border-color: var(--secondary-50);
-    background: var(--glass-07, rgba(255, 255, 255, 0.07));
+    background: var(--glass-07);
     box-shadow: 0 0 20px var(--secondary-10);
 }
 
@@ -1246,7 +1273,7 @@ a:hover .avatar-circle-refined,
     margin-bottom: 20px !important;
     display: flex;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 4px var(--extracted-color-3);
 }
 
 .pagetitle .breadcrumb-item {
@@ -1272,7 +1299,7 @@ a:hover .avatar-circle-refined,
 .pagetitle .breadcrumb-item+.breadcrumb-item::before {
     content: "›" !important;
     color: var(--rooq-secondary) !important;
-    font-size: 20px;
+    font-size: var(--fs-xl);
     line-height: 1;
     vertical-align: middle;
     padding: 0 10px;
@@ -1313,7 +1340,7 @@ a:hover .avatar-circle-refined,
 }
 
 .text-shadow-glow {
-    text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    text-shadow: 0 0 20px var(--extracted-color-15);
 }
 
 .reveal {
@@ -1334,7 +1361,7 @@ a:hover .avatar-circle-refined,
     background: var(--white);
     border-radius: 12px;
     padding: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 15px var(--extracted-color-4);
     border: 1px solid var(--border-light);
 }
 
@@ -1471,7 +1498,7 @@ a:hover .avatar-circle-refined,
 /* ---- Brand (left) panel ---- */
 .login-brand-side {
     flex: 0 0 48%;
-    background: linear-gradient(145deg, rgba(2, 48, 32, 0.95) 0%, rgba(1, 24, 16, 0.98) 100%);
+    background: linear-gradient(145deg, var(--extracted-color-14) 0%, var(--extracted-color-8) 100%);
     border-right: 1px solid var(--secondary-15);
     display: flex;
     flex-direction: column;
@@ -1617,7 +1644,7 @@ a:hover .avatar-circle-refined,
 /* ---- Form (right) panel ---- */
 .login-form-side {
     flex: 1;
-    background: linear-gradient(160deg, rgba(1, 26, 17, 0.97) 0%, rgba(5, 5, 5, 0.99) 100%);
+    background: linear-gradient(160deg, var(--extracted-color-9) 0%, var(--extracted-color-20) 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1665,7 +1692,7 @@ a:hover .avatar-circle-refined,
 }
 
 .btn-back-subtle i {
-    font-size: 1rem;
+    font-size: var(--fs-lg);
 }
 
 .btn-lang-switch {
@@ -1751,7 +1778,7 @@ a:hover .avatar-circle-refined,
 .login-input-group label {
     display: block;
     color: var(--glass-70);
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
     letter-spacing: 0.8px;
     text-transform: uppercase;
@@ -1801,7 +1828,7 @@ a:hover .avatar-circle-refined,
     border: none;
     cursor: pointer;
     padding: 4px;
-    font-size: 1rem;
+    font-size: var(--fs-lg);
     transition: color 0.2s ease;
     line-height: 1;
 }
@@ -1872,12 +1899,12 @@ a:hover .avatar-circle-refined,
 
 /* ---- Error alert ---- */
 .login-alert {
-    background: rgba(220, 53, 69, 0.12);
-    border: 1px solid rgba(220, 53, 69, 0.3);
+    background: var(--extracted-color-16);
+    border: 1px solid var(--extracted-color-17);
     border-left: 4px solid var(--status-danger);
     border-radius: 12px;
     padding: 12px 16px;
-    color: #ff6b7a;
+    color: var(--status-danger);
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
     display: flex;
@@ -2434,7 +2461,7 @@ a:hover .avatar-circle-refined,
 }
 
 .glass-3d {
-    background: linear-gradient(145deg, var(--brand-glass) 0%, rgba(1, 18, 12, 0.95) 100%);
+    background: linear-gradient(145deg, var(--brand-glass) 0%, var(--extracted-color-6) 100%);
     backdrop-filter: blur(20px);
     border: 1px solid var(--secondary-15);
     box-shadow: 0 20px 40px -10px var(--black-80), inset 0 1px 1px var(--glass-10), inset 0 -1px 1px var(--black-50);
@@ -2449,7 +2476,7 @@ a:hover .avatar-circle-refined,
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(82, 236, 197, 0.15), transparent 40%);
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--extracted-color-22), transparent 40%);
     z-index: -1;
     transition: opacity 0.4s ease;
     opacity: 0;
@@ -2515,7 +2542,7 @@ a:hover .avatar-circle-refined,
 
 .orbit-card {
     background: var(--bg-header);
-    border: 1px solid rgba(82, 236, 197, 0.3);
+    border: 1px solid var(--extracted-color-23);
     border-radius: 1rem;
     padding: 0.5rem;
     width: 60px;
@@ -2523,7 +2550,7 @@ a:hover .avatar-circle-refined,
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px var(--black-50), inset 0 0 15px rgba(82, 236, 197, 0.1);
+    box-shadow: 0 10px 30px var(--black-50), inset 0 0 15px var(--extracted-color-21);
     animation: spin-reverse 40s linear infinite;
     backdrop-filter: blur(10px);
 }
@@ -2545,8 +2572,8 @@ a:hover .avatar-circle-refined,
 }
 
 .btn-glow:hover {
-    background: linear-gradient(135deg, var(--accent-cyan) 0%, #3db89a 100%);
-    box-shadow: 0 15px 30px rgba(82, 236, 197, 0.4), inset 0 0 10px var(--glass-50);
+    background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--extracted-color-1) 100%);
+    box-shadow: 0 15px 30px var(--extracted-color-24), inset 0 0 10px var(--glass-50);
     transform: translateZ(20px) translateY(-3px) scale(1.02);
     color: var(--brand-dark);
 }
@@ -2566,10 +2593,10 @@ a:hover .avatar-circle-refined,
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(1, 18, 12, 0.85);
+    background: var(--extracted-color-5);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(82, 236, 197, 0.15);
+    border-bottom: 1px solid var(--extracted-color-22);
     z-index: 100;
 }
 
@@ -2579,8 +2606,8 @@ a:hover .avatar-circle-refined,
 
 .interactive-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 30px 60px var(--black-90), 0 0 40px rgba(82, 236, 197, 0.15);
-    border-color: rgba(82, 236, 197, 0.5);
+    box-shadow: 0 30px 60px var(--black-90), 0 0 40px var(--extracted-color-22);
+    border-color: var(--extracted-color-25);
     z-index: 20;
 }
 
@@ -2592,7 +2619,7 @@ a:hover .avatar-circle-refined,
 }
 
 .icon-box {
-    background: rgba(2, 48, 32, 0.6);
-    border: 1px solid rgba(82, 236, 197, 0.3);
-    box-shadow: inset 0 0 20px rgba(82, 236, 197, 0.1);
+    background: var(--extracted-color-11);
+    border: 1px solid var(--extracted-color-23);
+    box-shadow: inset 0 0 20px var(--extracted-color-21);
 }
