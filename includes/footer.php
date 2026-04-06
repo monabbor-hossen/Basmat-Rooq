@@ -12,7 +12,7 @@
                 </div>
                 <a href="mailto:Kh70007980@gmail.com"
                     class="btn-glow px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-lg sm:text-xl font-bold tracking-wide flex items-center gap-4 w-full md:w-auto justify-center">
-                    Contact Fayenor <i class="fa-solid fa-arrow-right"></i>
+                    Contact Fayenor <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
 
@@ -34,11 +34,11 @@
                     <h4 class="text-white font-bold mb-5 uppercase tracking-widest text-sm">Headquarters</h4>
                     <ul class="text-gray-400 space-y-4 text-sm sm:text-base">
                         <li class="flex items-start justify-center sm:justify-start gap-3">
-                            <i class="fa-solid fa-location-dot text-[#52ecc5] mt-1"></i>
+                            <i class="bi bi-geo-alt-fill text-[#52ecc5] mt-1"></i>
                             <span class="text-left">Unaizah, Al-Qassim<br>Kingdom of Saudi Arabia</span>
                         </li>
                         <li class="flex items-center justify-center sm:justify-start gap-3 mt-4">
-                            <i class="fa-solid fa-envelope text-[#52ecc5]"></i>
+                            <i class="bi bi-envelope-fill text-[#52ecc5]"></i>
                             Kh70007980@gmail.com
                         </li>
                     </ul>

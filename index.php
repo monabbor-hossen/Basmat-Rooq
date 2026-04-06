@@ -54,7 +54,7 @@ require_once 'includes/header.php';
                     class="glass-3d p-5 sm:p-8 interactive-card flex flex-col items-center text-center group cursor-pointer">
                     <div
                         class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl icon-box flex items-center justify-center mb-4 sm:mb-6 transition-all group-hover:shadow-[0_0_25px_rgba(82,236,197,0.4)] group-hover:scale-110 z-30">
-                        <i class="fa-solid fa-file-signature text-2xl sm:text-3xl text-[#52ecc5]"></i>
+                        <i class="bi bi-file-earmark-text text-2xl sm:text-3xl text-[#52ecc5]"></i>
                     </div>
                     <h3 class="text-base sm:text-xl font-bold text-white mb-2 z-20">AoA & C.R. Issuance</h3>
                     <p class="text-xs sm:text-sm text-gray-400 z-10 leading-relaxed">Precision drafting of Articles
@@ -69,7 +69,7 @@ require_once 'includes/header.php';
                     </div>
                     <div
                         class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl icon-box flex items-center justify-center mb-4 sm:mb-6 transition-all group-hover:shadow-[0_0_25px_rgba(82,236,197,0.4)] group-hover:scale-110 z-30">
-                        <i class="fa-solid fa-building-columns text-2xl sm:text-3xl text-[#52ecc5]"></i>
+                        <i class="bi bi-bank text-2xl sm:text-3xl text-[#52ecc5]"></i>
                     </div>
                     <h3 class="text-base sm:text-xl font-bold text-white mb-2 z-20">MISA Investor Gateway</h3>
                     <p class="text-xs sm:text-sm text-gray-400 z-10 leading-relaxed">Securing foreign direct
@@ -81,7 +81,7 @@ require_once 'includes/header.php';
                     class="glass-3d p-5 sm:p-8 interactive-card flex flex-col items-center text-center group cursor-pointer">
                     <div
                         class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl icon-box flex items-center justify-center mb-4 sm:mb-6 transition-all group-hover:shadow-[0_0_25px_rgba(82,236,197,0.4)] group-hover:scale-110 z-30">
-                        <i class="fa-solid fa-scale-balanced text-2xl sm:text-3xl text-[#52ecc5]"></i>
+                        <i class="bi bi-bank2 text-2xl sm:text-3xl text-[#52ecc5]"></i>
                     </div>
                     <h3 class="text-base sm:text-xl font-bold text-white mb-2 z-20">Compliance Architecture</h3>
                     <p class="text-xs sm:text-sm text-gray-400 z-10 leading-relaxed">Structuring labor, tax, and
@@ -106,7 +106,7 @@ require_once 'includes/header.php';
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
                         <div
                             class="w-24 h-24 sm:w-36 sm:h-36 rounded-full glass-3d flex items-center justify-center border-[3px] border-[#52ecc5] shadow-[0_0_60px_rgba(82,236,197,0.4)] bg-[#023020]">
-                            <img src="https://fayenor.com//assets/img/logo.png" alt="Fayenor"
+                            <img src="<?php echo BASE_URL; ?>assets/img/logo.png" alt="Fayenor"
                                 class="h-12 sm:h-20 w-auto" style="filter: brightness(0) invert(1);">
                         </div>
                     </div>
@@ -115,7 +115,7 @@ require_once 'includes/header.php';
                     <div class="orbit-item"
                         style="transform: translate(-50%, -50%) rotateY(0deg) translateZ(var(--orbit-radius));">
                         <div class="orbit-card"><img
-                                src="https://fayenor.com/assets/img/icons/Ministry_of_Investment_Logo-Dark.svg"
+                                src="<?php echo BASE_URL; ?>assets/img/icons/Ministry_of_Investment_Logo-Dark.svg"
                                 alt="MISA"
                                 class="filter brightness-0 invert drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
                         </div>
@@ -123,30 +123,30 @@ require_once 'includes/header.php';
                     <div class="orbit-item"
                         style="transform: translate(-50%, -50%) rotateY(60deg) translateZ(var(--orbit-radius));">
                         <div class="orbit-card"><img
-                                src="https://fayenor.com/assets/img/icons/Ministry_of_Commerce_Logo.svg" alt="Commerce"
+                                src="<?php echo BASE_URL; ?>assets/img/icons/Ministry_of_Commerce_Logo.svg" alt="Commerce"
                                 class="filter brightness-0 invert drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
                         </div>
                     </div>
                     <div class="orbit-item"
                         style="transform: translate(-50%, -50%) rotateY(120deg) translateZ(var(--orbit-radius));">
                         <div class="orbit-card bg-[#e2e8f0]"><img
-                                src="https://fayenor.com/assets/img/icons/GOSI-General-Organization-for-Social-Insurance.jpg"
+                                src="<?php echo BASE_URL; ?>assets/img/icons/GOSI-General-Organization-for-Social-Insurance.jpg"
                                 alt="GOSI" class="h-full w-full object-contain"></div>
                     </div>
                     <div class="orbit-item"
                         style="transform: translate(-50%, -50%) rotateY(180deg) translateZ(var(--orbit-radius));">
-                        <div class="orbit-card bg-[#e2e8f0]"><img src="https://fayenor.com/assets/img/icons/qiwa.svg"
+                        <div class="orbit-card bg-[#e2e8f0]"><img src="<?php echo BASE_URL; ?>assets/img/icons/qiwa.svg"
                                 alt="Qiwa"></div>
                     </div>
                     <div class="orbit-item"
                         style="transform: translate(-50%, -50%) rotateY(240deg) translateZ(var(--orbit-radius));">
-                        <div class="orbit-card"><img src="https://fayenor.com/assets/img/icons/MUQEEM.png" alt="Muqeem"
+                        <div class="orbit-card"><img src="<?php echo BASE_URL; ?>assets/img/icons/MUQEEM.png" alt="Muqeem"
                                 class="drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"></div>
                     </div>
                     <div class="orbit-item"
                         style="transform: translate(-50%, -50%) rotateY(300deg) translateZ(var(--orbit-radius));">
                         <div class="orbit-card bg-[#e2e8f0]"><img
-                                src="https://fayenor.com/assets/img/icons/Saudi_building_code_logo.svg" alt="SBC">
+                                src="<?php echo BASE_URL; ?>assets/img/icons/Saudi_building_code_logo.svg" alt="SBC">
                         </div>
                     </div>
 
@@ -217,7 +217,7 @@ require_once 'includes/header.php';
                 <h3
                     class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 translate-z-40 flex items-center gap-3 sm:gap-4">
                     <span class="text-[#52ecc5] text-2xl sm:text-3xl drop-shadow-[0_0_15px_rgba(82,236,197,0.4)]"><i
-                            class="fa-solid fa-gavel"></i></span>
+                            class="bi bi-hammer"></i></span>
                     Legal Entity Structuring
                 </h3>
                 <p class="text-gray-300 leading-relaxed text-sm sm:text-lg translate-z-20 mb-8">
@@ -226,11 +226,11 @@ require_once 'includes/header.php';
                     shield liability while maximizing your scope under the Foreign Investment Law.
                 </p>
                 <ul class="space-y-3 sm:space-y-4 text-xs sm:text-base text-gray-400 translate-z-30 font-medium">
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#52ecc5]"></i>
+                    <li class="flex items-center gap-3"><i class="bi bi-check-lg text-[#52ecc5]"></i>
                         Notarization & Chamber Registration</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#52ecc5]"></i> Shareholder
+                    <li class="flex items-center gap-3"><i class="bi bi-check-lg text-[#52ecc5]"></i> Shareholder
                         Agreements</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#52ecc5]"></i> Board
+                    <li class="flex items-center gap-3"><i class="bi bi-check-lg text-[#52ecc5]"></i> Board
                         Resolution Drafting</li>
                 </ul>
             </div>
@@ -243,7 +243,7 @@ require_once 'includes/header.php';
                 <h3
                     class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 translate-z-40 flex items-center gap-3 sm:gap-4">
                     <span class="text-[#52ecc5] text-2xl sm:text-3xl drop-shadow-[0_0_15px_rgba(82,236,197,0.4)]"><i
-                            class="fa-solid fa-users-viewfinder"></i></span>
+                            class="bi bi-people-fill"></i></span>
                     Workforce & Localization
                 </h3>
                 <p class="text-gray-300 leading-relaxed text-sm sm:text-lg translate-z-20 mb-8">
@@ -252,11 +252,11 @@ require_once 'includes/header.php';
                     strategies to keep your company in the Platinum compliance tier.
                 </p>
                 <ul class="space-y-3 sm:space-y-4 text-xs sm:text-base text-gray-400 translate-z-30 font-medium">
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#52ecc5]"></i> Saudization
+                    <li class="flex items-center gap-3"><i class="bi bi-check-lg text-[#52ecc5]"></i> Saudization
                         Tier Strategy</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#52ecc5]"></i> Investor
+                    <li class="flex items-center gap-3"><i class="bi bi-check-lg text-[#52ecc5]"></i> Investor
                         Iqama Processing</li>
-                    <li class="flex items-center gap-3"><i class="fa-solid fa-check text-[#52ecc5]"></i> Employment
+                    <li class="flex items-center gap-3"><i class="bi bi-check-lg text-[#52ecc5]"></i> Employment
                         Contract Authentication</li>
                 </ul>
             </div>

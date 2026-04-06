@@ -37,10 +37,12 @@ $_isLandingPage = isset($isLandingPage) && $isLandingPage;
     <?php if ($_isLandingPage): ?>
         <title>Fayenor | Premier Gateway to the Saudi Market</title>
 
+        <link rel="shortcut icon" href="<?php echo BASE_URL; ?>assets/img/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="<?php echo BASE_URL; ?>assets/img/favicon.svg" type="image/svg+xml" />
         <!-- External Assets -->
         <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/theme.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <script src="<?php echo BASE_URL; ?>assets/js/tailwindcss.js"></script>
+        <link href="<?php echo BASE_URL; ?>assets/css/bootstrap-icons.min.css" rel="stylesheet">
 
         <!-- Google Translate Integration (Hidden UI) -->
         <style>
@@ -141,7 +143,7 @@ $_isLandingPage = isset($isLandingPage) && $isLandingPage;
                             class="flex items-center justify-center gap-2 px-2 py-2 sm:px-3 sm:py-2 rounded-lg text-gray-300 hover:text-[#52ecc5] hover:bg-white/5 transition-all group"
                             title="<?php echo $lang === 'en' ? 'Switch to Arabic' : 'Switch to English'; ?>">
                             <i
-                                class="fa-solid fa-globe text-lg group-hover:drop-shadow-[0_0_8px_rgba(82,236,197,0.6)] transition-all"></i>
+                                class="bi bi-globe text-lg group-hover:drop-shadow-[0_0_8px_rgba(82,236,197,0.6)] transition-all"></i>
                             <span class="font-sans font-medium text-sm hidden sm:block mt-0.5">
                                 <?php echo $lang === 'en' ? 'العربية' : 'English'; ?>
                             </span>
@@ -151,7 +153,7 @@ $_isLandingPage = isset($isLandingPage) && $isLandingPage;
                         <!-- Portal Login -->
                         <a href="<?php echo BASE_URL; ?>public/login.php"
                             class="flex items-center justify-center gap-1.5 px-3 py-1.5 sm:px-6 sm:py-2.5 rounded-full border border-[rgba(176,196,222,0.4)] bg-[#023020]/60 text-white hover:bg-[#52ecc5] hover:text-[#023020] hover:border-[#52ecc5] transition-all duration-300 shadow-[0_0_10px_rgba(176,196,222,0.1)] hover:shadow-[0_0_20px_rgba(82,236,197,0.4)] flex-shrink-0">
-                            <i class="fa-solid fa-arrow-right-to-bracket text-sm sm:text-base"></i>
+                            <i class="bi bi-box-arrow-in-right text-sm sm:text-base"></i>
                             <span
                                 class="hidden sm:inline text-[11px] sm:text-sm font-bold tracking-wider uppercase whitespace-nowrap"><?php echo $text['login'] ?? 'Portal'; ?></span>
                         </a>
