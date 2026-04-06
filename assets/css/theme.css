@@ -968,27 +968,27 @@ a:hover .avatar-circle-refined,
    (Dark Green + Steel Blue)
    ========================================= */
 .chat-container-box {
-    border: 1px solid rgba(176, 196, 222, 0.15) !important;
+    border: 1px solid var(--secondary-15) !important;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px var(--black-30);
 }
 
 /* ---- Sidebar ---- */
 .chat-sidebar {
     background: linear-gradient(180deg, rgba(2, 48, 32, 0.85) 0%, rgba(1, 24, 16, 0.95) 100%);
-    border-right: 1px solid rgba(176, 196, 222, 0.1) !important;
+    border-right: 1px solid var(--secondary-10) !important;
 }
 
 .chat-sidebar-header {
-    background: rgba(2, 48, 32, 0.9);
+    background: var(--bg-header);
     color: var(--rooq-secondary);
     font-size: 0.7rem;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     font-weight: var(--fw-bold);
     padding: 14px 18px;
-    border-bottom: 1px solid rgba(176, 196, 222, 0.1);
+    border-bottom: 1px solid var(--secondary-10);
     position: sticky;
     top: 0;
     z-index: 1;
@@ -998,7 +998,7 @@ a:hover .avatar-circle-refined,
 .client-chat-link {
     background: transparent !important;
     border: none !important;
-    border-bottom: 1px solid rgba(176, 196, 222, 0.06) !important;
+    border-bottom: 1px solid var(--secondary-08) !important;
     padding: 14px 16px !important;
     transition: all 0.25s ease;
     text-decoration: none;
@@ -1007,11 +1007,11 @@ a:hover .avatar-circle-refined,
 }
 
 .client-chat-link:hover {
-    background: rgba(176, 196, 222, 0.06) !important;
+    background: var(--secondary-08) !important;
 }
 
 .client-chat-link.active-chat {
-    background: linear-gradient(90deg, rgba(2, 48, 32, 0.6) 0%, rgba(176, 196, 222, 0.08) 100%) !important;
+    background: linear-gradient(90deg, rgba(2, 48, 32, 0.6) 0%, var(--secondary-08) 100%) !important;
     border-left: 3px solid var(--rooq-secondary) !important;
 }
 
@@ -1028,7 +1028,7 @@ a:hover .avatar-circle-refined,
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-bold);
     color: var(--rooq-secondary);
     flex-shrink: 0;
@@ -1043,13 +1043,13 @@ a:hover .avatar-circle-refined,
 
 .chat-item-name {
     color: var(--glass-80);
-    font-size: 0.9rem;
+    font-size: var(--fs-base);
     font-weight: var(--fw-semi);
 }
 
 .chat-item-sub {
     color: var(--secondary-50);
-    font-size: 0.72rem;
+    font-size: var(--fs-inv-ref);
 }
 
 /* ---- Chat Header Bar ---- */
@@ -1100,8 +1100,8 @@ a:hover .avatar-circle-refined,
 }
 
 .chat-timestamp {
-    color: rgba(255, 255, 255, 0.35);
-    font-size: 0.67rem;
+    color: var(--glass-30);
+    font-size: var(--fs-inv-micro);
     letter-spacing: 0.3px;
 }
 
@@ -1191,7 +1191,7 @@ a:hover .avatar-circle-refined,
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: var(--fs-xxl);
     color: var(--secondary-50);
     margin-bottom: 20px;
 }
@@ -1541,8 +1541,8 @@ a:hover .avatar-circle-refined,
 }
 
 .brand-title {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: var(--fs-xxl);
+    font-weight: var(--fw-bold);
     color: var(--white);
     letter-spacing: 3px;
     margin: 0 0 6px;
@@ -1550,8 +1550,8 @@ a:hover .avatar-circle-refined,
 
 .brand-subtitle {
     color: var(--rooq-secondary);
-    font-size: 0.82rem;
-    font-weight: 500;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 28px;
@@ -1567,7 +1567,7 @@ a:hover .avatar-circle-refined,
 
 .brand-tagline {
     color: var(--glass-70);
-    font-size: 0.88rem;
+    font-size: var(--fs-sm);
     line-height: 1.7;
     max-width: 280px;
     margin: 0 auto 40px;
@@ -1604,14 +1604,14 @@ a:hover .avatar-circle-refined,
 
 .brand-feature-item i {
     color: var(--rooq-secondary);
-    font-size: 1.1rem;
+    font-size: var(--fs-lg);
     flex-shrink: 0;
 }
 
 .brand-feature-item span {
     color: var(--glass-80);
-    font-size: 0.82rem;
-    font-weight: 500;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
 }
 
 /* ---- Form (right) panel ---- */
@@ -1644,8 +1644,8 @@ a:hover .avatar-circle-refined,
     gap: 8px;
     color: var(--glass-50);
     text-decoration: none;
-    font-size: 0.83rem;
-    font-weight: 600;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
     letter-spacing: 0.3px;
     transition: all 0.3s ease;
     padding: 6px 12px;
@@ -1677,8 +1677,8 @@ a:hover .avatar-circle-refined,
     border: 1px solid var(--secondary-20);
     border-radius: 50px;
     padding: 6px 16px;
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
     text-decoration: none;
     letter-spacing: 0.3px;
     transition: all 0.3s ease;
@@ -1701,12 +1701,12 @@ a:hover .avatar-circle-refined,
     padding: 44px 40px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--glass-05) inset;
+    box-shadow: 0 20px 60px var(--black-50), 0 0 0 1px var(--glass-05) inset;
     transition: box-shadow 0.4s ease;
 }
 
 .login-card:hover {
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), 0 0 30px var(--secondary-08);
+    box-shadow: 0 24px 70px var(--black-50), 0 0 30px var(--secondary-08);
 }
 
 .login-card-header {
@@ -1722,7 +1722,7 @@ a:hover .avatar-circle-refined,
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: var(--fs-xl);
     color: var(--rooq-secondary);
     margin-bottom: 20px;
     box-shadow: 0 4px 16px var(--secondary-10);
@@ -1730,15 +1730,15 @@ a:hover .avatar-circle-refined,
 
 .login-card-header h2 {
     color: var(--white);
-    font-size: 1.55rem;
-    font-weight: 700;
+    font-size: var(--fs-inv-amount);
+    font-weight: var(--fw-bold);
     margin: 0 0 8px;
     letter-spacing: 0.3px;
 }
 
 .login-card-header p {
     color: var(--glass-50);
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     margin: 0;
     line-height: 1.6;
 }
@@ -1752,7 +1752,7 @@ a:hover .avatar-circle-refined,
     display: block;
     color: var(--glass-70);
     font-size: 0.78rem;
-    font-weight: 600;
+    font-weight: var(--fw-semi);
     letter-spacing: 0.8px;
     text-transform: uppercase;
     margin-bottom: 8px;
@@ -1770,7 +1770,7 @@ a:hover .avatar-circle-refined,
     border-radius: 12px;
     padding: 14px 18px;
     color: var(--white);
-    font-size: 0.9rem;
+    font-size: var(--fs-base);
     font-family: inherit;
     outline: none;
     transition: all 0.3s ease;
@@ -1834,7 +1834,7 @@ a:hover .avatar-circle-refined,
 
 .login-check-row label {
     color: var(--glass-50);
-    font-size: 0.83rem;
+    font-size: var(--fs-xs);
     cursor: pointer;
 }
 
@@ -1846,8 +1846,8 @@ a:hover .avatar-circle-refined,
     border: none;
     border-radius: 12px;
     padding: 15px;
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-bold);
     font-family: inherit;
     letter-spacing: 0.5px;
     cursor: pointer;
@@ -1878,8 +1878,8 @@ a:hover .avatar-circle-refined,
     border-radius: 12px;
     padding: 12px 16px;
     color: #ff6b7a;
-    font-size: 0.84rem;
-    font-weight: 600;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1901,14 +1901,14 @@ a:hover .avatar-circle-refined,
 
 .mobile-brand-strip .m-title {
     color: var(--white);
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-lg);
     letter-spacing: 2px;
 }
 
 .mobile-brand-strip .m-sub {
     color: var(--rooq-secondary);
-    font-size: 0.72rem;
+    font-size: var(--fs-inv-ref);
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
@@ -2436,8 +2436,8 @@ a:hover .avatar-circle-refined,
 .glass-3d {
     background: linear-gradient(145deg, var(--brand-glass) 0%, rgba(1, 18, 12, 0.95) 100%);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(176, 196, 222, 0.15);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1), inset 0 -1px 1px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--secondary-15);
+    box-shadow: 0 20px 40px -10px var(--black-80), inset 0 1px 1px var(--glass-10), inset 0 -1px 1px var(--black-50);
     transform-style: preserve-3d;
     border-radius: 1.5rem;
     position: relative;
@@ -2514,7 +2514,7 @@ a:hover .avatar-circle-refined,
 }
 
 .orbit-card {
-    background: rgba(2, 48, 32, 0.9);
+    background: var(--bg-header);
     border: 1px solid rgba(82, 236, 197, 0.3);
     border-radius: 1rem;
     padding: 0.5rem;
@@ -2523,7 +2523,7 @@ a:hover .avatar-circle-refined,
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(82, 236, 197, 0.1);
+    box-shadow: 0 10px 30px var(--black-50), inset 0 0 15px rgba(82, 236, 197, 0.1);
     animation: spin-reverse 40s linear infinite;
     backdrop-filter: blur(10px);
 }
@@ -2540,26 +2540,26 @@ a:hover .avatar-circle-refined,
     color: var(--rooq-primary);
     position: relative;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 5px 15px rgba(176, 196, 222, 0.2);
+    box-shadow: 0 5px 15px var(--secondary-20);
     transform-style: preserve-3d;
 }
 
 .btn-glow:hover {
     background: linear-gradient(135deg, var(--accent-cyan) 0%, #3db89a 100%);
-    box-shadow: 0 15px 30px rgba(82, 236, 197, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 30px rgba(82, 236, 197, 0.4), inset 0 0 10px var(--glass-50);
     transform: translateZ(20px) translateY(-3px) scale(1.02);
-    color: #01120c;
+    color: var(--brand-dark);
 }
 
 .text-3d {
-    text-shadow: 0 1px 0 #023020, 0 2px 0 #023020, 0 3px 0 #01120c, 0 4px 0 #01120c, 0 10px 20px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 1px 0 var(--rooq-primary), 0 2px 0 var(--rooq-primary), 0 3px 0 var(--brand-dark), 0 4px 0 var(--brand-dark), 0 10px 20px var(--black-80);
 }
 
 /* ---- translate-z utility classes (used in index.php content) ---- */
-.translate-z-10 { transform: translateZ(10px); }
-.translate-z-20 { transform: translateZ(20px); }
-.translate-z-30 { transform: translateZ(30px); }
-.translate-z-40 { transform: translateZ(40px); }
+
+
+
+
 
 .nav-blur {
     position: fixed;
@@ -2579,7 +2579,7 @@ a:hover .avatar-circle-refined,
 
 .interactive-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(82, 236, 197, 0.15);
+    box-shadow: 0 30px 60px var(--black-90), 0 0 40px rgba(82, 236, 197, 0.15);
     border-color: rgba(82, 236, 197, 0.5);
     z-index: 20;
 }

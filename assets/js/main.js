@@ -1194,7 +1194,4 @@ function initInteractiveElements() {
 document.addEventListener('DOMContentLoaded', () => {
     initHeroAnimation();
     initInteractiveElements();
-
-    const tBtn = document.getElementById('translate-btn');
-    if (tBtn) tBtn.addEventListener('click', toggleLanguage);
 });
