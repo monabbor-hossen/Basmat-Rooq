@@ -163,6 +163,11 @@
     /* --- 3D Orbit Radius --- */
     --orbit-radius: 160px;
 
+    /* --- Invest Saudi Inspired Tokens --- */
+    --card-emerald: rgba(1, 42, 32, 0.7);
+    --card-teal: rgba(0, 167, 162, 0.2);
+    --card-border: rgba(255, 255, 255, 0.2);
+
     /* --- Extracted Colors --- */
     --extracted-color-1: #3db89a;
     --extracted-color-2: rgba(0, 0, 0, 0);
@@ -2622,4 +2627,106 @@ a:hover .avatar-circle-refined,
     background: var(--extracted-color-11);
     border: 1px solid var(--extracted-color-23);
     box-shadow: inset 0 0 20px var(--extracted-color-21);
+}
+
+/* --- Scroll Reveal Animations --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* --- Invest Saudi Inspired Cards --- */
+.pillar-card {
+    background: var(--card-emerald);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 380px;
+}
+
+.pillar-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, var(--card-teal), transparent 70%);
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
+}
+
+.pillar-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(82, 236, 197, 0.1);
+}
+
+.pillar-card:hover::before {
+    opacity: 0.6;
+}
+
+.pillar-icon {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #fff, var(--accent-cyan));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(82, 236, 197, 0.3));
+}
+
+.scroll-progress-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-progress-container.visible {
+    opacity: 1;
+}
+
+.scroll-progress-circle {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.scroll-progress-circle circle {
+    fill: none;
+    stroke-width: 4;
+}
+
+.scroll-progress-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+.scroll-progress-bar {
+    stroke: var(--accent-cyan);
+    stroke-dasharray: 175.9;
+    stroke-dashoffset: 175.9;
+    transition: stroke-dashoffset 0.1s linear;
 }

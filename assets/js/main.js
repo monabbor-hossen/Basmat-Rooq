@@ -1194,4 +1194,44 @@ function initInteractiveElements() {
 document.addEventListener('DOMContentLoaded', () => {
     initHeroAnimation();
     initInteractiveElements();
+
+    // --- Scroll Reveal Animation (Intersection Observer) ---
+    const revealElements = document.querySelectorAll('.reveal');
+    if (revealElements.length > 0) {
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+    }
+
+    // --- Scroll Progress Tracker ---
+    const scrollProgress = document.getElementById('scrollProgress');
+    const progressBar = document.getElementById('progressBar');
+    
+    if (scrollProgress && progressBar) {
+        const circumference = 2 * Math.PI * 28; // Radius 28
+        progressBar.style.strokeDasharray = circumference;
+        
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const b = document.body;
+            const st = 'scrollTop';
+            const sh = 'scrollHeight';
+
+            const scrollPercent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight);
+            const drawLength = circumference * scrollPercent;
+            progressBar.style.strokeDashoffset = circumference - drawLength;
+
+            if ((h[st] || b[st]) > 100) {
+                scrollProgress.classList.add('visible');
+            } else {
+                scrollProgress.classList.remove('visible');
+            }
+        });
+    }
 });

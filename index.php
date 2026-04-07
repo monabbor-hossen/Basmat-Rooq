@@ -5,7 +5,7 @@ require_once 'includes/header.php';
 
 <!-- Interactive 3D Hero Section -->
 <header
-    class="relative min-h-[100vh] min-h-[100svh] flex items-center justify-center pt-36 sm:pt-44 pb-12 overflow-hidden perspective-base parallax-scene"
+    class="relative min-h-[100vh] min-h-[100svh] flex items-center justify-center pt-36 sm:pt-44 pb-12 overflow-hidden perspective-base parallax-scene reveal"
     id="hero-section">
 
     <canvas id="hero-canvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"
@@ -94,7 +94,7 @@ require_once 'includes/header.php';
 </header>
 
 <!-- Government Ecosystem Section -->
-<section id="ecosystem" class="py-20 sm:py-32 relative z-10 perspective-base preserve-3d">
+<section id="ecosystem" class="py-20 sm:py-32 relative z-10 perspective-base preserve-3d reveal">
     <div class="container mx-auto px-4 sm:px-6 max-w-7xl">
         <div class="flex flex-col lg:flex-row items-center gap-12 sm:gap-20 preserve-3d">
 
@@ -199,9 +199,65 @@ require_once 'includes/header.php';
     </div>
 </section>
 
+<!-- Investment Pillars Section (Inspired by InvestSaudi) -->
+<section id="pillars" class="py-20 sm:py-32 relative z-10 perspective-base reveal">
+    <div class="container mx-auto px-4 sm:px-6 max-w-7xl">
+        <div class="text-center mb-16 sm:mb-24 reveal">
+            <h2 class="text-xs sm:text-sm font-bold tracking-widest text-[#52ecc5] uppercase mb-4 drop-shadow-[0_0_10px_rgba(82,236,197,0.4)]">
+                The Saudi Advantage
+            </h2>
+            <h3 class="text-3xl sm:text-5xl font-bold text-white text-3d">
+                A Nation of Unprecedented Scale.
+            </h3>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <!-- Pillar 1 -->
+            <div class="pillar-card reveal reveal-delay-1">
+                <i class="bi bi-rocket-takeoff pillar-icon"></i>
+                <h4 class="text-xl font-bold text-white mb-4">Transformational Vision</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    70% of the Saudi population is under 35, driving a dynamic, digitally-native economy at the heart of Vision 2030.
+                </p>
+                <div class="mt-auto pt-6 text-[#52ecc5] font-bold text-lg">70% <span class="text-xs text-gray-500 uppercase tracking-widest ml-1">Youth</span></div>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div class="pillar-card reveal reveal-delay-2">
+                <i class="bi bi-shield-check pillar-icon"></i>
+                <h4 class="text-xl font-bold text-white mb-4">Trusted Destination</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Recognized as the #1 FDI Destination in MENA, with 90+ bilateral tax treaties ensuring investor security.
+                </p>
+                <div class="mt-auto pt-6 text-[#52ecc5] font-bold text-lg">#1 <span class="text-xs text-gray-500 uppercase tracking-widest ml-1">FDI Destination</span></div>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div class="pillar-card reveal reveal-delay-3">
+                <i class="bi bi-cpu pillar-icon"></i>
+                <h4 class="text-xl font-bold text-white mb-4">Digital Infrastructure</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Ranked #2 globally in Digital Government Maturity, offering seamless electronic business registration.
+                </p>
+                <div class="mt-auto pt-6 text-[#52ecc5] font-bold text-lg">#2 <span class="text-xs text-gray-500 uppercase tracking-widest ml-1">Digital Rank</span></div>
+            </div>
+
+            <!-- Pillar 4 -->
+            <div class="pillar-card reveal reveal-delay-4">
+                <i class="bi bi-graph-up-arrow pillar-icon"></i>
+                <h4 class="text-xl font-bold text-white mb-4">Scale & Opportunity</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Access to USD 2T+ in national investment pipelines and 100% foreign ownership rights in strategic sectors.
+                </p>
+                <div class="mt-auto pt-6 text-[#52ecc5] font-bold text-lg">$2T+ <span class="text-xs text-gray-500 uppercase tracking-widest ml-1">Pipeline</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Consultancy Expertise Section -->
 <section id="expertise"
-    class="py-20 sm:py-32 relative z-10 bg-gradient-to-b from-transparent to-[#01120c] perspective-base preserve-3d">
+    class="py-20 sm:py-32 relative z-10 bg-gradient-to-b from-transparent to-[#01120c] perspective-base preserve-3d reveal">
     <div class="container mx-auto px-4 sm:px-6 max-w-7xl text-center preserve-3d">
 
         <h2 class="text-3xl sm:text-5xl font-bold mb-12 sm:mb-20 text-white text-3d translate-z-40">Consultancy
@@ -266,3 +322,14 @@ require_once 'includes/header.php';
 </section>
 
 <?php include 'includes/footer.php'; ?>
+
+<!-- Scroll Progress Component -->
+<div class="scroll-progress-container" id="scrollProgress">
+    <svg class="scroll-progress-circle" width="60" height="60" viewBox="0 0 60 60">
+        <circle class="scroll-progress-bg" cx="30" cy="30" r="28"></circle>
+        <circle class="scroll-progress-bar" id="progressBar" cx="30" cy="30" r="28"></circle>
+    </svg>
+    <div class="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold pointer-events-none uppercase tracking-tighter">
+        Scroll
+    </div>
+</div>
