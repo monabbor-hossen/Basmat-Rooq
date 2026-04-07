@@ -7,7 +7,7 @@
     --theme-accent: #B0C4DE;
     --text-dark: #111111;
     --text-muted: #555555;
-    --bg-offwhite: #ffffff;
+    --bg-offwhite: #dfded8;
 }
 
 body.standalone-contract-page {
@@ -100,7 +100,7 @@ body.standalone-contract-page {
     width: 794px;
     height: 1122px;
     /* FIX: Reduced by exactly 1px to prevent micro-overflows */
-    background-image: url('../img/pad.jpg');
+    background-image: url('../img/pad.jpeg');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-color: white;
@@ -284,7 +284,7 @@ body.standalone-contract-page {
     line-height: 1.6;
     font-size: 11pt;
     border-top: 3px solid var(--theme-primary);
-    margin-top: 10px;
+    margin-top: 30px;
 }
 
 .inner-doc-title {
