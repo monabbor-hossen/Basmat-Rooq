@@ -223,12 +223,24 @@ $txt_iban_number = !empty($customText['iban_number']) ? $customText['iban_number
 $txt_account_name = !empty($customText['account_name']) ? $customText['account_name'] : ($globalDefaults['account_name'] ?? '');
 
 // --- DYNAMIC LICENSE LABELING ---
-$licenseScopeRaw = $client['license_scope_status'] ?? 'Service';
-$licenseLabelArr = explode(' ', $licenseScopeRaw);
-$licenseMainType = !empty($licenseLabelArr[0]) ? $licenseLabelArr[0] : 'Service'; // e.g., "Service", "Trade", "Industrial"
+$licenseScopeRaw = trim($client['license_scope_status'] ?? 'Service');
+
+// Normalize to Title Case for better presentation (e.g., "Service License Update")
+$licenseFormatted = ucwords(strtolower($licenseScopeRaw));
+
+// Automatically append "License" if the scope doesn't already have it
+if (stripos($licenseFormatted, 'License') === false && stripos($licenseFormatted, 'Licence') === false && !in_array(strtolower($licenseFormatted), ['not required', 'pending', 'done', ''])) {
+    $licenseFullName = $licenseFormatted . " License";
+} else {
+    $licenseFullName = $licenseFormatted;
+}
+
+// Short version without "License" for Arabic specific display
+$licenseShortBase = trim(str_ireplace('License', '', $licenseFullName));
 
 $pdfClientName = htmlspecialchars(str_replace(' ', '_', $clientName));
-$pageTitle = htmlspecialchars($licenseMainType) . " License Agreement - " . htmlspecialchars($clientName);
+$licenseTypeFile = str_replace(' ', '_', $licenseFullName);
+$pageTitle = htmlspecialchars($licenseFullName) . " Agreement - " . htmlspecialchars($clientName);
 require_once 'header.php';
 ?>
 
@@ -236,36 +248,18 @@ require_once 'header.php';
     Contract</a>
 <button class="download-btn" onclick="generatePDF()" data-html2canvas-ignore="true">⬇ Download PDF</button>
 
-<div id="contract-content" data-client-name="<?php echo $pdfClientName; ?>">
+<div id="contract-content" data-client-name="<?php echo $pdfClientName; ?>" data-license-type="<?php echo htmlspecialchars($licenseTypeFile); ?>">
 
     <div class="document-page cover-page">
-        <svg width="794" height="1123" viewBox="0 0 794 1123" style="position:absolute; top:0; left:0; z-index:1;"
-            xmlns="http://www.w3.org/2000/svg">
-            <path d="M 0,0 L 550,0 C 350,150 150,220 0,180 Z" fill="none" style="stroke: var(--theme-accent);"
-                stroke-width="4" transform="translate(8, 8)" opacity="0.8" />
-            <path d="M 0,0 L 550,0 C 350,150 150,220 0,180 Z" style="fill: var(--theme-primary);" />
-
-            <path d="M 794,250 C 650,400 650,600 794,750 Z" fill="none" style="stroke: var(--theme-accent);"
-                stroke-width="4" transform="translate(-8, 0)" opacity="0.8" />
-            <path d="M 794,250 C 650,400 650,600 794,750 Z" style="fill: var(--theme-primary);" />
-
-            <path d="M 0,450 C 100,1050 550,800 794,880" fill="none" style="stroke: var(--theme-accent);"
-                stroke-width="4" transform="translate(0, -8)" opacity="0.8"></path>
-            <path d="M 0,450 C 100,1050 550,800 794,880 L 794,1025 C 500,960 200,1123 0,1123 Z"
-                style="fill: var(--theme-primary);"></path>
-        </svg>
-        <img src="../assets/img/logo-icon.png" class="watermark" alt="">
 
         <div class="cover-content-layer">
 
-            <img src="../assets/img/logo.png" class="brand-logo" alt="Logo">
-
             <div class="title-section">
                 <div class="doc-arabic">
-                    <?php echo $licenseMainType === 'Service' ? 'ملف ترخيص وزارة الاستثمار' : 'ترخيص وزارة الاستثمار - ' . htmlspecialchars($licenseMainType); ?>
+                    <?php echo strtolower($licenseShortBase) === 'service' ? 'ملف ترخيص وزارة الاستثمار' : 'ترخيص وزارة الاستثمار - ' . htmlspecialchars($licenseShortBase); ?>
                 </div>
                 <div class="doc-subtitle">MISA INVESTOR</div>
-                <h1 class="cover-main-title"><?php echo strtoupper(htmlspecialchars($licenseMainType)); ?> LICENSE</h1>
+                <h1 class="cover-main-title"><?php echo strtoupper(htmlspecialchars($licenseFullName)); ?></h1>
 
                 <div class="doc-data-box">
                     <div class="data-row">
@@ -329,12 +323,12 @@ require_once 'header.php';
 
     <div class="document-page">
         <div class="content">
-            <div class="inner-doc-title"><?php echo strtoupper(htmlspecialchars($licenseMainType)); ?> LICENSE AGREEMENT
+            <div class="inner-doc-title"><?php echo strtoupper(htmlspecialchars($licenseFullName)); ?> AGREEMENT
             </div>
-            <div class="inner-doc-subtitle">(MISA <?php echo htmlspecialchars($licenseMainType); ?> License
+            <div class="inner-doc-subtitle">(MISA <?php echo htmlspecialchars($licenseFullName); ?>
                 Facilitation)</div>
 
-            <p>This <?php echo htmlspecialchars($licenseMainType); ?> Agreement ("Agreement") is made between:
+            <p>This <?php echo htmlspecialchars($licenseFullName); ?> Agreement ("Agreement") is made between:
             </p>
 
             <div class="layout-table bg-gray">
@@ -348,7 +342,7 @@ require_once 'header.php';
             <h2>1. OBJECTIVE OF THE AGREEMENT</h2>
             <div><?php echo $txt_objective; ?></div>
 
-            <h2>2. PERMITTED ACTIVITIES UNDER <?php echo strtoupper(htmlspecialchars($licenseMainType)); ?> LICENSE</h2>
+            <h2>2. PERMITTED ACTIVITIES UNDER <?php echo strtoupper(htmlspecialchars($licenseFullName)); ?></h2>
             <div><?php echo $txt_permitted; ?></div>
 
             <h2>3. SCOPE OF SERVICES</h2>
@@ -404,7 +398,7 @@ require_once 'header.php';
             <div><?php echo $txt_obligations; ?></div>
 
             <h2>8. TIMELINE & DELAYS</h2>
-            <p>The estimated timeline to complete the MISA <?php echo htmlspecialchars($licenseMainType); ?> License and
+            <p>The estimated timeline to complete the MISA <?php echo htmlspecialchars($licenseFullName); ?> and
                 related registrations is
                 approximately <strong><?php echo htmlspecialchars($txt_timeline_days); ?> working days</strong>,
                 subject to timely submission of documents and payments by the Client.</p>

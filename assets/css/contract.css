@@ -128,7 +128,10 @@ body.standalone-contract-page {
 
 .document-page.cover-page {
     padding: 0;
-    background-color: var(--bg-offwhite);
+    background-color: var(--theme-primary);
+    background-image: url('../img/pad_cover.jpeg');
+    background-size: cover;
+    background-position: center;
 }
 
 /* EDIT PAGE SPECIFIC MODIFIER */
