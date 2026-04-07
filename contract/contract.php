@@ -248,7 +248,8 @@ require_once 'header.php';
     Contract</a>
 <button class="download-btn" onclick="generatePDF()" data-html2canvas-ignore="true">⬇ Download PDF</button>
 
-<div id="contract-content" data-client-name="<?php echo $pdfClientName; ?>" data-license-type="<?php echo htmlspecialchars($licenseTypeFile); ?>">
+<div id="contract-content" data-client-name="<?php echo $pdfClientName; ?>"
+    data-license-type="<?php echo htmlspecialchars($licenseTypeFile); ?>">
 
     <div class="document-page cover-page">
 
@@ -271,7 +272,7 @@ require_once 'header.php';
                         <div class="data-text-block">
                             <span class="data-label">Company Name</span>
                             <span
-                                class="data-value"><?php echo htmlspecialchars($client['company_name'] ?? ''); ?></span>
+                                class="data-value"><?php echo html_entity_decode($client['company_name'] ?? ''); ?></span>
                         </div>
                     </div>
 
@@ -284,7 +285,7 @@ require_once 'header.php';
                         <div class="data-text-block">
                             <span class="data-label">Trade Name</span>
                             <span
-                                class="data-value"><?php echo htmlspecialchars($client['trade_name_application'] ?? ''); ?></span>
+                                class="data-value"><?php echo html_entity_decode($client['trade_name_application'] ?? ''); ?></span>
                         </div>
                     </div>
 
@@ -296,7 +297,7 @@ require_once 'header.php';
                         </svg>
                         <div class="data-text-block">
                             <span class="data-label">Client Representative</span>
-                            <span class="data-value"><?php echo htmlspecialchars($clientName); ?></span>
+                            <span class="data-value"><?php echo html_entity_decode($clientName); ?></span>
                         </div>
                     </div>
 
